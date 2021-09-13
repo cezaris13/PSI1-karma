@@ -1,5 +1,5 @@
 # Team members:
-arentas, martinas, pijus
+Arentas, Martinas, Pijus
 
 # Setup
 1. Open solution file (karma.sln) with visual studio
