@@ -2,6 +2,8 @@
 {
     public enum ItemState
     {
-        Ready, Reserved, Taken
+        Ready,
+        Reserved,
+        Taken
     }
 }
