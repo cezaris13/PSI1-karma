@@ -8,7 +8,7 @@ Arentas, Martinas, Pijus
 
 
 # Tasks
-1. [x] Get greenlight for our idea during lecture
-2. [x] Transfer milestones to ~~trello~~ github board
-3. [x] Split milestones into smaller tasks and start working on them
-4. ...
+- [x] Get greenlight for our idea during lecture
+- [x] Transfer milestones to ~~trello~~ github board
+- [x] Split milestones into smaller tasks and start working on them
+- [ ] ...
