@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Karma.Server.Models;
 
 namespace Karma.Server.File
 {
-    public interface IFileContentProvider
+    interface IFileContentProvider
     {
-        public List<Item> ReadFromFile ();
+        Task<List<Item>> ReadFromFile ();
 
-        public void WriteToFile (List<Item> listToWrite);
+        Task WriteToFile (List<Item> listToWrite);
     }
 }

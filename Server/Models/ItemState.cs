@@ -2,8 +2,9 @@
 {
     public enum ItemState
     {
-        Ready, //Charity item is publicly seen and ready to be taken
-        Reserved, //Someone is interested in this item
-        Taken //This item has been collected and is no longer available
+        Started, //charity event
+        InProgress, //of collecting money
+        Finished, //the event and money collection
+        Removed, //the charity event was deleted and is marked for deletion(soft delete).
     }
 }
