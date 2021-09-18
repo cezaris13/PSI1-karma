@@ -10,17 +10,12 @@
 
         public int Id { get; set; }
 
-        public Item ()
-        {
-
-        }
-
         public Item (string givenName, string givenDescription, int givenId)
         {
             Name = givenName;
             Description = givenDescription;
             Id = givenId;
-            State = ItemState.Ready;
+            State = ItemState.Started;
         }
     }
 }

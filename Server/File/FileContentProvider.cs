@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
-using System.Text.Json;
 using Karma.Server.Models;
+using Newtonsoft.Json;
 
 namespace Karma.Server.File
 {
@@ -12,14 +12,14 @@ namespace Karma.Server.File
         {
             StreamReader reader = new StreamReader("File/AllItems.txt");
             string jsonString = await reader.ReadToEndAsync();
-            List<Item> readList = JsonSerializer.Deserialize<List<Item>>(jsonString);
+            List<Item> readList = JsonConvert.DeserializeObject<List<Item>>(jsonString);
             reader.Close();
             return readList;
         }
 
         public async Task WriteToFile (List<Item> listToWrite)
         {
-            string jsonString = JsonSerializer.Serialize(listToWrite);
+            string jsonString = JsonConvert.SerializeObject(listToWrite);
             StreamWriter writer = new StreamWriter("File/AllItems.txt");
             await writer.WriteAsync(jsonString);
             writer.Close();
