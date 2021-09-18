@@ -8,7 +8,7 @@
 
         public ItemState State { get; set; }
 
-        public int Id { get; }
+        public int Id { get; set; }
 
         public Item ()
         {

@@ -7,6 +7,6 @@ namespace Karma.Server.File
     {
         public List<Item> ReadFromFile ();
 
-        public void WriteToFile (List<Item> ListToWrite);
+        public void WriteToFile (List<Item> listToWrite);
     }
 }

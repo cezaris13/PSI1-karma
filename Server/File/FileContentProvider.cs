@@ -9,19 +9,19 @@ namespace Karma.Server.File
     {
         public List<Item> ReadFromFile ()
         {
-            StreamReader Reader = new StreamReader("File/AllItems.txt");
-            string JsonString = Reader.ReadToEnd();
-            List<Item> ReadList = JsonSerializer.Deserialize<List<Item>>(JsonString);
-            Reader.Close();
-            return ReadList;
+            StreamReader reader = new StreamReader("File/AllItems.txt");
+            string jsonString = reader.ReadToEnd();
+            List<Item> readList = JsonSerializer.Deserialize<List<Item>>(jsonString);
+            reader.Close();
+            return readList;
         }
 
-        public void WriteToFile (List<Item> ListToWrite)
+        public void WriteToFile (List<Item> listToWrite)
         {
-            string JsonString = JsonSerializer.Serialize(ListToWrite);
-            StreamWriter Writer = new StreamWriter("File/AllItems.txt");
-            Writer.Write(JsonString)
-            Writer.Close();
+            string jsonString = JsonSerializer.Serialize(listToWrite);
+            StreamWriter writer = new StreamWriter("File/AllItems.txt");
+            writer.Write(jsonString);
+            writer.Close();
         }
     }
 }
