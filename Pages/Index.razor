@@ -4,4 +4,18 @@
 
 Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@foreach (var karmaEvent in GetItems().Result)
+{
+    <tr>
+        <td>@karmaEvent.Name @karmaEvent.Description</td>
+        <td>@karmaEvent.Id</td>
+    </tr>
+}
+
+@code {
+    public async Task<IEnumerable<IGenericKarmaItem>> GetItems()
+    {
+        var provider = new FileContentProvider();
+        return await provider.ReadFromFile();
+    }
+}
