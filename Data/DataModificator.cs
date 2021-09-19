@@ -33,7 +33,7 @@ namespace Karma.Data
         public async Task UpdateCharityEvent (IGenericKarmaItem updatedItem)
         {
             List<IGenericKarmaItem> charityEventList = (await m_fileContentProvider.ReadFromFile()).ToList();
-            int updatedElementId = charityEventList.FindIndex(p => p.Id != updatedItem.Id);
+            int updatedElementId = charityEventList.FindIndex(p => p.Id == updatedItem.Id);
             if (updatedElementId != -1)
             {
                 charityEventList[updatedElementId] = updatedItem;

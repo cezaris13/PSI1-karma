@@ -17,7 +17,9 @@
 <input type="text" @bind="@Id" @oninput="@((e) => { Id=(string)e.Value;})" />
 <br>
 <br>
-<button class="btn btn-primary" @onclick="AddEvent">Click me</button>
+<button class="btn btn-primary" @onclick="AddEvent">Add event</button>
+<button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
+<button class="btn btn-primary" @onclick="DeleteEvent">Delete event</button>
 
 @code {
     string EventTitle { get; set; }
@@ -29,4 +31,17 @@
         CharityEvent ev = new CharityEvent(EventTitle, EventDescription, Int32.Parse(Id));
         await dataModificator.AddCharityEvent(ev);
     }
+
+    private async Task UpdateEvent()
+    {
+        CharityEvent ev = new CharityEvent(EventTitle, EventDescription, Int32.Parse(Id));
+        await dataModificator.UpdateCharityEvent(ev);
+    }
+
+    private async Task DeleteEvent()
+    {
+        await dataModificator.RemoveCharityEvent(Int32.Parse(Id));
+    }
+
+
 }
