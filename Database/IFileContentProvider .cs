@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Karma.Server.Models;
+using Karma.Models;
 
-namespace Karma.Server.Database
+namespace Karma.Database
 {
     public interface IFileContentProvider
     {

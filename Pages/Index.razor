@@ -1,5 +1,7 @@
 ﻿@page "/"
-
+@using Karma.Models
+@using Karma.Database
+@inject IFileContentProvider fileContentProvider 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
@@ -15,7 +17,6 @@ Welcome to your new app.
 @code {
     public async Task<IEnumerable<IGenericKarmaItem>> GetItems()
     {
-        var provider = new FileContentProvider();
-        return await provider.ReadFromFile();
+        return await fileContentProvider.ReadFromFile();
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Karma.Server.Models
+﻿namespace Karma.Models
 {
     public interface IGenericKarmaItem
     {
