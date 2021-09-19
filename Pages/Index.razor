@@ -12,24 +12,10 @@ Welcome to your new app.
     </tr>
 }
 
-@* inject IHttpClientFactory ClientFactory *@
 @code {
     public async Task<IEnumerable<IGenericKarmaItem>> GetItems()
     {
-        //var x = Http.GetAsync("api/WeatherForecastController/Get");
-        //var x = Http.GetAsync("api/CharityEventController/GetAsync").Result;
-        //var y = Http.GetAsync(@"https://localhost:5001/api/test");
-        //var x = y.Result;
-        //Thread.Sleep(4);
-        //var clientlocal = Http.CreateClient("Karma.ServerAPI");
-        //var res = clientlocal.GetStringAsync("api/test");
-        //var x = res.Result;
-        //var res = Http.GetFromJsonAsync<List<CharityEvent>>("api/test");
-        var x = new FileContentProvider();
-        var y = await x.ReadFromFile();
-        var mock = new List<CharityEvent> {
-                new CharityEvent("sad", "asd", 4),
-            };
-        return y;
+        var provider = new FileContentProvider();
+        return await provider.ReadFromFile();
     }
 }
