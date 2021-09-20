@@ -1,0 +1,47 @@
+﻿@page "/addcharityevent"
+@using Karma.Models
+@using Karma.Data
+@inject IDataModificator dataModificator
+
+<h1>Add charity event</h1>
+
+<label for="fname">Event title:</label>
+<input type="text" @bind="@EventTitle" @oninput="@((e) => { EventTitle=(string)e.Value;})" />
+<br>
+<br>
+<label for="fname">Event description:</label>
+<input type="text" @bind="@EventDescription" @oninput="@((e) => { EventDescription=(string)e.Value;})" />
+<br>
+<br>
+<label for="fname">ID:</label>
+<input type="text" @bind="@Id" @oninput="@((e) => { Id=(string)e.Value;})" />
+<br>
+<br>
+<button class="btn btn-primary" @onclick="AddEvent">Add event</button>
+<button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
+<button class="btn btn-primary" @onclick="DeleteEvent">Delete event</button>
+
+@code {
+    string EventTitle { get; set; }
+    string EventDescription { get; set; }
+    string Id { get; set; }
+
+    private async Task AddEvent()
+    {
+        CharityEvent ev = new CharityEvent(EventTitle, EventDescription, Int32.Parse(Id));
+        await dataModificator.AddCharityEvent(ev);
+    }
+
+    private async Task UpdateEvent()
+    {
+        CharityEvent ev = new CharityEvent(EventTitle, EventDescription, Int32.Parse(Id));
+        await dataModificator.UpdateCharityEvent(ev);
+    }
+
+    private async Task DeleteEvent()
+    {
+        await dataModificator.RemoveCharityEvent(Int32.Parse(Id));
+    }
+
+
+}

@@ -1,8 +1,9 @@
-﻿namespace Karma.Server.Models
+﻿namespace Karma.Models
 {
     public class CharityEvent : IGenericKarmaItem
     {
         public int Id { get; set; }
+
         public string Name { get; set; }
 
         public string Description { get; set; }
