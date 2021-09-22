@@ -2,12 +2,13 @@
 {
     public enum CharityEventState
     {
-        Planning,
-        WaitingForApproval,
-        Started,
-        InProgress, 
-        Finished,
-        Removed,
-        OnHold,
+        Undefined = 0,
+        Planning = 1,
+        WaitingForApproval = 2,
+        Started = 3,
+        InProgress = 4, 
+        Finished = 5,
+        Removed = 6,
+        OnHold = 7,
     }
 }
