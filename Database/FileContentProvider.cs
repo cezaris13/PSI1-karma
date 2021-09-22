@@ -9,7 +9,7 @@ namespace Karma.Database
     public class FileContentProvider : IFileContentProvider
     {
         const string PathToFile = "Database/AllItems.txt";
-        public async Task<IEnumerable<IGenericKarmaItem>> ReadFromFileAsync ()
+        public async Task<IEnumerable<IGenericKarmaItem>> ReadFromFileAsync()
         {
             List<IGenericKarmaItem> list = new List<IGenericKarmaItem>();
             using (StreamReader reader = new StreamReader(PathToFile))
@@ -21,7 +21,7 @@ namespace Karma.Database
             return list;
         }
 
-        public async Task WriteToFileAsync (IEnumerable<IGenericKarmaItem> listToWrite)
+        public async Task WriteToFileAsync(IEnumerable<IGenericKarmaItem> listToWrite)
         {
             string jsonString = JsonConvert.SerializeObject(listToWrite);
             using (StreamWriter writer = new StreamWriter(PathToFile))

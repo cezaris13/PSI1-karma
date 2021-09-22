@@ -6,8 +6,8 @@ namespace Karma.Database
 {
     public interface IFileContentProvider
     {
-        Task<IEnumerable<IGenericKarmaItem>> ReadFromFileAsync ();
+        Task<IEnumerable<IGenericKarmaItem>> ReadFromFileAsync();
 
-        Task WriteToFileAsync (IEnumerable<IGenericKarmaItem> listToWrite);
+        Task WriteToFileAsync(IEnumerable<IGenericKarmaItem> listToWrite);
     }
 }

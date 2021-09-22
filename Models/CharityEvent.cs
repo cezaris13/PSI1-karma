@@ -10,7 +10,7 @@
 
         public CharityEventState State { get; set; }
 
-        public CharityEvent (string name, string description, int id, CharityEventState state = CharityEventState.Planning)
+        public CharityEvent(string name, string description, int id, CharityEventState state = CharityEventState.Planning)
         {
             Id = id;
             Name = name;
