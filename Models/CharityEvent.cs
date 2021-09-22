@@ -8,14 +8,14 @@
 
         public string Description { get; set; }
 
-        public int State { get; set; }
+        public CharityEventState State { get; set; }
 
         public CharityEvent (string name, string description, int id, CharityEventState state = CharityEventState.Planning)
         {
             Id = id;
             Name = name;
             Description = description;
-            State = (int)state;
+            State = state;
         }
     }
 }
