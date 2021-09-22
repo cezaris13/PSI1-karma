@@ -1,0 +1,35 @@
+﻿@page "/event/{Id:guid}"
+@inject IFileContentProvider m_fileContentProvider
+@inject NavigationManager UriHelper
+@using System.Linq
+
+@if (charityEvent != null)
+{
+    <h1>@charityEvent.Name</h1>
+
+    <h2>@charityEvent.Description</h2>
+
+    <h3>@charityEvent.State.ToString()</h3>
+
+    <button class="btn btn-primary" @onclick="MoveToIndividualEvent">Update event</button>
+}
+else
+{
+    <h1>Sorry,but this event was not found</h1>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    private CharityEvent charityEvent;
+
+    protected override async Task OnInitializedAsync()
+    {
+        charityEvent = (CharityEvent)(await m_fileContentProvider.ReadFromFileAsync()).Where(p => p.Id == Id).FirstOrDefault();
+    }
+
+    public void MoveToIndividualEvent()
+    {
+        UriHelper.NavigateTo($"editcharityevent/{Id}");
+    }
+}

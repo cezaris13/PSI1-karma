@@ -1,0 +1,42 @@
+﻿@page "/editcharityevent/{Id:guid}"
+@using Karma.Models
+@using Karma.Data
+@inject NavigationManager UriHelper
+@inject IFileContentProvider m_fileContentProvider
+@inject IDataModificator dataModificator
+
+<h1>Add charity event</h1>
+
+<label for="fname">Event title:</label>
+<input type="text" @bind="@charityEvent.Name" @oninput="@((e) => { charityEvent.Name=(string)e.Value;})" />
+<br>
+<br>
+<label for="fname">Event description:</label>
+<input type="text" @bind="@charityEvent.Description" @oninput="@((e) => { charityEvent.Description=(string)e.Value;})" />
+<br>
+<br>
+<button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
+<button class="btn btn-primary" @onclick="DeleteEvent">Delete event</button>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    public CharityEvent charityEvent;
+
+    private async Task UpdateEvent()
+    {
+        await dataModificator.UpdateCharityEvent(charityEvent);
+        UriHelper.NavigateTo("");
+    }
+
+    private async Task DeleteEvent()
+    {
+        await dataModificator.RemoveCharityEvent(Id);
+        UriHelper.NavigateTo("");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        charityEvent = (CharityEvent)(await m_fileContentProvider.ReadFromFileAsync()).Where(p => p.Id == Id).FirstOrDefault();
+    }
+}

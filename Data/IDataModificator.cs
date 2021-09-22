@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Karma.Models;
 
 namespace Karma.Data
@@ -7,7 +8,7 @@ namespace Karma.Data
     {
         Task AddCharityEvent(IGenericKarmaItem newCharityEvent);
 
-        Task RemoveCharityEvent(int charityEventId);
+        Task RemoveCharityEvent(Guid charityEventId);
 
         Task UpdateCharityEvent(IGenericKarmaItem updatedItem);
     }
