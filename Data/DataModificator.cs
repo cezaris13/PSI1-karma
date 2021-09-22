@@ -10,27 +10,27 @@ namespace Karma.Data
     public class DataModificator : IDataModificator
     {
         private readonly IFileContentProvider m_fileContentProvider;
-        public DataModificator (
+        public DataModificator(
             IFileContentProvider fileContentprovider)
         {
             m_fileContentProvider = fileContentprovider;
         }
 
-        public async Task AddCharityEvent (IGenericKarmaItem newCharityEvent)
+        public async Task AddCharityEvent(IGenericKarmaItem newCharityEvent)
         {
             List<IGenericKarmaItem> charityEventList = (await m_fileContentProvider.ReadFromFileAsync()).ToList();
             charityEventList.Add(newCharityEvent);
             await m_fileContentProvider.WriteToFileAsync(charityEventList);
         }
 
-        public async Task RemoveCharityEvent (int charityEventId)
+        public async Task RemoveCharityEvent(int charityEventId)
         {
             List<IGenericKarmaItem> charityEventList = (await m_fileContentProvider.ReadFromFileAsync()).ToList();
             IEnumerable<IGenericKarmaItem> newCharityList = charityEventList.Where(p => p.Id != charityEventId);
             await m_fileContentProvider.WriteToFileAsync(newCharityList);
         }
 
-        public async Task UpdateCharityEvent (IGenericKarmaItem updatedItem)
+        public async Task UpdateCharityEvent(IGenericKarmaItem updatedItem)
         {
             List<IGenericKarmaItem> charityEventList = (await m_fileContentProvider.ReadFromFileAsync()).ToList();
             int updatedElementId = charityEventList.FindIndex(p => p.Id == updatedItem.Id);
@@ -41,7 +41,7 @@ namespace Karma.Data
             }
             else
             {
-                throw(new IndexOutOfRangeException($"Item with given id :{updatedItem.Id} was not found")); 
+                throw (new IndexOutOfRangeException($"Item with given id :{updatedItem.Id} was not found"));
             }
         }
     }
