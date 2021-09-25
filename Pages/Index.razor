@@ -1,20 +1,31 @@
 ﻿@page "/"
 @using Karma.Models
 @using Karma.Database
-@inject IFileContentProvider fileContentProvider 
-<h1>Hello, world!</h1>
+@using System.Text.RegularExpressions;
+@inject IFileContentProvider fileContentProvider
+<h1>Karma</h1>
 
-Welcome to your new app.
+Ready to aquire karma points by helping out others?
+
+<h5>Filter Karma events: </h5>
+<input @bind-value="FilterValue" @bind-value:event="oninput" />
 
 @foreach (var karmaEvent in GetItems().Result)
 {
+    var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());
+    @if (matches.Count > 0)
+    {
     <tr>
         <td>@karmaEvent.Name @karmaEvent.Description</td>
         <td>@karmaEvent.Id</td>
     </tr>
+    }
 }
 
 @code {
+    private string FilterValue { get; set; } = "";
+
     public async Task<IEnumerable<IGenericKarmaItem>> GetItems()
     {
         return await fileContentProvider.ReadFromFileAsync();
