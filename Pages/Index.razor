@@ -1,12 +1,23 @@
 ﻿@page "/"
 @using Karma.Models
 @using Karma.Database
+@using System.Text.RegularExpressions;
 @inject IFileContentProvider m_fileContentProvider
 @inject NavigationManager m_uriHelper
+<h1>Karma</h1>
+
+Ready to aquire karma points by helping out others?
+
+<h5>Filter Karma events: </h5>
+<input @bind-value="FilterValue" @bind-value:event="oninput" />
 
 <div class="card-deck">
     @foreach (var karmaEvent in GetItems().Result)
     {
+        var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());
+        @if (matches.Count > 0)
+        {
         <div class="card m-3" style="min-width: 18rem; max-width:30.5%;">
             <div class="card-header" style="display: inline-block">
                 <div style="float: left" @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">
@@ -23,10 +34,13 @@
             </div>
             <h6 @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">@karmaEvent.Description</h6>
         </div>
+        }
     }
 </div>
 
 @code {
+    private string FilterValue { get; set; } = "";
+
     public async Task<IEnumerable<IGenericKarmaItem>> GetItems()
     {
         return await m_fileContentProvider.ReadFromFileAsync();
