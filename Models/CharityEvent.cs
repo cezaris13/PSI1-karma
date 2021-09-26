@@ -1,8 +1,10 @@
-﻿namespace Karma.Models
+﻿using System;
+
+namespace Karma.Models
 {
     public class CharityEvent : IGenericKarmaItem
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Name { get; set; }
 
@@ -10,7 +12,7 @@
 
         public CharityEventState State { get; set; }
 
-        public CharityEvent(string name, string description, int id, CharityEventState state = CharityEventState.Planning)
+        public CharityEvent(string name, string description, Guid id, CharityEventState state = CharityEventState.Planning)
         {
             Id = id;
             Name = name;

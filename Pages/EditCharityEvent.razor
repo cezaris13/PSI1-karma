@@ -1,0 +1,45 @@
+﻿@page "/editcharityevent/{Id:guid}"
+@using Karma.Models
+@using Karma.Data
+@inject NavigationManager m_uriHelper
+@inject IFileContentProvider m_fileContentProvider
+@inject IDataModificator m_dataModificator
+@inject IJSRuntime m_jsRuntime
+
+<h1>Edit charity event</h1>
+
+<label for="fname">Event title:</label>
+<input type="text" @bind="@charityEvent.Name" @oninput="@((e) => { charityEvent.Name=(string)e.Value;})" />
+<br>
+<br>
+<label for="fname">Event description:</label>
+<input type="text" @bind="@charityEvent.Description" @oninput="@((e) => { charityEvent.Description=(string)e.Value;})" />
+<br>
+<br>
+<button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
+<button class="btn btn-primary" @onclick="DeleteEvent">Delete event</button>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    public CharityEvent charityEvent;
+
+    private async Task UpdateEvent()
+    {
+        await m_dataModificator.UpdateCharityEvent(charityEvent);
+        m_uriHelper.NavigateTo("");
+        await m_jsRuntime.InvokeVoidAsync("alert", "The event has been updated");
+    }
+
+    private async Task DeleteEvent()
+    {
+        await m_dataModificator.RemoveCharityEvent(Id);
+        m_uriHelper.NavigateTo("");
+        await m_jsRuntime.InvokeVoidAsync("alert", "The event has been deleted");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        charityEvent = (CharityEvent)(await m_fileContentProvider.ReadFromFileAsync()).Where(p => p.Id == Id).FirstOrDefault();
+    }
+}

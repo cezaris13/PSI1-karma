@@ -23,7 +23,7 @@ namespace Karma.Data
             await m_fileContentProvider.WriteToFileAsync(charityEventList);
         }
 
-        public async Task RemoveCharityEvent(int charityEventId)
+        public async Task RemoveCharityEvent(Guid charityEventId)
         {
             List<IGenericKarmaItem> charityEventList = (await m_fileContentProvider.ReadFromFileAsync()).ToList();
             IEnumerable<IGenericKarmaItem> newCharityList = charityEventList.Where(p => p.Id != charityEventId);
