@@ -1,11 +1,12 @@
 ﻿@page "/editcharityevent/{Id:guid}"
 @using Karma.Models
 @using Karma.Data
-@inject NavigationManager UriHelper
+@inject NavigationManager m_uriHelper
 @inject IFileContentProvider m_fileContentProvider
-@inject IDataModificator dataModificator
+@inject IDataModificator m_dataModificator
+@inject IJSRuntime m_jsRuntime
 
-<h1>Add charity event</h1>
+<h1>Edit charity event</h1>
 
 <label for="fname">Event title:</label>
 <input type="text" @bind="@charityEvent.Name" @oninput="@((e) => { charityEvent.Name=(string)e.Value;})" />
@@ -25,14 +26,16 @@
 
     private async Task UpdateEvent()
     {
-        await dataModificator.UpdateCharityEvent(charityEvent);
-        UriHelper.NavigateTo("");
+        await m_dataModificator.UpdateCharityEvent(charityEvent);
+        m_uriHelper.NavigateTo("");
+        await m_jsRuntime.InvokeVoidAsync("alert", "The event has been updated");
     }
 
     private async Task DeleteEvent()
     {
-        await dataModificator.RemoveCharityEvent(Id);
-        UriHelper.NavigateTo("");
+        await m_dataModificator.RemoveCharityEvent(Id);
+        m_uriHelper.NavigateTo("");
+        await m_jsRuntime.InvokeVoidAsync("alert", "The event has been deleted");
     }
 
     protected override async Task OnInitializedAsync()
