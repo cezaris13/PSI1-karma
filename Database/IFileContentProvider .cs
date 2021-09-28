@@ -8,10 +8,10 @@ namespace Karma.Database
     {
         Task<IEnumerable<IGenericKarmaItem>> ReadItemFromFileAsync();
 
-        Task<IEnumerable<IVolunteerUser>> ReadVolunteerFromFileAsync();
+        Task<IEnumerable<IVolunteer>> ReadVolunteerFromFileAsync();
 
         Task WriteItemToFileAsync(IEnumerable<IGenericKarmaItem> listToWrite);
 
-        Task WriteVolunteerToFileAsync(IEnumerable<IVolunteerUser> listToWrite);
+        Task WriteVolunteerToFileAsync(IEnumerable<IVolunteer> listToWrite);
     }
 }

@@ -22,14 +22,14 @@ namespace Karma.Database
             return list;
         }
 
-        public async Task<IEnumerable<IVolunteerUser>> ReadVolunteerFromFileAsync()
+        public async Task<IEnumerable<IVolunteer>> ReadVolunteerFromFileAsync()
         {
-            List<IVolunteerUser> list = new List<IVolunteerUser>();
+            List<IVolunteer> list = new List<IVolunteer>();
             using (StreamReader reader = new StreamReader(PathToVolunteerFile))
             {
                 //TODO investigate why await takes so long (might be buffers)
                 string jsonString = reader.ReadToEndAsync().Result;
-                list.AddRange(JsonConvert.DeserializeObject<List<VolunteerUser>>(jsonString));
+                list.AddRange(JsonConvert.DeserializeObject<List<Volunteer>>(jsonString));
             }
             return list;
         }
@@ -43,7 +43,7 @@ namespace Karma.Database
             }
         }
 
-        public async Task WriteVolunteerToFileAsync(IEnumerable<IVolunteerUser> listToWrite)
+        public async Task WriteVolunteerToFileAsync(IEnumerable<IVolunteer> listToWrite)
         {
             string jsonString = JsonConvert.SerializeObject(listToWrite);
             using (StreamWriter writer = new StreamWriter(PathToVolunteerFile))

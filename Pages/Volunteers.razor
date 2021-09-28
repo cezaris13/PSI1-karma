@@ -15,18 +15,18 @@
             <th>Surname</th>
             <th>Events</th>
         </tr>
-        @foreach (VolunteerUser volunteer in GetVolunteers().Result)
+        @foreach (Volunteer volunteer in GetVolunteers().Result)
         {
             <tr>
                 <td>@volunteer.Name</td>
                 <td>@volunteer.Surname</td>
-                @if (volunteer.ParticipatedEvents != null)
+                @if (volunteer.ParticipatedEventIds != null)
                 {
                     <td>
-                        @foreach (CharityEvent charityEvent in volunteer.ParticipatedEvents)
+                        @foreach (Guid charityEventId in volunteer.ParticipatedEventIds)
                         {
-                            <div @onclick="()=>NavigateToIndividualEvent(charityEvent.Id)">
-                                @charityEvent.Name
+                            <div @onclick="()=>NavigateToIndividualEvent(charityEventId)">
+                                @EventIdToEventNameMatching(charityEventId)
                             </div>
                         }
                     </td>
@@ -41,9 +41,21 @@
 </table>
 
 @code {
-    public async Task<IEnumerable<IVolunteerUser>> GetVolunteers()
+    IEnumerable<IGenericKarmaItem> localList;
+
+    protected override async Task OnInitializedAsync()
     {
-        return await m_fileContentProvider.ReadVolunteerFromFileAsync();
+        localList = (IEnumerable<IGenericKarmaItem>) await m_fileContentProvider.ReadItemFromFileAsync();
+    }
+
+    public string EventIdToEventNameMatching(Guid id)
+    {
+        return localList.Where(p => p.Id == id).FirstOrDefault().Name;
+    }
+
+    public async Task<IEnumerable<IVolunteer>> GetVolunteers()
+    {
+        return (IEnumerable<IVolunteer>) await m_fileContentProvider.ReadVolunteerFromFileAsync();
     }
 
     public void NavigateToIndividualEvent(Guid id)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Karma.Models
 {
-    public class VolunteerUser : IVolunteerUser
+    public class Volunteer : IVolunteer
     {
         public Guid Id { get; set; }
 
@@ -11,9 +11,9 @@ namespace Karma.Models
 
         public string Surname { get; set; }
 
-        public List<CharityEvent> ParticipatedEvents { get; set; }
+        public List<Guid> ParticipatedEventIds { get; set; }
 
-        public VolunteerUser(string name, string surname, Guid id)
+        public Volunteer(string name, string surname, Guid id)
         {
             Id = id;
             Name = name;
