@@ -43,7 +43,7 @@ Ready to aquire karma points by helping out others?
 
     public async Task<IEnumerable<IGenericKarmaItem>> GetItems()
     {
-        return await m_fileContentProvider.ReadFromFileAsync();
+        return await m_fileContentProvider.ReadItemFromFileAsync();
     }
 
     public void NavigateToIndividualEvent(Guid id)
