@@ -45,7 +45,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        localList = (IEnumerable<IGenericKarmaItem>) await m_fileContentProvider.ReadItemFromFileAsync();
+        localList = (IEnumerable<IGenericKarmaItem>) await m_fileContentProvider.ReadFromFileAsync<CharityEvent>();
     }
 
     public string EventIdToEventNameMatching(Guid id)
@@ -55,7 +55,7 @@
 
     public async Task<IEnumerable<IVolunteer>> GetVolunteers()
     {
-        return (IEnumerable<IVolunteer>) await m_fileContentProvider.ReadVolunteerFromFileAsync();
+        return (IEnumerable<IVolunteer>) await m_fileContentProvider.ReadFromFileAsync<Volunteer>();
     }
 
     public void NavigateToIndividualEvent(Guid id)

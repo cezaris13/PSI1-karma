@@ -18,26 +18,26 @@ namespace Karma.Data
 
         public async Task AddCharityEvent(IGenericKarmaItem newCharityEvent)
         {
-            List<IGenericKarmaItem> charityEventList = (await m_fileContentProvider.ReadItemFromFileAsync()).ToList();
-            charityEventList.Add(newCharityEvent);
-            await m_fileContentProvider.WriteItemToFileAsync(charityEventList);
+            var charityEventList = (await m_fileContentProvider.ReadFromFileAsync<CharityEvent>()).ToList();
+            charityEventList.Add((CharityEvent)newCharityEvent);
+            await m_fileContentProvider.WriteToFileAsync(charityEventList);
         }
 
         public async Task RemoveCharityEvent(Guid charityEventId)
         {
-            List<IGenericKarmaItem> charityEventList = (await m_fileContentProvider.ReadItemFromFileAsync()).ToList();
-            IEnumerable<IGenericKarmaItem> newCharityList = charityEventList.Where(p => p.Id != charityEventId);
-            await m_fileContentProvider.WriteItemToFileAsync(newCharityList);
+            var charityEventList = (await m_fileContentProvider.ReadFromFileAsync<CharityEvent>()).ToList();
+            IEnumerable<CharityEvent> newCharityList = charityEventList.Where(p => p.Id != charityEventId);
+            await m_fileContentProvider.WriteToFileAsync(newCharityList);
         }
 
         public async Task UpdateCharityEvent(IGenericKarmaItem updatedItem)
         {
-            List<IGenericKarmaItem> charityEventList = (await m_fileContentProvider.ReadItemFromFileAsync()).ToList();
+            var charityEventList = (await m_fileContentProvider.ReadFromFileAsync<CharityEvent>()).ToList();
             int updatedElementId = charityEventList.FindIndex(p => p.Id == updatedItem.Id);
             if (updatedElementId != -1)
             {
-                charityEventList[updatedElementId] = updatedItem;
-                await m_fileContentProvider.WriteItemToFileAsync(charityEventList);
+                charityEventList[updatedElementId] = (CharityEvent)updatedItem;
+                await m_fileContentProvider.WriteToFileAsync(charityEventList);
             }
             else
             {

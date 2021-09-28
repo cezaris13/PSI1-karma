@@ -8,45 +8,24 @@ namespace Karma.Database
 {
     public class FileContentProvider : IFileContentProvider
     {
-        const string PathToItemFile = "Database/AllItems.txt";
-        const string PathToVolunteerFile = "Database/AllVolunteers.txt";
-        public async Task<IEnumerable<IGenericKarmaItem>> ReadItemFromFileAsync()
+        public async Task<IEnumerable<T>> ReadFromFileAsync<T>()
         {
-            List<IGenericKarmaItem> list = new List<IGenericKarmaItem>();
-            using (StreamReader reader = new StreamReader(PathToItemFile))
+            List<T> list = new List<T>();
+            string path = $"Database/{typeof(T).Name}.txt";
+            using (StreamReader reader = new StreamReader(path))
             {
                 //TODO investigate why await takes so long (might be buffers)
                 string jsonString = reader.ReadToEndAsync().Result;
-                list.AddRange(JsonConvert.DeserializeObject<List<CharityEvent>>(jsonString));
+                list.AddRange(JsonConvert.DeserializeObject<List<T>>(jsonString));
             }
             return list;
         }
 
-        public async Task<IEnumerable<IVolunteer>> ReadVolunteerFromFileAsync()
+        public async Task WriteToFileAsync<T>(IEnumerable<T> listToWrite)
         {
-            List<IVolunteer> list = new List<IVolunteer>();
-            using (StreamReader reader = new StreamReader(PathToVolunteerFile))
-            {
-                //TODO investigate why await takes so long (might be buffers)
-                string jsonString = reader.ReadToEndAsync().Result;
-                list.AddRange(JsonConvert.DeserializeObject<List<Volunteer>>(jsonString));
-            }
-            return list;
-        }
-
-        public async Task WriteItemToFileAsync(IEnumerable<IGenericKarmaItem> listToWrite)
-        {
+            string path = $"Database/{typeof(T).Name}.txt";
             string jsonString = JsonConvert.SerializeObject(listToWrite);
-            using (StreamWriter writer = new StreamWriter(PathToItemFile))
-            {
-                await writer.WriteAsync(jsonString);
-            }
-        }
-
-        public async Task WriteVolunteerToFileAsync(IEnumerable<IVolunteer> listToWrite)
-        {
-            string jsonString = JsonConvert.SerializeObject(listToWrite);
-            using (StreamWriter writer = new StreamWriter(PathToVolunteerFile))
+            using (StreamWriter writer = new StreamWriter(path))
             {
                 await writer.WriteAsync(jsonString);
             }
