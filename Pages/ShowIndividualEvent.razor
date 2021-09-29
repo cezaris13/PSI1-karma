@@ -25,7 +25,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        charityEvent = (CharityEvent)(await m_fileContentProvider.ReadFromFileAsync()).Where(p => p.Id == Id).FirstOrDefault();
+        charityEvent = (await m_fileContentProvider.ReadFromFileAsync<CharityEvent>()).Where(p => p.Id == Id).FirstOrDefault();
     }
 
     public void NavigateToEditEvent()

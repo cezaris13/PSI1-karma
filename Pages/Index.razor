@@ -43,7 +43,7 @@ Ready to aquire karma points by helping out others?
 
     public async Task<IEnumerable<IGenericKarmaItem>> GetItems()
     {
-        return await m_fileContentProvider.ReadFromFileAsync();
+        return await m_fileContentProvider.ReadFromFileAsync<CharityEvent>();
     }
 
     public void NavigateToIndividualEvent(Guid id)
@@ -55,5 +55,4 @@ Ready to aquire karma points by helping out others?
     {
         m_uriHelper.NavigateTo($"editcharityevent/{id}");
     }
-
 }

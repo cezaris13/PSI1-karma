@@ -18,25 +18,25 @@ namespace Karma.Data
 
         public async Task AddCharityEvent(IGenericKarmaItem newCharityEvent)
         {
-            List<IGenericKarmaItem> charityEventList = (await m_fileContentProvider.ReadFromFileAsync()).ToList();
-            charityEventList.Add(newCharityEvent);
+            var charityEventList = (await m_fileContentProvider.ReadFromFileAsync<CharityEvent>()).ToList();
+            charityEventList.Add((CharityEvent)newCharityEvent);
             await m_fileContentProvider.WriteToFileAsync(charityEventList);
         }
 
         public async Task RemoveCharityEvent(Guid charityEventId)
         {
-            List<IGenericKarmaItem> charityEventList = (await m_fileContentProvider.ReadFromFileAsync()).ToList();
-            IEnumerable<IGenericKarmaItem> newCharityList = charityEventList.Where(p => p.Id != charityEventId);
+            var charityEventList = (await m_fileContentProvider.ReadFromFileAsync<CharityEvent>()).ToList();
+            IEnumerable<CharityEvent> newCharityList = charityEventList.Where(p => p.Id != charityEventId);
             await m_fileContentProvider.WriteToFileAsync(newCharityList);
         }
 
         public async Task UpdateCharityEvent(IGenericKarmaItem updatedItem)
         {
-            List<IGenericKarmaItem> charityEventList = (await m_fileContentProvider.ReadFromFileAsync()).ToList();
+            var charityEventList = (await m_fileContentProvider.ReadFromFileAsync<CharityEvent>()).ToList();
             int updatedElementId = charityEventList.FindIndex(p => p.Id == updatedItem.Id);
             if (updatedElementId != -1)
             {
-                charityEventList[updatedElementId] = updatedItem;
+                charityEventList[updatedElementId] = (CharityEvent)updatedItem;
                 await m_fileContentProvider.WriteToFileAsync(charityEventList);
             }
             else

@@ -8,23 +8,24 @@ namespace Karma.Database
 {
     public class FileContentProvider : IFileContentProvider
     {
-        const string PathToFile = "Database/AllItems.txt";
-        public async Task<IEnumerable<IGenericKarmaItem>> ReadFromFileAsync()
+        public async Task<IEnumerable<T>> ReadFromFileAsync<T>()
         {
-            List<IGenericKarmaItem> list = new List<IGenericKarmaItem>();
-            using (StreamReader reader = new StreamReader(PathToFile))
+            List<T> list = new List<T>();
+            string path = $"Database/{typeof(T).Name}.txt";
+            using (StreamReader reader = new StreamReader(path))
             {
                 //TODO investigate why await takes so long (might be buffers)
                 string jsonString = reader.ReadToEndAsync().Result;
-                list.AddRange(JsonConvert.DeserializeObject<List<CharityEvent>>(jsonString));
+                list.AddRange(JsonConvert.DeserializeObject<List<T>>(jsonString));
             }
             return list;
         }
 
-        public async Task WriteToFileAsync(IEnumerable<IGenericKarmaItem> listToWrite)
+        public async Task WriteToFileAsync<T>(IEnumerable<T> listToWrite)
         {
+            string path = $"Database/{typeof(T).Name}.txt";
             string jsonString = JsonConvert.SerializeObject(listToWrite);
-            using (StreamWriter writer = new StreamWriter(PathToFile))
+            using (StreamWriter writer = new StreamWriter(path))
             {
                 await writer.WriteAsync(jsonString);
             }
