@@ -12,7 +12,7 @@ Ready to aquire karma points by helping out others?
 <input @bind-value="FilterValue" @bind-value:event="oninput" />
 
 <div class="card-deck">
-    @foreach (var karmaEvent in GetItems().Result)
+    @foreach (var karmaEvent in GetEventsAsync().Result)
     {
         var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());
@@ -41,7 +41,7 @@ Ready to aquire karma points by helping out others?
 @code {
     private string FilterValue { get; set; } = "";
 
-    public async Task<IEnumerable<IGenericKarmaItem>> GetItems()
+    public async Task<IEnumerable<IGenericKarmaItem>> GetEventsAsync()
     {
         return await m_fileContentProvider.ReadFromFileAsync<CharityEvent>();
     }
