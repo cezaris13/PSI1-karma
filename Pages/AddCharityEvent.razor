@@ -23,7 +23,7 @@
 
     private async Task AddEvent()
     {
-        CharityEvent ev = new CharityEvent(EventTitle, EventDescription, Guid.NewGuid());
+        var ev = new CharityEvent(EventTitle, EventDescription, Guid.NewGuid());
         await m_dataModificator.AddCharityEvent(ev);
         m_uriHelper.NavigateTo("");
         await m_jsRuntime.InvokeVoidAsync("alert", "The event has been created");
