@@ -8,8 +8,6 @@ namespace Karma.Database
     {
         Task<IEnumerable<T>> ReadFromFileAsync<T>();
 
-
         Task WriteToFileAsync<T>(IEnumerable<T> listToWrite);
-
     }
 }
