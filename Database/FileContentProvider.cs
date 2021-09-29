@@ -14,7 +14,7 @@ namespace Karma.Database
             using (StreamReader reader = new StreamReader(path))
             {
                 //TODO investigate why await takes so long (might be buffers)
-                string jsonString = await reader.ReadToEndAsync();
+                string jsonString = reader.ReadToEndAsync().Result;
                 list.AddRange(JsonConvert.DeserializeObject<List<T>>(jsonString));
             }
             return list;
