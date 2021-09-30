@@ -1,6 +1,5 @@
 ﻿@page "/volunteers"
 @using Karma.Models
-@using Karma.Data
 @inject IFileContentProvider m_fileContentProvider
 @inject NavigationManager m_uriHelper
 
@@ -55,7 +54,7 @@
 
     public async Task<IEnumerable<IVolunteer>> GetVolunteers()
     {
-        return (IEnumerable<IVolunteer>) await m_fileContentProvider.ReadFromFileAsync<Volunteer>();
+        return await m_fileContentProvider.ReadFromFileAsync<Volunteer>();
     }
 
     public void NavigateToIndividualEvent(Guid id)
