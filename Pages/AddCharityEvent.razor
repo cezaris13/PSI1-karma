@@ -2,22 +2,28 @@
 @using Karma.Models
 @using Karma.Data
 @inject IDataModificator m_dataModificator
-@inject NavigationManager m_uriHelper
 @inject IJSRuntime m_jsRuntime
 
 <h1>Add charity event</h1>
 
-<label for="fname">Event title:</label>
-<input type="text" @bind="@EventTitle" @oninput="@((e) => { EventTitle=(string)e.Value;})" />
-<br>
-<br>
-<label for="fname">Event description:</label>
-<input type="text" @bind="@EventDescription" @oninput="@((e) => { EventDescription=(string)e.Value;})" />
-<br>
-<br>
-<button class="btn btn-primary" @onclick="AddEvent">Add event</button>
-
-@code {
+@if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+{
+    <label for="fname">Event title:</label>
+    <input type="text" @bind="@EventTitle" @oninput="@((e) => { EventTitle = (string)e.Value; })" />
+    <br>
+    <br>
+    <label for="fname">Event description:</label>
+    <input type="text" @bind="@EventDescription" @oninput="@((e) => { EventDescription = (string)e.Value; })" />
+    <br>
+    <br>
+    <button class="btn btn-primary" @onclick="AddEvent">Add event</button>
+}
+else
+{
+    <label for="fname">Please LogIn:</label>
+}
+@code
+{
     string EventTitle { get; set; }
     string EventDescription { get; set; }
 

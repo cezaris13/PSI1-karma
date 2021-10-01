@@ -1,42 +1,43 @@
 ﻿@page "/"
-@using Karma.Models
-@using Karma.Database
 @using System.Text.RegularExpressions;
-@inject IFileContentProvider m_fileContentProvider
-@inject NavigationManager m_uriHelper
+@using Karma.Models
 <h1>Karma</h1>
 
 Ready to aquire karma points by helping out others?
 
-<h5>Filter Karma events: </h5>
-<input @bind-value="FilterValue" @bind-value:event="oninput" />
+@if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+{
+    <h5>Filter Karma events: </h5>
+    <input @bind-value="FilterValue" @bind-value:event="oninput" />
 
-<div class="card-deck">
-    @foreach (var karmaEvent in GetEventsAsync().Result)
-    {
-        var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());
-        @if (matches.Count > 0)
+    <div class="card-deck">
+        @foreach (var karmaEvent in GetEventsAsync().Result)
         {
-        <div class="card m-3" style="min-width: 18rem; max-width:30.5%;">
-            <div class="card-header" style="display: inline-block">
-                <div style="float: left" @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">
-                    <h4>@karmaEvent.Name</h4>
-                </div>
-                <div class="test" style="
+            var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());
+            @if (matches.Count > 0)
+            {
+                <div class="card m-3" style="min-width: 18rem; max-width:30.5%;">
+                    <div class="card-header" style="display: inline-block">
+                        <div style="float: left" @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">
+                            <h4>@karmaEvent.Name</h4>
+                        </div>
+                        <div class="test" style="
                      float: right;
                      width: 25px;
                      height: 25px;
                      background-image: radial-gradient(circle, black 2px, transparent 3px);
                      background-size: 100% 33.33%;"
-                     @onclick="()=>NavigateToEditEvent(karmaEvent.Id)">
+                             @onclick="()=>NavigateToEditEvent(karmaEvent.Id)">
+                        </div>
+                    </div>
+                    <h6 @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">@karmaEvent.Description</h6>
                 </div>
-            </div>
-            <h6 @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">@karmaEvent.Description</h6>
-        </div>
+            }
         }
-    }
-</div>
+    </div>
+}
+
 
 @code {
     private string FilterValue { get; set; } = "";

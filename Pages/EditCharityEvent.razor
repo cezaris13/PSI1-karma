@@ -1,25 +1,26 @@
 ﻿@page "/editcharityevent/{Id:guid}"
 @using Karma.Models
 @using Karma.Data
-@inject NavigationManager m_uriHelper
-@inject IFileContentProvider m_fileContentProvider
 @inject IDataModificator m_dataModificator
 @inject IJSRuntime m_jsRuntime
 
-<h1>Edit charity event</h1>
+@if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+{
+    <h1>Edit charity event</h1>
 
-<label for="fname">Event title:</label>
-<input type="text" @bind="@charityEvent.Name" @oninput="@((e) => { charityEvent.Name=(string)e.Value;})" />
-<br>
-<br>
-<label for="fname">Event description:</label>
-<input type="text" @bind="@charityEvent.Description" @oninput="@((e) => { charityEvent.Description=(string)e.Value;})" />
-<br>
-<br>
-<button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
-<button class="btn btn-primary" @onclick="DeleteEvent">Delete event</button>
-
-@code {
+    <label for="fname">Event title:</label>
+    <input type="text" @bind="@charityEvent.Name" @oninput="@((e) => { charityEvent.Name = (string)e.Value; })" />
+    <br>
+    <br>
+    <label for="fname">Event description:</label>
+    <input type="text" @bind="@charityEvent.Description" @oninput="@((e) => { charityEvent.Description = (string)e.Value; })" />
+    <br>
+    <br>
+    <button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
+    <button class="btn btn-primary" @onclick="DeleteEvent">Delete event</button>
+}
+@code
+{
     [Parameter]
     public Guid Id { get; set; }
     public CharityEvent charityEvent;

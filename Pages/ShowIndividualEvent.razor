@@ -1,24 +1,31 @@
 ﻿@page "/event/{Id:guid}"
-@inject IFileContentProvider m_fileContentProvider
-@inject NavigationManager m_uriHelper
 @using System.Linq
+@using Karma.Models
 
-@if (charityEvent != null)
+@if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
-    <h1>@charityEvent.Name</h1>
+    @if (charityEvent != null)
+    {
+        <h1>@charityEvent.Name</h1>
 
-    <h2>@charityEvent.Description</h2>
+        <h2>@charityEvent.Description</h2>
 
-    <h3>@charityEvent.State.ToString()</h3>
+        <h3>@charityEvent.State.ToString()</h3>
 
-    <button class="btn btn-primary" @onclick="NavigateToEditEvent">Update event</button>
+        <button class="btn btn-primary" @onclick="NavigateToEditEvent">Update event</button>
+    }
+    else
+    {
+        <h1>Sorry,but this event was not found</h1>
+    }
 }
 else
 {
-    <h1>Sorry,but this event was not found</h1>
+    <label for="fname">Please LogIn</label>
 }
 
-@code {
+@code
+{
     [Parameter]
     public Guid Id { get; set; }
     private CharityEvent charityEvent;

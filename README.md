@@ -3,8 +3,9 @@ Arentas, Martinas, Pijus
 
 # Setup
 1. Open solution file (karma.sln) with visual studio
-2. Build the project
-3. Launch (after launch the app should be accessible on localhost)
+1. Build the project
+1. PM Console: `dotnet user-secrets set "SendGridApiKey" "ValueGivenByDevelopers"`
+1. Launch (after launch the app should be accessible on localhost)
 
 
 # Tasks

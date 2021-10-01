@@ -1,50 +1,55 @@
 ﻿@page "/volunteers"
 @using Karma.Models
-@inject IFileContentProvider m_fileContentProvider
-@inject NavigationManager m_uriHelper
 
 <h1>Volunteers</h1>
 
 <p>Here you can find the list of volunteers working on various projects.</p>
 
-<table class="table">
-    <tbody>
-        <tr>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Events</th>
-        </tr>
-        @foreach (Volunteer volunteer in GetVolunteers().Result)
-        {
+@if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+{
+    <table class="table">
+        <tbody>
             <tr>
-                <td>@volunteer.Name</td>
-                <td>@volunteer.Surname</td>
-                @if (volunteer.ParticipatedEventIds != null)
-                {
-                    <td>
-                        @foreach (Guid charityEventId in volunteer.ParticipatedEventIds)
-                        {
-                            <div @onclick="()=>NavigateToIndividualEvent(charityEventId)">
-                                @EventIdToEventNameMatching(charityEventId)
-                            </div>
-                        }
-                    </td>
-                }
-                else
-                {
-                    <td>No Data</td>
-                }
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Events</th>
             </tr>
-        }
-    </tbody>
-</table>
-
-@code {
+            @foreach (Volunteer volunteer in GetVolunteers().Result)
+            {
+                <tr>
+                    <td>@volunteer.Name</td>
+                    <td>@volunteer.Surname</td>
+                    @if (volunteer.ParticipatedEventIds != null)
+                    {
+                        <td>
+                            @foreach (Guid charityEventId in volunteer.ParticipatedEventIds)
+                            {
+                                <div @onclick="() => NavigateToIndividualEvent(charityEventId)">
+                                    @EventIdToEventNameMatching(charityEventId)
+                                </div>
+                            }
+                        </td>
+                    }
+                    else
+                    {
+                        <td>No Data</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <label for="fname">Please LogIn</label>
+}
+@code
+{
     IEnumerable<IGenericKarmaItem> localList;
 
     protected override async Task OnInitializedAsync()
     {
-        localList = (IEnumerable<IGenericKarmaItem>) await m_fileContentProvider.ReadFromFileAsync<CharityEvent>();
+        localList = (IEnumerable<IGenericKarmaItem>)await m_fileContentProvider.ReadFromFileAsync<CharityEvent>();
     }
 
     public string EventIdToEventNameMatching(Guid id)
