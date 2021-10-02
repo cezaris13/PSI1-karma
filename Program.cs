@@ -14,13 +14,6 @@ namespace Karma
     {
         public static void Main(string[] args)
         {
-            var db = new KarmaContext();
-            var path = db.DbPath;
-           // db.Add(new CharityEvent("save someone2", "save them good2", Guid.NewGuid(), CharityEventState.WaitingForApproval));
-            //db.SaveChanges();
-            var blogs = db.Events
-                    .OrderBy(b => b.Id);
-
             CreateHostBuilder(args).Build().Run();
         }
 

@@ -6,7 +6,6 @@ namespace Karma.Models
     public class KarmaContext : DbContext
     {
         public DbSet<CharityEvent> Events { get; set; }
-        //public DbSet<Post> Posts { get; set; }
 
         public string DbPath { get; private set; }
 
