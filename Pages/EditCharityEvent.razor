@@ -1,7 +1,7 @@
 ﻿@page "/editcharityevent/{Id:guid}"
 @using Karma.Models
 @using Karma.Data
-@inject IDataModificator m_dataModificator
+@using Z.EntityFramework.Plus;
 @inject IJSRuntime m_jsRuntime
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
@@ -9,11 +9,11 @@
     <h1>Edit charity event</h1>
 
     <label for="fname">Event title:</label>
-    <input type="text" @bind="@charityEvent.Name" @oninput="@((e) => { charityEvent.Name = (string)e.Value; })" />
+    <input type="text" @bind="@CharityEvent.Name" @oninput="@((e) => { CharityEvent.Name = (string)e.Value; })" />
     <br>
     <br>
     <label for="fname">Event description:</label>
-    <input type="text" @bind="@charityEvent.Description" @oninput="@((e) => { charityEvent.Description = (string)e.Value; })" />
+    <input type="text" @bind="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" />
     <br>
     <br>
     <button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
@@ -23,24 +23,28 @@
 {
     [Parameter]
     public Guid Id { get; set; }
-    public CharityEvent charityEvent;
+    KarmaContext KarmaContext = new KarmaContext();
+    public CharityEvent CharityEvent;
+
 
     private async Task UpdateEvent()
     {
-        await m_dataModificator.UpdateCharityEvent(charityEvent);
+        KarmaContext.Events.Update(CharityEvent);
+        KarmaContext.SaveChanges();
         m_uriHelper.NavigateTo("");
         await m_jsRuntime.InvokeVoidAsync("alert", "The event has been updated");
     }
 
     private async Task DeleteEvent()
     {
-        await m_dataModificator.RemoveCharityEvent(Id);
+        KarmaContext.Events.Where(x => x.Id == Id).Delete();
+        KarmaContext.SaveChanges();
         m_uriHelper.NavigateTo("");
         await m_jsRuntime.InvokeVoidAsync("alert", "The event has been deleted");
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        charityEvent = (await m_fileContentProvider.ReadFromFileAsync<CharityEvent>()).Where(p => p.Id == Id).FirstOrDefault();
+        CharityEvent = KarmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
     }
 }

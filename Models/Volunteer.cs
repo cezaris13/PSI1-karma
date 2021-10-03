@@ -11,13 +11,14 @@ namespace Karma.Models
 
         public string Surname { get; set; }
 
-        public List<Guid> ParticipatedEventIds { get; set; }
+        public List<CharityEvent> Events { get; set; }
 
-        public Volunteer(string name, string surname, Guid id)
+        public Volunteer(string name, string surname, Guid id, List<CharityEvent> events = null)
         {
             Id = id;
             Name = name;
             Surname = surname;
+            Events = events ?? new List<CharityEvent>();
         }
     }
 }

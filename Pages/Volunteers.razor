@@ -1,6 +1,7 @@
 ﻿@page "/volunteers"
 @using Karma.Models
-
+@using Microsoft.EntityFrameworkCore;
+@using System.Linq;
 <h1>Volunteers</h1>
 
 <p>Here you can find the list of volunteers working on various projects.</p>
@@ -14,26 +15,24 @@
                 <th>Surname</th>
                 <th>Events</th>
             </tr>
-            @foreach (Volunteer volunteer in GetVolunteers().Result)
+            @foreach (var volunteer in GetVolunteers())
             {
                 <tr>
                     <td>@volunteer.Name</td>
                     <td>@volunteer.Surname</td>
-                    @if (volunteer.ParticipatedEventIds != null)
-                    {
-                        <td>
-                            @foreach (Guid charityEventId in volunteer.ParticipatedEventIds)
+                    <td>
+                        @if (volunteer.Events != null)
+                        {
+
+                            @foreach (var karmaEvent in volunteer.Events)
                             {
-                                <div @onclick="() => NavigateToIndividualEvent(charityEventId)">
-                                    @EventIdToEventNameMatching(charityEventId)
+                                <div @onclick="() => NavigateToIndividualEvent(karmaEvent.Id)">
+                                    @karmaEvent.Name
                                 </div>
                             }
-                        </td>
-                    }
-                    else
-                    {
-                        <td>No Data</td>
-                    }
+                        }
+
+                    </td>
                 </tr>
             }
         </tbody>
@@ -45,21 +44,11 @@ else
 }
 @code
 {
-    IEnumerable<IGenericKarmaItem> localList;
+    private KarmaContext KarmaContext { get; } = new KarmaContext();
 
-    protected override async Task OnInitializedAsync()
+    public IEnumerable<IVolunteer> GetVolunteers()
     {
-        localList = (IEnumerable<IGenericKarmaItem>)await m_fileContentProvider.ReadFromFileAsync<CharityEvent>();
-    }
-
-    public string EventIdToEventNameMatching(Guid id)
-    {
-        return localList.Where(p => p.Id == id).FirstOrDefault().Name;
-    }
-
-    public async Task<IEnumerable<IVolunteer>> GetVolunteers()
-    {
-        return await m_fileContentProvider.ReadFromFileAsync<Volunteer>();
+        return KarmaContext.Volunteers.Include(x => x.Events);
     }
 
     public void NavigateToIndividualEvent(Guid id)

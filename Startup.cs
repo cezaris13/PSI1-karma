@@ -39,9 +39,8 @@ namespace Karma
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
-            services.AddSingleton<WeatherForecastService>();
-            services.AddSingleton<IFileContentProvider, FileContentProvider>();
-            services.AddSingleton<IDataModificator, DataModificator>();
+            //services.AddSingleton<IFileContentProvider, FileContentProvider>();
+            //services.AddSingleton<IDataModificator, DataModificator>();
 
             services.AddHttpContextAccessor();
         }

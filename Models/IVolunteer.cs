@@ -8,6 +8,6 @@ namespace Karma.Models
         Guid Id { get; set; }
         string Name { get; set; }
         string Surname { get; set; }
-        List<Guid> ParticipatedEventIds { get; set; }
+        List<CharityEvent> Events { get; set; }
     }
 }

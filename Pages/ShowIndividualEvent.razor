@@ -29,10 +29,11 @@ else
     [Parameter]
     public Guid Id { get; set; }
     private CharityEvent charityEvent;
+    KarmaContext KarmaContext = new KarmaContext();
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        charityEvent = (await m_fileContentProvider.ReadFromFileAsync<CharityEvent>()).Where(p => p.Id == Id).FirstOrDefault();
+        charityEvent = KarmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
     }
 
     public void NavigateToEditEvent()
