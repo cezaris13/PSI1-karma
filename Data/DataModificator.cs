@@ -7,9 +7,10 @@ using Karma.Models;
 
 namespace Karma.Data
 {
-    public class DataModificator : IDataModificator
+    //TODO delete after presentation
+    public class DataModificator //: IDataModificator
     {
-        private readonly IFileContentProvider m_fileContentProvider;
+        /*private readonly IFileContentProvider m_fileContentProvider;
         public DataModificator(
             IFileContentProvider fileContentprovider)
         {
@@ -43,6 +44,6 @@ namespace Karma.Data
             {
                 throw (new IndexOutOfRangeException($"Item with given id :{updatedItem.Id} was not found"));
             }
-        }
+        }*/
     }
 }

@@ -5,8 +5,10 @@ using Newtonsoft.Json;
 
 namespace Karma.Database
 {
-    public class FileContentProvider : IFileContentProvider
+    //Leaving this code in case it's needed for 1st presentation. Will be deleted afterwards
+    public class FileContentProvider //: IFileContentProvider
     {
+        /*
         public async Task<IEnumerable<T>> ReadFromFileAsync<T>()
         {
             var list = new List<T>();
@@ -28,6 +30,6 @@ namespace Karma.Database
             {
                 await writer.WriteAsync(jsonString);
             }
-        }
+        }*/
     }
 }

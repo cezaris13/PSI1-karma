@@ -1,3 +1,4 @@
-﻿@using Karma.Database;
-@using Karma.Models;
-@using System.Threading;
+﻿@using Microsoft.AspNetCore.Http
+@using Karma.Database
+@inject IHttpContextAccessor m_httpContextAccessor
+@inject NavigationManager m_uriHelper

@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Karma.Models
 {
-    public class CharityEvent : IGenericKarmaItem
+    public class CharityEvent : ICharityEvent
     {
         public Guid Id { get; set; }
 
@@ -12,12 +13,15 @@ namespace Karma.Models
 
         public CharityEventState State { get; set; }
 
-        public CharityEvent(string name, string description, Guid id, CharityEventState state = CharityEventState.Planning)
+        public List<Volunteer> Volunteers { get; set; }
+
+        public CharityEvent(string name, string description, Guid id, CharityEventState state = CharityEventState.Undefined)
         {
             Id = id;
             Name = name;
             Description = description;
             State = state;
+            Volunteers = new List<Volunteer>();
         }
     }
 }

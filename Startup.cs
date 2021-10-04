@@ -1,11 +1,12 @@
 using Karma.Areas.Identity;
 using Karma.Data;
 using Karma.Database;
-using Karma.Models;
+using Karma.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,13 +32,17 @@ namespace Karma
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddTransient<IEmailSender, EmailSender>();
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
-            services.AddSingleton<WeatherForecastService>();
-            services.AddSingleton<IFileContentProvider, FileContentProvider>();
-            services.AddSingleton<IDataModificator, DataModificator>();
+            //services.AddSingleton<IFileContentProvider, FileContentProvider>();
+            //services.AddSingleton<IDataModificator, DataModificator>();
+
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
