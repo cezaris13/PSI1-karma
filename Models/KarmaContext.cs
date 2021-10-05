@@ -7,6 +7,7 @@ namespace Karma.Models
     {
         public DbSet<CharityEvent> Events { get; set; }
         public DbSet<Volunteer> Volunteers { get; set; }
+        public DbSet<SpecialEquipment> SpecialEquipment { get; set; }
         public string DbPath { get; private set; }
 
         public KarmaContext()
