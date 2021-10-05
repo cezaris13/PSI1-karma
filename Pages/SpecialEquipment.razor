@@ -11,12 +11,14 @@
         <tbody>
             <tr>
                 <th>Name</th>
+                <th>Surname</th>
                 <th>Equipment</th>
             </tr>
             @foreach (var pair in GetPairsOfVolunteersAndEquipment())
             {
                 <tr>
                     <td>@pair.VolunteerName</td>
+                    <td>@pair.VolunteerSurname</td>
                     <td>
                         @if (pair.EquipmentList != null)
                         {
@@ -43,18 +45,20 @@ else
 {
     private KarmaContext KarmaContext { get; } = new KarmaContext();
 
-    public class VolunteerAndEquipment
+    private class VolunteerAndEquipment
     {
         public string VolunteerName { get; set; }
+        public string VolunteerSurname { get; set; }
         public IEnumerable<string> EquipmentList { get; set; }
-        public VolunteerAndEquipment(string name, IEnumerable<string> equipment)
+        public VolunteerAndEquipment(string name, string surname, IEnumerable<string> equipment)
         {
             VolunteerName = name;
+            VolunteerSurname = surname;
             EquipmentList = equipment;
         }
     }
 
-    public IEnumerable<VolunteerAndEquipment> GetPairsOfVolunteersAndEquipment()
+    private IEnumerable<VolunteerAndEquipment> GetPairsOfVolunteersAndEquipment()
     {
         var vols = KarmaContext.Volunteers.ToList();
         var equipment = KarmaContext.SpecialEquipment.ToList();
@@ -62,7 +66,7 @@ else
                          owner => owner,
                          eq => eq.Owner,
                          (owner, collection) =>
-                             new VolunteerAndEquipment(owner.Name, collection.Select(x => x.Name)));
+                             new VolunteerAndEquipment(owner.Name, owner.Surname, collection.Select(x => x.Name)));
         return pairs;
     }
 }
