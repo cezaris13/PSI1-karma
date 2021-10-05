@@ -1,0 +1,38 @@
+﻿@page "/addvolunteer"
+@using Karma.Models
+@using Karma.Data
+@inject IJSRuntime m_jsRuntime
+
+<h1>Add volunteer</h1>
+
+@if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+{
+    <label for="fname">Volunteer name:</label>
+    <input type="text" @bind="@VolunteerName" @oninput="@((e) => { VolunteerName = (string)e.Value; })" />
+    <br>
+    <br>
+    <label for="fname">Volunteer surname:</label>
+    <input type="text" @bind="@VolunteerSurname" @oninput="@((e) => { VolunteerSurname = (string)e.Value; })" />
+    <br>
+    <br>
+    <button class="btn btn-primary" @onclick="AddThisVolunteer">Add volunteer</button>
+}
+else
+{
+    <label for="fname">Please LogIn:</label>
+}
+@code
+{
+    KarmaContext KarmaContext = new KarmaContext();
+    string VolunteerName { get; set; }
+    string VolunteerSurname { get; set; }
+
+    private async Task AddThisVolunteer()
+    {
+        var vol = new Volunteer(VolunteerName, VolunteerSurname, Guid.NewGuid());
+        KarmaContext.Volunteers.Add(vol);
+        KarmaContext.SaveChanges();
+        m_uriHelper.NavigateTo("/volunteers");
+        await m_jsRuntime.InvokeVoidAsync("alert", "The volunteer has been added");
+    }
+}

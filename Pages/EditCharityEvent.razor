@@ -3,6 +3,7 @@
 @using Karma.Data
 @using Z.EntityFramework.Plus;
 @inject IJSRuntime m_jsRuntime
+@using Microsoft.EntityFrameworkCore;
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
@@ -14,6 +15,45 @@
     <br>
     <label for="fname">Event description:</label>
     <input type="text" @bind="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" />
+    <br>
+    <br>
+    <tbody>
+        <tr>
+            <th>Volunteers that are working on this event</th>
+        </tr>
+        <tr>
+            @foreach (var volunteer in GetVolunteersInThisEvent())
+            {
+                <li>
+                    @volunteer.Name
+                    @volunteer.Surname
+                    <div align="left">
+                        <button class="btn btn-primary" @onclick="() => RemoveVolunteerFromEvent(volunteer.Id)">Remove</button>
+                    </div>
+                </li>
+            }
+        </tr>
+    </tbody>
+    <br>
+    <br>
+    <tbody>
+        <tr>
+            <th>Volunteers that could be added to this event</th>
+            <th></th>
+        </tr>
+        <tr>
+            @foreach (var volunteer in GetVolunteersNotInThisEvent())
+            {
+                <li>
+                    @volunteer.Name
+                    @volunteer.Surname
+                    <div align="left">
+                        <button class="btn btn-primary" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</button>
+                    </div>
+                </li>
+            }
+        </tr>
+    </tbody>
     <br>
     <br>
     <button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
@@ -45,6 +85,26 @@
 
     protected override void OnInitialized()
     {
-        CharityEvent = KarmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
+        CharityEvent = KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).FirstOrDefault();
+    }
+
+    public IEnumerable<IVolunteer> GetVolunteersInThisEvent()
+    {
+        return KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p);
+    }
+
+    public IEnumerable<IVolunteer> GetVolunteersNotInThisEvent()
+    {
+        return KarmaContext.Volunteers.Include(p => p.Events).Where(p => !p.Events.Contains(CharityEvent));
+    }
+
+    private void AddVolunteerToEvent(Guid id)
+    {
+        CharityEvent.Volunteers.Add(KarmaContext.Volunteers.Where(p => p.Id == id).FirstOrDefault());
+    }
+
+    private void RemoveVolunteerFromEvent(Guid id)
+    {
+        CharityEvent.Volunteers.Remove(KarmaContext.Volunteers.Where(p => p.Id == id).FirstOrDefault());
     }
 }
