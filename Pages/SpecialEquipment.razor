@@ -45,19 +45,6 @@ else
 {
     private KarmaContext KarmaContext { get; } = new KarmaContext();
 
-    private class VolunteerAndEquipment
-    {
-        public string VolunteerName { get; set; }
-        public string VolunteerSurname { get; set; }
-        public IEnumerable<string> EquipmentList { get; set; }
-        public VolunteerAndEquipment(string name, string surname, IEnumerable<string> equipment)
-        {
-            VolunteerName = name;
-            VolunteerSurname = surname;
-            EquipmentList = equipment;
-        }
-    }
-
     private IEnumerable<VolunteerAndEquipment> GetPairsOfVolunteersAndEquipment()
     {
         var vols = KarmaContext.Volunteers.ToList();
