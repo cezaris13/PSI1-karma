@@ -48,6 +48,17 @@ else
 
     public IEnumerable<IVolunteer> GetVolunteers()
     {
+        var vols = KarmaContext.Volunteers.ToList();
+        var equipment = KarmaContext.SpecialEquipment.ToList();
+        var pairs = vols.GroupJoin(equipment,
+                         owner => owner,
+                         eq => eq.Owner,
+                         (owner, collection) =>
+                             new
+                             {
+                                 volName = owner.Name,
+                                 names = collection.Select(x => x.Name)
+                             });
         return KarmaContext.Volunteers.Include(x => x.Events);
     }
 
