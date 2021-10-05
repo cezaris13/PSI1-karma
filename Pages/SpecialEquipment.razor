@@ -1,0 +1,69 @@
+﻿@page "/specialequipment"
+@using Karma.Models
+@using Microsoft.EntityFrameworkCore;
+@using System.Linq;
+<h1>Volunteers</h1>
+
+<p>Here you can find the special equipment each volunteer owns.</p>
+
+@if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+{
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Name</th>
+                <th>Equipment</th>
+            </tr>
+            @foreach (var pair in GetPairsOfVolunteersAndEquipment())
+            {
+                <tr>
+                    <td>@pair.VolunteerName</td>
+                    <td>
+                        @if (pair.EquipmentList != null)
+                        {
+
+                            @foreach (var equipmentItemName in pair.EquipmentList)
+                            {
+                                <div>
+                                    @equipmentItemName
+                                </div>
+                            }
+                        }
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <label for="fname">Please LogIn</label>
+}
+@code
+{
+    private KarmaContext KarmaContext { get; } = new KarmaContext();
+
+    public class VolunteerAndEquipment
+    {
+        public string VolunteerName { get; set; }
+        public IEnumerable<string> EquipmentList { get; set; }
+        public VolunteerAndEquipment(string name, IEnumerable<string> equipment)
+        {
+            VolunteerName = name;
+            EquipmentList = equipment;
+        }
+    }
+
+    public IEnumerable<VolunteerAndEquipment> GetPairsOfVolunteersAndEquipment()
+    {
+        var vols = KarmaContext.Volunteers.ToList();
+        var equipment = KarmaContext.SpecialEquipment.ToList();
+        var pairs = vols.GroupJoin(equipment,
+                         owner => owner,
+                         eq => eq.Owner,
+                         (owner, collection) =>
+                             new VolunteerAndEquipment(owner.Name, collection.Select(x => x.Name)));
+        return pairs;
+    }
+}
