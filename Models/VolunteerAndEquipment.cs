@@ -12,12 +12,17 @@ namespace Karma.Models
     {
         public string VolunteerName { get; set; }
         public string VolunteerSurname { get; set; }
-        public IEnumerable<string> EquipmentList { get; set; }
+        public string[] EquipmentList { get; set; }
+
+        public int Size
+        {
+            get { return EquipmentList.Count(); }
+        }
         public VolunteerAndEquipment(string name, string surname, IEnumerable<string> equipment)
         {
             VolunteerName = name;
             VolunteerSurname = surname;
-            EquipmentList = equipment;
+            EquipmentList = equipment.ToArray();
         }
     }
     public static class VolunteerAndEquipmentExtension
