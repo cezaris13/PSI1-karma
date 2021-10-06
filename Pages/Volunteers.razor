@@ -2,18 +2,22 @@
 @using Karma.Models
 @using Microsoft.EntityFrameworkCore;
 @using System.Linq;
+@inject IJSRuntime m_jsRuntime
 <h1>Volunteers</h1>
-
-<p>Here you can find the list of volunteers working on various projects.</p>
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
+    <p>
+        Here you can find the list of volunteers working on various projects.
+        <button class="btn btn-primary" @onclick="NavigateToAddVolunteer">Add a new volunteer</button>
+    </p>
     <table class="table">
         <tbody>
             <tr>
                 <th>Name</th>
                 <th>Surname</th>
                 <th>Events</th>
+                <th>Actions</th>
             </tr>
             @foreach (var volunteer in GetVolunteers())
             {
@@ -32,6 +36,10 @@
                             }
                         }
 
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => NavigateToManageVolunteer(volunteer.Id)">Manage volunteer</button>
+                        <button class="btn btn-primary" style ="background-color: black;" @onclick="() => RemoveVolunteer(volunteer.Id)">Remove the volunteer</button>
                     </td>
                 </tr>
             }
@@ -54,5 +62,23 @@ else
     public void NavigateToIndividualEvent(Guid id)
     {
         m_uriHelper.NavigateTo($"event/{id}");
+    }
+
+    public void NavigateToAddVolunteer()
+    {
+        m_uriHelper.NavigateTo("addvolunteer");
+    }
+
+    private async Task RemoveVolunteer(Guid id)
+    {
+        KarmaContext.Volunteers.Where(x => x.Id == id).DeleteFromQuery();
+        KarmaContext.SaveChanges();
+        m_uriHelper.NavigateTo("/volunteers");
+        await m_jsRuntime.InvokeVoidAsync("alert", "The event has been deleted");
+    }
+
+    public void NavigateToManageVolunteer(Guid id)
+    {
+        m_uriHelper.NavigateTo($"volunteer/{id}");
     }
 }
