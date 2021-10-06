@@ -101,10 +101,12 @@
     private void AddVolunteerToEvent(Guid id)
     {
         CharityEvent.Volunteers.Add(KarmaContext.Volunteers.Where(p => p.Id == id).FirstOrDefault());
+        KarmaContext.SaveChanges();
     }
 
     private void RemoveVolunteerFromEvent(Guid id)
     {
         CharityEvent.Volunteers.Remove(KarmaContext.Volunteers.Where(p => p.Id == id).FirstOrDefault());
+        KarmaContext.SaveChanges();
     }
 }

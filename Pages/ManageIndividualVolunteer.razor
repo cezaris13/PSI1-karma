@@ -14,7 +14,7 @@
         <input type="text" @bind="@volunteer.Name" @oninput="@((e) => { volunteer.Name = (string)e.Value; })" />
         <br>
         <br>
-        <label for="fname">Volunterr surname:</label>
+        <label for="fname">Volunteer surname:</label>
         <input type="text" @bind="@volunteer.Surname" @oninput="@((e) => { volunteer.Surname = (string)e.Value; })" />
         <br>
         <br>
@@ -69,38 +69,40 @@ else
     [Parameter]
     public Guid Id { get; set; }
     private Volunteer volunteer;
-    KarmaContext karmaContext = new KarmaContext();
+    KarmaContext m_context = new KarmaContext();
 
     private async Task UpdateVolunteerData()
     {
-        karmaContext.Volunteers.Update(volunteer);
-        karmaContext.SaveChanges();
+        m_context.Volunteers.Update(volunteer);
+        m_context.SaveChanges();
         m_uriHelper.NavigateTo("/volunteers");
         await m_jsRuntime.InvokeVoidAsync("alert", "The volunteer data has been updated");
     }
 
     protected override void OnInitialized()
     {
-        volunteer = karmaContext.Volunteers.Include(p => p.Events).Where(p => p.Id == Id).FirstOrDefault();
+        volunteer = m_context.Volunteers.Include(p => p.Events).Where(p => p.Id == Id).FirstOrDefault();
     }
 
     public IEnumerable<ICharityEvent> GetEventsOfThisVolunteer()
     {
-        return karmaContext.Volunteers.Include(p => p.Events).Where(p => p.Id == Id).Select(p => p.Events).SelectMany(p => p);
+        return m_context.Volunteers.Include(p => p.Events).Where(p => p.Id == Id).Select(p => p.Events).SelectMany(p => p);
     }
 
     public IEnumerable<ICharityEvent> GetEventsNotOfThisVolunteer()
     {
-        return karmaContext.Events.Include(p => p.Volunteers).Where(p => !p.Volunteers.Contains(volunteer));
+        return m_context.Events.Include(p => p.Volunteers).Where(p => !p.Volunteers.Contains(volunteer));
     }
 
     private void AddEventToVolunteerList(Guid id)
     {
-        volunteer.Events.Add(karmaContext.Events.Where(p => p.Id == id).FirstOrDefault());
+        volunteer.Events.Add(m_context.Events.Where(p => p.Id == id).FirstOrDefault());
+        m_context.SaveChanges();
     }
 
     private void RemoveEventFromList(Guid id)
     {
-        volunteer.Events.Remove(karmaContext.Events.Where(p => p.Id == id).FirstOrDefault());
+        volunteer.Events.Remove(m_context.Events.Where(p => p.Id == id).FirstOrDefault());
+        m_context.SaveChanges();
     }
 }

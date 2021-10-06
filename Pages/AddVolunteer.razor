@@ -29,7 +29,7 @@ else
 
     private async Task AddThisVolunteer()
     {
-        var vol = new Volunteer(VolunteerName, VolunteerSurname, Guid.NewGuid());
+        var vol = new Volunteer(name: VolunteerName, surname: VolunteerSurname, Guid.NewGuid());
         KarmaContext.Volunteers.Add(vol);
         KarmaContext.SaveChanges();
         m_uriHelper.NavigateTo("/volunteers");
