@@ -54,6 +54,7 @@ else
                          eq => eq.Owner,
                          (owner, collection) =>
                              new VolunteerAndEquipment(owner.Name, owner.Surname, collection.Select(x => x.Name)));
-        return pairs;
+        var orderedList = pairs.ToList().OrderByEquipmentCount();
+        return orderedList;
     }
 }

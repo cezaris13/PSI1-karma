@@ -20,4 +20,11 @@ namespace Karma.Models
             EquipmentList = equipment;
         }
     }
+    public static class VolunteerAndEquipmentExtension
+    {
+        public static List<VolunteerAndEquipment> OrderByEquipmentCount(this List<VolunteerAndEquipment> list)
+        {
+            return list.OrderByDescending(pair => pair.EquipmentList.Count()).ToList();
+        }
+    }
 }
