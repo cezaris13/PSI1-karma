@@ -90,7 +90,12 @@
 
     public IEnumerable<IVolunteer> GetVolunteersInThisEvent()
     {
-        return KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p);
+        var events = KarmaContext.Events;
+        var filteredEvents =
+            from oneEvent in events
+            where oneEvent.Id == Id
+            select oneEvent.Volunteers;
+        return filteredEvents.SelectMany(o => o);
     }
 
     public IEnumerable<IVolunteer> GetVolunteersNotInThisEvent()
