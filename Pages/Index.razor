@@ -46,7 +46,9 @@ Ready to aquire karma points by helping out others?
 
     public IEnumerable<IGenericKarmaItem> GetEvents()
     {
-        return KarmaContext.Events;
+        var result = KarmaContext.Events.ToList();
+        result.Sort();
+        return result;
     }
 
     public void NavigateToIndividualEvent(Guid id)
