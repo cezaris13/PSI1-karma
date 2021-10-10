@@ -15,13 +15,16 @@ namespace Karma.Models
 
         public List<Volunteer> Volunteers { get; set; }
 
-        public CharityEvent(string name, string description, Guid id, CharityEventState state = CharityEventState.Undefined)
+        public string ManagedByUser { get; set; }
+
+        public CharityEvent(string name, string description, Guid id, string managedByUser, CharityEventState state = CharityEventState.Undefined)
         {
             Id = id;
             Name = name;
             Description = description;
             State = state;
             Volunteers = new List<Volunteer>();
+            ManagedByUser = managedByUser;
         }
     }
 }

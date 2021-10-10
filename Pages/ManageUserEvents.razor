@@ -1,6 +1,8 @@
-﻿@page "/"
+﻿@page "/manageuserevents"
 @using System.Text.RegularExpressions;
 @using Karma.Models
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+
 <h1>Karma</h1>
 
 Ready to aquire karma points by helping out others?
@@ -22,6 +24,14 @@ Ready to aquire karma points by helping out others?
                         <div style="float: left" @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">
                             <h4>@karmaEvent.Name</h4>
                         </div>
+                        <div class="test" style="
+                     float: right;
+                     width: 25px;
+                     height: 25px;
+                     background-image: radial-gradient(circle, black 2px, transparent 3px);
+                     background-size: 100% 33.33%;"
+                             @onclick="()=>NavigateToEditEvent(karmaEvent.Id)">
+                        </div>
                     </div>
                     <h6 @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">@karmaEvent.Description</h6>
                 </div>
@@ -33,16 +43,28 @@ Ready to aquire karma points by helping out others?
 
 @code {
     private string FilterValue { get; set; } = "";
+    string CurrentUserName { get; set; }
 
     private KarmaContext KarmaContext { get; } = new KarmaContext();
 
     public IEnumerable<IGenericKarmaItem> GetEvents()
     {
-        return KarmaContext.Events;
+        return KarmaContext.Events.Where(p=>p.ManagedByUser == CurrentUserName );
     }
 
     public void NavigateToIndividualEvent(Guid id)
     {
         m_uriHelper.NavigateTo($"event/{id}");
+    }
+
+    public void NavigateToEditEvent(Guid id)
+    {
+        m_uriHelper.NavigateTo($"editcharityevent/{id}");
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        var user = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        CurrentUserName = user.User.Identity.Name;
     }
 }
