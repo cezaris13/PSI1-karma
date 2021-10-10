@@ -4,60 +4,68 @@
 @using Z.EntityFramework.Plus;
 @inject IJSRuntime m_jsRuntime
 @using Microsoft.EntityFrameworkCore;
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
-    <h1>Edit charity event</h1>
+    if (CharityEvent.ManagedByUser == CurrentUserName)
+    {
+        <h1>Edit charity event</h1>
 
-    <label for="fname">Event title:</label>
-    <input type="text" @bind="@CharityEvent.Name" @oninput="@((e) => { CharityEvent.Name = (string)e.Value; })" />
-    <br>
-    <br>
-    <label for="fname">Event description:</label>
-    <input type="text" @bind="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" />
-    <br>
-    <br>
-    <tbody>
-        <tr>
-            <th>Volunteers that are working on this event</th>
-        </tr>
-        <tr>
-            @foreach (var volunteer in GetVolunteersInThisEvent())
-            {
-                <li>
-                    @volunteer.Name
-                    @volunteer.Surname
-                    <div align="left">
-                        <button class="btn btn-primary" @onclick="() => RemoveVolunteerFromEvent(volunteer.Id)">Remove</button>
-                    </div>
-                </li>
-            }
-        </tr>
-    </tbody>
-    <br>
-    <br>
-    <tbody>
-        <tr>
-            <th>Volunteers that could be added to this event</th>
-            <th></th>
-        </tr>
-        <tr>
-            @foreach (var volunteer in GetVolunteersNotInThisEvent())
-            {
-                <li>
-                    @volunteer.Name
-                    @volunteer.Surname
-                    <div align="left">
-                        <button class="btn btn-primary" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</button>
-                    </div>
-                </li>
-            }
-        </tr>
-    </tbody>
-    <br>
-    <br>
-    <button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
-    <button class="btn btn-primary" @onclick="DeleteEvent">Delete event</button>
+        <label for="fname">Event title:</label>
+        <input type="text" @bind="@CharityEvent.Name" @oninput="@((e) => { CharityEvent.Name = (string)e.Value; })" />
+        <br>
+        <br>
+        <label for="fname">Event description:</label>
+        <input type="text" @bind="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" />
+        <br>
+        <br>
+        <tbody>
+            <tr>
+                <th>Volunteers that are working on this event</th>
+            </tr>
+            <tr>
+                @foreach (var volunteer in GetVolunteersInThisEvent())
+                {
+                    <li>
+                        @volunteer.Name
+                        @volunteer.Surname
+                        <div align="left">
+                            <button class="btn btn-primary" @onclick="() => RemoveVolunteerFromEvent(volunteer.Id)">Remove</button>
+                        </div>
+                    </li>
+                }
+            </tr>
+        </tbody>
+        <br>
+        <br>
+        <tbody>
+            <tr>
+                <th>Volunteers that could be added to this event</th>
+                <th></th>
+            </tr>
+            <tr>
+                @foreach (var volunteer in GetVolunteersNotInThisEvent())
+                {
+                    <li>
+                        @volunteer.Name
+                        @volunteer.Surname
+                        <div align="left">
+                            <button class="btn btn-primary" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</button>
+                        </div>
+                    </li>
+                }
+            </tr>
+        </tbody>
+        <br>
+        <br>
+        <button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
+        <button class="btn btn-primary" @onclick="DeleteEvent">Delete event</button>
+    }
+    else
+    {
+        <h1>Cannot access this event</h1>
+    }
 }
 @code
 {
@@ -65,7 +73,7 @@
     public Guid Id { get; set; }
     KarmaContext KarmaContext = new KarmaContext();
     public CharityEvent CharityEvent;
-
+    string CurrentUserName { get; set; }
 
     private async Task UpdateEvent()
     {
@@ -83,9 +91,11 @@
         await m_jsRuntime.InvokeVoidAsync("alert", "The event has been deleted");
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         CharityEvent = KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).FirstOrDefault();
+        var user = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        CurrentUserName = user.User.Identity.Name;
     }
 
     public IEnumerable<IVolunteer> GetVolunteersInThisEvent()
