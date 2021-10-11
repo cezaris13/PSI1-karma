@@ -3,6 +3,7 @@
 @using Karma.Models
 @inject IJSRuntime m_jsRuntime
 @using Microsoft.EntityFrameworkCore;
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
@@ -31,7 +32,10 @@
                     <tr>
                         <td>@charityEvent.Name</td>
                         <td>
-                            <button class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</button>
+                            @if (charityEvent.ManagedByUser == CurrentUserName)
+                            {
+                                <button class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</button>
+                            }
                         </td>
                     </tr>
                 }
@@ -44,7 +48,10 @@
                     <tr>
                         <td>@charityEvent.Name</td>
                         <td>
-                            <button class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</button>
+                            @if (charityEvent.ManagedByUser == CurrentUserName)
+                            {
+                                <button class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</button>
+                            }
                         </td>
                     </tr>
                 }
@@ -70,6 +77,7 @@ else
     public Guid Id { get; set; }
     private Volunteer volunteer;
     KarmaContext m_context = new KarmaContext();
+    string CurrentUserName { get; set; }
 
     private async Task UpdateVolunteerData()
     {
@@ -78,10 +86,11 @@ else
         m_uriHelper.NavigateTo("/volunteers");
         await m_jsRuntime.InvokeVoidAsync("alert", "The volunteer data has been updated");
     }
-
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
         volunteer = m_context.Volunteers.Include(p => p.Events).Where(p => p.Id == Id).FirstOrDefault();
+        var user = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        CurrentUserName = user.User.Identity.Name;
     }
 
     public IEnumerable<ICharityEvent> GetEventsOfThisVolunteer()
