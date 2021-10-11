@@ -21,7 +21,7 @@ namespace Karma.Models
                 return equipmentList[index];
             }
         }
-        public int Size
+        public long Size
         {
             get { return equipmentList.Count(); }
         }
