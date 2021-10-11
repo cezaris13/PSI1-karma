@@ -12,24 +12,31 @@ namespace Karma.Models
     {
         public string VolunteerName { get; set; }
         public string VolunteerSurname { get; set; }
-        public string[] EquipmentList { get; set; }
+        private string[] equipmentList { get; set; }
 
+        public string this[int index]
+        {
+            get
+            {
+                return equipmentList[index];
+            }
+        }
         public int Size
         {
-            get { return EquipmentList.Count(); }
+            get { return equipmentList.Count(); }
         }
         public VolunteerAndEquipment(string name, string surname, IEnumerable<string> equipment)
         {
             VolunteerName = name;
             VolunteerSurname = surname;
-            EquipmentList = equipment.ToArray();
+            equipmentList = equipment.ToArray();
         }
     }
     public static class VolunteerAndEquipmentExtension
     {
         public static List<VolunteerAndEquipment> OrderByEquipmentCount(this List<VolunteerAndEquipment> list)
         {
-            return list.OrderByDescending(pair => pair.EquipmentList.Count()).ToList();
+            return list.OrderByDescending(pair => pair.Size).ToList();
         }
     }
 }
