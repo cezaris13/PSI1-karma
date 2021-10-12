@@ -2,62 +2,71 @@
 @using Karma.Models
 @using Karma.Data
 @using Z.EntityFramework.Plus;
-@inject IJSRuntime m_jsRuntime
 @using Microsoft.EntityFrameworkCore;
+@using System.Security.Claims
+@inject IJSRuntime m_jsRuntime
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
-    <h1>Edit charity event</h1>
+    if (CharityEvent.ManagerId == CurrentUserId)
+    {
+        <h1>Edit charity event</h1>
 
-    <label for="fname">Event title:</label>
-    <input type="text" @bind="@CharityEvent.Name" @oninput="@((e) => { CharityEvent.Name = (string)e.Value; })" />
-    <br>
-    <br>
-    <label for="fname">Event description:</label>
-    <input type="text" @bind="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" />
-    <br>
-    <br>
-    <tbody>
-        <tr>
-            <th>Volunteers that are working on this event</th>
-        </tr>
-        <tr>
-            @foreach (var volunteer in GetVolunteersInThisEvent())
-            {
-                <li>
-                    @volunteer.Name
-                    @volunteer.Surname
-                    <div align="left">
-                        <button class="btn btn-primary" @onclick="() => RemoveVolunteerFromEvent(volunteer.Id)">Remove</button>
-                    </div>
-                </li>
-            }
-        </tr>
-    </tbody>
-    <br>
-    <br>
-    <tbody>
-        <tr>
-            <th>Volunteers that could be added to this event</th>
-            <th></th>
-        </tr>
-        <tr>
-            @foreach (var volunteer in GetVolunteersNotInThisEvent())
-            {
-                <li>
-                    @volunteer.Name
-                    @volunteer.Surname
-                    <div align="left">
-                        <button class="btn btn-primary" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</button>
-                    </div>
-                </li>
-            }
-        </tr>
-    </tbody>
-    <br>
-    <br>
-    <button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
-    <button class="btn btn-primary" @onclick="DeleteEvent">Delete event</button>
+        <label for="fname">Event title:</label>
+        <input type="text" @bind="@CharityEvent.Name" @oninput="@((e) => { CharityEvent.Name = (string)e.Value; })" />
+        <br>
+        <br>
+        <label for="fname">Event description:</label>
+        <input type="text" @bind="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" />
+        <br>
+        <br>
+        <tbody>
+            <tr>
+                <th>Volunteers that are working on this event</th>
+            </tr>
+            <tr>
+                @foreach (var volunteer in GetVolunteersInThisEvent())
+                {
+                    <li>
+                        @volunteer.Name
+                        @volunteer.Surname
+                        <div align="left">
+                            <button class="btn btn-primary" @onclick="() => RemoveVolunteerFromEvent(volunteer.Id)">Remove</button>
+                        </div>
+                    </li>
+                }
+            </tr>
+        </tbody>
+        <br>
+        <br>
+        <tbody>
+            <tr>
+                <th>Volunteers that could be added to this event</th>
+                <th></th>
+            </tr>
+            <tr>
+                @foreach (var volunteer in GetVolunteersNotInThisEvent())
+                {
+                    <li>
+                        @volunteer.Name
+                        @volunteer.Surname
+                        <div align="left">
+                            <button class="btn btn-primary" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</button>
+                        </div>
+                    </li>
+                }
+            </tr>
+        </tbody>
+        <br>
+        <br>
+        <button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
+        <button class="btn btn-primary" @onclick="DeleteEvent">Delete event</button>
+    }
+    else
+    {
+        <h1>Cannot access this event</h1>
+    }
 }
 @code
 {
@@ -65,7 +74,7 @@
     public Guid Id { get; set; }
     KarmaContext KarmaContext = new KarmaContext();
     public CharityEvent CharityEvent;
-
+    string CurrentUserId { get; set; }
 
     private async Task UpdateEvent()
     {
@@ -86,6 +95,8 @@
     protected override void OnInitialized()
     {
         CharityEvent = KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).FirstOrDefault();
+        var principal = m_httpContextAccessor.HttpContext.User;
+        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 
     public IEnumerable<IVolunteer> GetVolunteersInThisEvent()

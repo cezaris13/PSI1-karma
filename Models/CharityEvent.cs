@@ -16,13 +16,16 @@ namespace Karma.Models
 
         public List<Volunteer> Volunteers { get; set; }
 
-        public CharityEvent(string name, string description, Guid id, CharityEventState state = CharityEventState.Undefined)
+        public string ManagerId { get; set; }
+
+        public CharityEvent(string name, string description, Guid id, string managerId, CharityEventState state = CharityEventState.Undefined)
         {
             Id = id;
             Name = name;
             Description = description;
             State = state;
             Volunteers = new List<Volunteer>();
+            ManagerId = managerId;
         }
 
         public int CompareTo(object obj)

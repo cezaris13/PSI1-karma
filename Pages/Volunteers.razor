@@ -2,7 +2,9 @@
 @using Karma.Models
 @using Microsoft.EntityFrameworkCore;
 @using System.Linq;
+@using System.Security.Claims
 @inject IJSRuntime m_jsRuntime
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
 <h1>Volunteers</h1>
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
@@ -39,7 +41,10 @@
                     </td>
                     <td>
                         <button class="btn btn-primary" @onclick="() => NavigateToManageVolunteer(volunteer.Id)">Manage volunteer</button>
-                        <button class="btn btn-primary" style ="background-color: black;" @onclick="() => RemoveVolunteer(volunteer.Id)">Remove the volunteer</button>
+                        @if (!volunteer.Events.Where(p => p.ManagerId != CurrentUserId).Any())
+                        {
+                            <button class="btn btn-primary" style="background-color: black;" @onclick="() => RemoveVolunteer(volunteer.Id)">Remove the volunteer</button>
+                        }
                     </td>
                 </tr>
             }
@@ -53,6 +58,7 @@ else
 @code
 {
     private KarmaContext KarmaContext { get; } = new KarmaContext();
+    string CurrentUserId { get; set; }
 
     public IEnumerable<IVolunteer> GetVolunteers()
     {
@@ -80,5 +86,11 @@ else
     public void NavigateToManageVolunteer(Guid id)
     {
         m_uriHelper.NavigateTo($"volunteer/{id}");
+    }
+
+    protected override void OnInitialized()
+    {
+        var principal = m_httpContextAccessor.HttpContext.User;
+        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 }
