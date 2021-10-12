@@ -3,11 +3,9 @@ using System.Collections.Generic;
 
 namespace Karma.Models
 {
-    public interface IVolunteer
+    public interface IVolunteer : IVolunteerNameSurname
     {
         Guid Id { get; set; }
-        string Name { get; set; }
-        string Surname { get; set; }
         List<CharityEvent> Events { get; set; }
     }
 }

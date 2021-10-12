@@ -2,6 +2,8 @@
 @using System.Linq
 @using Karma.Models
 @using Microsoft.EntityFrameworkCore;
+@using System.Security.Claims
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
@@ -16,11 +18,13 @@
         <ol>
             @foreach (var volunteer in GetVolunteers())
             {
-                <li>@volunteer</li>
+                <li>@volunteer.Name @volunteer.Surname </li>
             }
         </ol>
-
-        <button class="btn btn-primary" @onclick="NavigateToEditEvent">Update event</button>
+        if (CurrentUserId == charityEvent.ManagerId)
+        {
+            <button class="btn btn-primary" @onclick="NavigateToEditEvent">Update event</button>
+        }
     }
     else
     {
@@ -38,10 +42,13 @@ else
     public Guid Id { get; set; }
     private CharityEvent charityEvent;
     KarmaContext KarmaContext = new KarmaContext();
+    string CurrentUserId { get; set; }
 
     protected override void OnInitialized()
     {
         charityEvent = KarmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
+        var principal = m_httpContextAccessor.HttpContext.User;
+        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 
     public void NavigateToEditEvent()
@@ -49,8 +56,8 @@ else
         m_uriHelper.NavigateTo($"editcharityevent/{Id}");
     }
 
-    public IEnumerable<string> GetVolunteers()
+    public IEnumerable<VolunteerNameSurname> GetVolunteers()
     {
-        return KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p).Select(p => $"{p.Name} {p.Surname}");
+        return KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p =>p).Select(p=>(VolunteerNameSurname)p);
     }
 }
