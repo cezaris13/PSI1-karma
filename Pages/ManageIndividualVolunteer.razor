@@ -2,6 +2,7 @@
 @using System.Linq
 @using Karma.Models
 @inject IJSRuntime m_jsRuntime
+@using System.Text.RegularExpressions;
 @using Microsoft.EntityFrameworkCore;
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
@@ -20,6 +21,8 @@
         <br>
         <br>
         <br>
+        <h5>Filter charity events: </h5>
+        <input @bind-value="FilterValue" @bind-value:event="oninput" />
         <table class="table">
             <tbody>
                 <tr>
@@ -28,12 +31,17 @@
                 </tr>
                 @foreach (var charityEvent in GetEventsOfThisVolunteer())
                 {
-                    <tr>
-                        <td>@charityEvent.Name</td>
-                        <td>
-                            <button class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</button>
-                        </td>
-                    </tr>
+                    var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                    var matches = regex.Matches(charityEvent.Name + charityEvent.Description);
+                    @if (matches.Count > 0)
+                    {
+                        <tr>
+                            <td>@charityEvent.Name</td>
+                            <td>
+                                <button class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</button>
+                            </td>
+                        </tr>
+                    }
                 }
                 <tr>
                     <th>Charity events that this volunteer could be a part of:</th>
@@ -41,12 +49,17 @@
                 </tr>
                 @foreach (var charityEvent in GetEventsNotOfThisVolunteer())
                 {
-                    <tr>
-                        <td>@charityEvent.Name</td>
-                        <td>
-                            <button class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</button>
-                        </td>
-                    </tr>
+                    var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                    var matches = regex.Matches(charityEvent.Name + charityEvent.Description);
+                    @if (matches.Count > 0)
+                    {
+                        <tr>
+                            <td>@charityEvent.Name</td>
+                            <td>
+                                <button class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</button>
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
@@ -70,6 +83,7 @@ else
     public Guid Id { get; set; }
     private Volunteer volunteer;
     KarmaContext m_context = new KarmaContext();
+    private string FilterValue { get; set; } = "";
 
     private async Task UpdateVolunteerData()
     {

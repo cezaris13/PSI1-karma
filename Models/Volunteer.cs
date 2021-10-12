@@ -20,5 +20,14 @@ namespace Karma.Models
             Surname = surname;
             Events = new List<CharityEvent>();
         }
+
+        public Volunteer(string name, string surname, Guid id, List<CharityEvent> events)
+        {
+            Id = id;
+            Name = name;
+            Surname = surname;
+            Events = new List<CharityEvent>();
+            Events.AddRange(events);
+        }
     }
 }
