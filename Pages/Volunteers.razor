@@ -26,9 +26,10 @@
             </tr>
             @foreach (var volunteer in GetVolunteers())
             {
-                nameSurname = volunteer.Name + " " + volunteer.Surname;//SurnameName prideti
+                nameSurname = volunteer.Name + " " + volunteer.Surname;
+                surnameName = volunteer.Surname + " " + volunteer.Name;
                 var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                var matches = regex.Matches(nameSurname);
+                var matches = regex.Matches(nameSurname + surnameName);
                 @if (matches.Count > 0)
                 {
                     <tr>
@@ -69,6 +70,7 @@ else
     private String FilterValue { get; set; } = "";
     KarmaContext KarmaContext = new KarmaContext();
     private String nameSurname { get; set; } = "";
+    private String surnameName { get; set; } = "";
     string CurrentUserId { get; set; }
 
     public IEnumerable<IVolunteer> GetVolunteers()
