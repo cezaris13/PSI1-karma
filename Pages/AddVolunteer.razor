@@ -2,6 +2,7 @@
 @using Karma.Models
 @using Karma.Data
 @inject IJSRuntime m_jsRuntime
+@using Microsoft.EntityFrameworkCore;
 
 <h1>Add volunteer</h1>
 
@@ -16,6 +17,48 @@
     <br>
     <br>
     <button class="btn btn-primary" @onclick="AddThisVolunteer">Add volunteer</button>
+    <br>
+    <br>
+    <br>
+    <br>
+    <table class="table">
+        <tbody>
+            @if (GetEventsOfThisVolunteer() != null)
+            {
+                <tr>
+                    <th>Charity events that this volunteer is working on:</th>
+                    <th>Actions:</th>
+                </tr>
+                @foreach (var charityEvent in GetEventsOfThisVolunteer())
+                {
+                    <tr>
+                        <td>@charityEvent.Name</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</button>
+                        </td>
+                    </tr>
+                }
+            }
+            <tr>
+                <th>Charity events that this volunteer could be a part of:</th>
+                <th>Actions:</th>
+            </tr>
+            @foreach (var charityEvent in GetEventsNotOfThisVolunteer())
+            {
+                @if (listOfCharityEvents == null || !listOfCharityEvents.Contains(charityEvent))
+                {
+                    <tr>
+                        <td>@charityEvent.Name</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <br>
+    <br>
 }
 else
 {
@@ -23,16 +66,37 @@ else
 }
 @code
 {
-    KarmaContext KarmaContext = new KarmaContext();
     string VolunteerName { get; set; }
     string VolunteerSurname { get; set; }
+    private List<CharityEvent> listOfCharityEvents = new List<CharityEvent>();
+    KarmaContext m_context = new KarmaContext();
 
     private async Task AddThisVolunteer()
     {
-        var vol = new Volunteer(name: VolunteerName, surname: VolunteerSurname, Guid.NewGuid());
-        KarmaContext.Volunteers.Add(vol);
-        KarmaContext.SaveChanges();
+        var vol = new Volunteer(name: VolunteerName, surname: VolunteerSurname, Guid.NewGuid(), listOfCharityEvents);
+        m_context.Volunteers.Add(vol);
+        m_context.SaveChanges();
         m_uriHelper.NavigateTo("/volunteers");
         await m_jsRuntime.InvokeVoidAsync("alert", "The volunteer has been added");
+    }
+
+    public IEnumerable<ICharityEvent> GetEventsOfThisVolunteer()
+    {
+        return listOfCharityEvents;
+    }
+
+    public IEnumerable<ICharityEvent> GetEventsNotOfThisVolunteer()
+    {
+        return m_context.Events;
+    }
+
+    private void AddEventToVolunteerList(Guid id)
+    {
+        listOfCharityEvents.Add(m_context.Events.Where(p => p.Id == id).FirstOrDefault());
+    }
+
+    private void RemoveEventFromList(Guid id)
+    {
+        listOfCharityEvents.Remove(m_context.Events.Where(p => p.Id == id).FirstOrDefault());
     }
 }

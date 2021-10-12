@@ -6,6 +6,7 @@
 @using System.Security.Claims
 @inject IJSRuntime m_jsRuntime
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
+@using System.Text.RegularExpressions;
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
@@ -21,6 +22,8 @@
         <input type="text" @bind="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" />
         <br>
         <br>
+        <h5>Filter volunteers: </h5>
+        <input @bind-value="FilterValue" @bind-value:event="oninput" />
         <tbody>
             <tr>
                 <th>Volunteers that are working on this event</th>
@@ -28,13 +31,20 @@
             <tr>
                 @foreach (var volunteer in GetVolunteersInThisEvent())
                 {
-                    <li>
-                        @volunteer.Name
-                        @volunteer.Surname
-                        <div align="left">
-                            <button class="btn btn-primary" @onclick="() => RemoveVolunteerFromEvent(volunteer.Id)">Remove</button>
-                        </div>
-                    </li>
+                    nameSurname = volunteer.Name + " " + volunteer.Surname;
+                    surnameName = volunteer.Surname + " " + volunteer.Name;
+                    var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                    var matches = regex.Matches(nameSurname + surnameName);
+                    @if (matches.Count > 0)
+                    {
+                        <li>
+                            @volunteer.Name
+                            @volunteer.Surname
+                            <div align="left">
+                                <button class="btn btn-primary" @onclick="() => RemoveVolunteerFromEvent(volunteer.Id)">Remove</button>
+                            </div>
+                        </li>
+                    }
                 }
             </tr>
         </tbody>
@@ -48,13 +58,18 @@
             <tr>
                 @foreach (var volunteer in GetVolunteersNotInThisEvent())
                 {
-                    <li>
-                        @volunteer.Name
-                        @volunteer.Surname
-                        <div align="left">
-                            <button class="btn btn-primary" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</button>
-                        </div>
-                    </li>
+                    var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                    var matches = regex.Matches(volunteer.Name + volunteer.Surname);
+                    @if (matches.Count > 0)
+                    {
+                        <li>
+                            @volunteer.Name
+                            @volunteer.Surname
+                            <div align="left">
+                                <button class="btn btn-primary" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</button>
+                            </div>
+                        </li>
+                    }
                 }
             </tr>
         </tbody>
@@ -68,12 +83,17 @@
         <h1>Cannot access this event</h1>
     }
 }
+
 @code
 {
     [Parameter]
     public Guid Id { get; set; }
     KarmaContext KarmaContext = new KarmaContext();
     public CharityEvent CharityEvent;
+    private string FilterValue { get; set; } = "";
+    private String nameSurname { get; set; } = "";
+    private String surnameName { get; set; } = "";
+
     string CurrentUserId { get; set; }
 
     private async Task UpdateEvent()
