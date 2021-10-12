@@ -2,6 +2,7 @@
 @using Karma.Models
 @using Karma.Data
 @inject IJSRuntime m_jsRuntime
+@using System.Security.Claims
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 
 <h1>Add charity event</h1>
@@ -27,17 +28,17 @@ else
     KarmaContext KarmaContext = new KarmaContext();
     string EventTitle { get; set; }
     string EventDescription { get; set; }
-    string CurrentUserName { get; set; }
+    string CurrentUserId { get; set; }
 
-    protected async override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        var user = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-        CurrentUserName = user.User.Identity.Name;
+        var principal = m_httpContextAccessor.HttpContext.User;
+        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 
     private async Task AddEvent()
     {
-        var ev = new CharityEvent(EventTitle, EventDescription, Guid.NewGuid(), CurrentUserName);
+        var ev = new CharityEvent(EventTitle, EventDescription, Guid.NewGuid(), CurrentUserId);
         KarmaContext.Events.Add(ev);
         KarmaContext.SaveChanges();
         m_uriHelper.NavigateTo("");

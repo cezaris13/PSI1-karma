@@ -2,6 +2,7 @@
 @using System.Linq
 @using Karma.Models
 @using Microsoft.EntityFrameworkCore;
+@using System.Security.Claims
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
@@ -20,7 +21,7 @@
                 <li>@volunteer</li>
             }
         </ol>
-        if (CurrentUserName == charityEvent.ManagedByUser)
+        if (CurrentUserId == charityEvent.ManagerId)
         {
             <button class="btn btn-primary" @onclick="NavigateToEditEvent">Update event</button>
         }
@@ -41,13 +42,13 @@ else
     public Guid Id { get; set; }
     private CharityEvent charityEvent;
     KarmaContext KarmaContext = new KarmaContext();
-    string CurrentUserName { get; set; }
+    string CurrentUserId { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         charityEvent = KarmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
-        var user = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-        CurrentUserName = user.User.Identity.Name;
+        var principal = m_httpContextAccessor.HttpContext.User;
+        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 
     public void NavigateToEditEvent()

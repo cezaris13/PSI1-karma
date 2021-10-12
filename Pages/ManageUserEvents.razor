@@ -1,6 +1,7 @@
 ﻿@page "/manageuserevents"
 @using System.Text.RegularExpressions;
 @using Karma.Models
+@using System.Security.Claims
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 
 <h1>Karma</h1>
@@ -43,13 +44,13 @@ Ready to aquire karma points by helping out others?
 
 @code {
     private string FilterValue { get; set; } = "";
-    string CurrentUserName { get; set; }
+    string CurrentUserId { get; set; }
 
     private KarmaContext KarmaContext { get; } = new KarmaContext();
 
     public IEnumerable<IGenericKarmaItem> GetEvents()
     {
-        return KarmaContext.Events.Where(p=>p.ManagedByUser == CurrentUserName );
+        return KarmaContext.Events.Where(p => p.ManagerId == CurrentUserId);
     }
 
     public void NavigateToIndividualEvent(Guid id)
@@ -62,9 +63,9 @@ Ready to aquire karma points by helping out others?
         m_uriHelper.NavigateTo($"editcharityevent/{id}");
     }
 
-    protected async override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        var user = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-        CurrentUserName = user.User.Identity.Name;
+        var principal = m_httpContextAccessor.HttpContext.User;
+        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 }

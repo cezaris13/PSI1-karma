@@ -7,6 +7,6 @@ namespace Karma.Models
         Guid Id { get; set; }
         string Name { get; set; }
         string Description { get; set; }
-        string ManagedByUser { get; set; }
+        string ManagerId { get; set; }
     }
 }
