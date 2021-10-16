@@ -121,12 +121,7 @@
 
     public IEnumerable<IVolunteer> GetVolunteersInThisEvent()
     {
-        var events = KarmaContext.Events;
-        var filteredEvents =
-            from oneEvent in events
-            where oneEvent.Id == Id
-            select oneEvent.Volunteers;
-        return filteredEvents.SelectMany(o => o);
+        return KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p);
     }
 
     public IEnumerable<IVolunteer> GetVolunteersNotInThisEvent()

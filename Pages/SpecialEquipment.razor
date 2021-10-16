@@ -20,13 +20,13 @@
                     <td>@pair.VolunteerName</td>
                     <td>@pair.VolunteerSurname</td>
                     <td>
-                        @if (pair.Size >= 0)
+                        @if (pair.EquipmentList != null)
                         {
 
-                            @for (int i = 0; i < pair.Size; i++)
+                            @foreach(var equipmentItemName in pair.EquipmentList)
                             {
                                 <div>
-                                    @pair[i]
+                                    @equipmentItemName
                                 </div>
                             }
                         }
