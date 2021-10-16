@@ -18,7 +18,7 @@
         <ol>
             @foreach (var volunteer in GetVolunteers())
             {
-                <li>@volunteer.Name @volunteer.Surname </li>
+                <li>@volunteer</li>
             }
         </ol>
         if (CurrentUserId == charityEvent.ManagerId)
@@ -56,8 +56,8 @@ else
         m_uriHelper.NavigateTo($"editcharityevent/{Id}");
     }
 
-    public IEnumerable<VolunteerNameSurname> GetVolunteers()
+    public IEnumerable<string> GetVolunteers()
     {
-        return KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p =>p).Select(p=>(VolunteerNameSurname)p);
+        return KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p =>p).Select(p=>$"{p.Name} {p.Surname}");
     }
 }

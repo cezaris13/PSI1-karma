@@ -3,8 +3,12 @@ using System.Collections.Generic;
 
 namespace Karma.Models
 {
-    public class Volunteer : VolunteerNameSurname, IVolunteer
+    public class Volunteer : IVolunteer
     {
+        public string Name { get; set; }
+
+        public string Surname { get; set; }
+
         public Guid Id { get; set; }
 
         public List<CharityEvent> Events { get; set; }

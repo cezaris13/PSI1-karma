@@ -1,6 +1,5 @@
 using Karma.Areas.Identity;
 using Karma.Data;
-using Karma.Database;
 using Karma.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -39,8 +38,6 @@ namespace Karma
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
-            //services.AddSingleton<IFileContentProvider, FileContentProvider>();
-            //services.AddSingleton<IDataModificator, DataModificator>();
 
             services.AddHttpContextAccessor();
         }
