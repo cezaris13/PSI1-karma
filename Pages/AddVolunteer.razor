@@ -4,19 +4,17 @@
 @inject IJSRuntime m_jsRuntime
 @using Microsoft.EntityFrameworkCore;
 
-<h1>Add volunteer</h1>
+<h1 class="mat">Add volunteer</h1>
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
-    <label for="fname">Volunteer name:</label>
-    <input type="text" @bind="@VolunteerName" @oninput="@((e) => { VolunteerName = (string)e.Value; })" />
+    <MatTextField @bind-Value="@VolunteerName" @oninput="@((e) => { VolunteerName = (string)e.Value; })" Label=" Volunteer Name" Outlined="true"></MatTextField>
     <br>
     <br>
-    <label for="fname">Volunteer surname:</label>
-    <input type="text" @bind="@VolunteerSurname" @oninput="@((e) => { VolunteerSurname = (string)e.Value; })" />
+    <MatTextField @bind-Value="@VolunteerSurname" @oninput="@((e) => { VolunteerSurname = (string)e.Value; })" Label=" Volunteer Surname" Outlined="true"></MatTextField>
     <br>
     <br>
-    <button class="btn btn-primary" @onclick="AddThisVolunteer">Add volunteer</button>
+    <MatButton Raised="true" class="btn btn-primary" @onclick="AddThisVolunteer">Add volunteer</MatButton>
     <br>
     <br>
     <br>
@@ -34,7 +32,7 @@
                     <tr>
                         <td>@charityEvent.Name</td>
                         <td>
-                            <button class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</button>
+                            <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</MatButton>
                         </td>
                     </tr>
                 }
@@ -50,7 +48,7 @@
                     <tr>
                         <td>@charityEvent.Name</td>
                         <td>
-                            <button class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</button>
+                            <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
                         </td>
                     </tr>
                 }
@@ -71,13 +69,13 @@ else
     private List<CharityEvent> listOfCharityEvents = new List<CharityEvent>();
     KarmaContext m_context = new KarmaContext();
 
-    private async Task AddThisVolunteer()
+    private void AddThisVolunteer()
     {
         var vol = new Volunteer(name: VolunteerName, surname: VolunteerSurname, Guid.NewGuid(), listOfCharityEvents);
         m_context.Volunteers.Add(vol);
         m_context.SaveChanges();
         m_uriHelper.NavigateTo("/volunteers");
-        await m_jsRuntime.InvokeVoidAsync("alert", "The volunteer has been added");
+        m_notificationPopup.ShowMessage("The volunteer has been added");
     }
 
     public IEnumerable<ICharityEvent> GetEventsOfThisVolunteer()

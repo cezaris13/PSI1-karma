@@ -4,14 +4,34 @@
 @using System.Security.Claims
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 
-<h1>Karma</h1>
+<style>
+    .demo-mat-card {
+        display: flex;
+        min-width: 18rem;
+        max-width: 30.5%;
+    }
+
+    .demo-mat-card-content {
+        padding: 1rem;
+        flex: 0 0 30%;
+    }
+
+    .demo-mat-card-clean-margin {
+        margin: 0px;
+        flex: 0 0 30%;
+    }
+</style>
+
+<h1 class="mat">Karma</h1>
 
 Ready to aquire karma points by helping out others?
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
-    <h5>Filter Karma events: </h5>
-    <input @bind-value="FilterValue" @bind-value:event="oninput" />
+    <br />
+    <br />
+    <br />
+    <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Events" Icon="search" IconTrailing="true"></MatTextField>
 
     <div class="card-deck">
         @foreach (var karmaEvent in GetEvents())
@@ -20,22 +40,22 @@ Ready to aquire karma points by helping out others?
             var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());
             @if (matches.Count > 0)
             {
-                <div class="card m-3" style="min-width: 18rem; max-width:30.5%;">
-                    <div class="card-header" style="display: inline-block">
-                        <div style="float: left" @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">
-                            <h4>@karmaEvent.Name</h4>
-                        </div>
-                        <div class="test" style="
-                     float: right;
-                     width: 25px;
-                     height: 25px;
-                     background-image: radial-gradient(circle, black 2px, transparent 3px);
-                     background-size: 100% 33.33%;"
-                             @onclick="()=>NavigateToEditEvent(karmaEvent.Id)">
-                        </div>
+                <MatCard class="demo-mat-card mx-3">
+                    <div class="demo-mat-card-content">
+                        <MatHeadline6 class="demo-mat-card-clean-margin" style="display: inline-block;float:left; margin: 0" @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">
+                            @karmaEvent.Name
+                        </MatHeadline6>
+                        <MatCardActionIcons style="display: inline-block;float:right">
+                            <MatIconButton Icon="@MatIconNames.More_vert" @onclick="()=>NavigateToEditEvent(karmaEvent.Id)"></MatIconButton>
+                        </MatCardActionIcons>
                     </div>
-                    <h6 @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">@karmaEvent.Description</h6>
-                </div>
+                    <MatCardContent @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">
+                        <MatCardMedia Wide="true" ImageUrl="https://material-components.github.io/material-components-web-catalog/static/media/photos/3x2/2.jpg"></MatCardMedia>
+                        <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">
+                            @karmaEvent.Description
+                        </MatBody2>
+                    </MatCardContent>
+                </MatCard>
             }
         }
     </div>
