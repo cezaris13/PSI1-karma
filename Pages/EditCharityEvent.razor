@@ -35,7 +35,7 @@
                             var matches = regex.Matches(nameSurname + surnameName);
                             @if (matches.Count > 0)
                             {
-                                <MatListItem>
+                                <MatListItem display: inline-block; width: 100%;>
                                     <div>
                                         <div style="float:left">
                                             @volunteer.Name
@@ -65,12 +65,12 @@
                             var matches = regex.Matches(volunteer.Name + volunteer.Surname);
                             @if (matches.Count > 0)
                             {
-                                <MatListItem>
-                                    <div style="display: inline-block;float:left; margin: 0">
+                                <MatListItem display: inline-block; width: 100%;>
+                                    <div style="float:left">
                                         @volunteer.Name
                                         @volunteer.Surname
                                     </div>
-                                    <div style="display: inline-block;float:right">
+                                    <div style="float:right">
                                         <MatButton Outlined="true" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</MatButton>
                                     </div>
                                 </MatListItem>

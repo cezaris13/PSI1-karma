@@ -19,42 +19,54 @@
     <br>
     <br>
     <br>
-    <table class="table">
-        <tbody>
-            @if (GetEventsOfThisVolunteer() != null)
-            {
-                <tr>
-                    <th>Charity events that this volunteer is working on:</th>
-                    <th>Actions:</th>
-                </tr>
-                @foreach (var charityEvent in GetEventsOfThisVolunteer())
-                {
-                    <tr>
-                        <td>@charityEvent.Name</td>
-                        <td>
-                            <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</MatButton>
-                        </td>
-                    </tr>
-                }
-            }
-            <tr>
-                <th>Charity events that this volunteer could be a part of:</th>
-                <th>Actions:</th>
-            </tr>
-            @foreach (var charityEvent in GetEventsNotOfThisVolunteer())
-            {
-                @if (listOfCharityEvents == null || !listOfCharityEvents.Contains(charityEvent))
-                {
-                    <tr>
-                        <td>@charityEvent.Name</td>
-                        <td>
-                            <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
+    <MatAccordion Multi="true">
+        <MatExpansionPanel @bind-Expanded="@panelOpenState1">
+            <MatExpansionPanelSummary>
+                <MatExpansionPanelHeader>Charity events that this volunteer is working on</MatExpansionPanelHeader>
+            </MatExpansionPanelSummary>
+            <MatExpansionPanelDetails>
+                <MatList>
+                    @if (GetEventsOfThisVolunteer() != null)
+                    {
+                        @foreach (var charityEvent in GetEventsOfThisVolunteer())
+                        {
+                            <MatListItem style=" display: inline-block; width: 100%;">
+                                <div style="float:left; margin: 0">
+                                    @charityEvent.Name
+                                </div>
+                                <div style="float:right">
+                                    <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</MatButton>
+                                </div>
+                            </MatListItem>
+                        }
+                    }
+                </MatList>
+            </MatExpansionPanelDetails>
+        </MatExpansionPanel>
+        <MatExpansionPanel @bind-Expanded="@panelOpenState2">
+            <MatExpansionPanelSummary>
+                <MatExpansionPanelHeader>Charity events that this volunteer could be a part of:</MatExpansionPanelHeader>
+            </MatExpansionPanelSummary>
+            <MatExpansionPanelDetails>
+                <MatList>
+                    @foreach (var charityEvent in GetEventsNotOfThisVolunteer())
+                    {
+                        @if (listOfCharityEvents == null || !listOfCharityEvents.Contains(charityEvent))
+                        {
+                            <MatListItem style=" display: inline-block; width: 100%;">>
+                                <div style="float:left; margin: 0">
+                                    @charityEvent.Name
+                                </div>
+                                <div style="float:right">
+                                    <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
+                                </div>
+                            </MatListItem>
+                        }
+                    }
+                </MatList>
+            </MatExpansionPanelDetails>
+        </MatExpansionPanel>
+    </MatAccordion>
     <br>
     <br>
 }
@@ -68,6 +80,8 @@ else
     string VolunteerSurname { get; set; }
     private List<CharityEvent> listOfCharityEvents = new List<CharityEvent>();
     KarmaContext m_context = new KarmaContext();
+    bool panelOpenState1 = true;
+    bool panelOpenState2 = true;
 
     private void AddThisVolunteer()
     {

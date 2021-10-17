@@ -9,16 +9,18 @@
         display: flex;
         min-width: 18rem;
         max-width: 30.5%;
+        flex-grow: 1;
+        flex-basis: 0;
+        margin-bottom: 10px;
     }
 
     .demo-mat-card-content {
         padding: 1rem;
-        flex: 0 0 30%;
+        display:inline-block;
     }
 
     .demo-mat-card-clean-margin {
         margin: 0px;
-        flex: 0 0 30%;
     }
 </style>
 
@@ -42,10 +44,10 @@ Ready to aquire karma points by helping out others?
             {
                 <MatCard class="demo-mat-card mx-3">
                     <div class="demo-mat-card-content">
-                        <MatHeadline6 class="demo-mat-card-clean-margin" style="display: inline-block;float:left; margin: 0" @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">
+                        <MatHeadline6 class="demo-mat-card-clean-margin" style="float:left" @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">
                             @karmaEvent.Name
                         </MatHeadline6>
-                        <MatCardActionIcons style="display: inline-block;float:right">
+                        <MatCardActionIcons style="float:right">
                             <MatIconButton Icon="@MatIconNames.More_vert" @onclick="()=>NavigateToEditEvent(karmaEvent.Id)"></MatIconButton>
                         </MatCardActionIcons>
                     </div>
