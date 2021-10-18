@@ -19,7 +19,40 @@
         <br>
         <br>
         <label for="fname">Event description:</label>
-        <input type="text" @bind="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" />
+        <input type="" @bind="@CharityEvent.Description" @oninput="@((a) => { CharityEvent.Description = (string)a.Value; })" />
+        <br>
+        <br>
+        <label for="fname">Maximum number of volunteers in this project:</label>
+        <input type="number" min="0" max="1000000" @bind="@CharityEvent.MaxVolunteers" />
+        @if (CharityEvent.MaxVolunteers < 0)
+        {
+            <p>
+                Illegal volunteer count, please choose a positive number.
+            </p>
+        }
+        else
+        {
+            <br>
+        }
+        @if (CharityEvent.MaxVolunteers < CharityEvent.Volunteers.Count)
+        {
+            <p>
+                Illegal volunteer count, please choose a value grater than currently assigned volunteeer count or reduce the number of volunteers in this event.
+            </p>
+        }
+        else
+        {
+            <br>
+        }
+        @if (CharityEvent.MaxVolunteers < 0 || CharityEvent.MaxVolunteers < CharityEvent.Volunteers.Count)
+        {
+            <button class="btn btn-primary" disabled="disabled">Update event</button>
+        }
+        else
+        {
+            <button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
+        }
+        <button class="btn btn-primary" @onclick="DeleteEvent">Delete event</button>
         <br>
         <br>
         <h5>Filter volunteers: </h5>
@@ -66,17 +99,20 @@
                             @volunteer.Name
                             @volunteer.Surname
                             <div align="left">
-                                <button class="btn btn-primary" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</button>
+                                @if (CharityEvent.MaxVolunteers < 0 || CharityEvent.MaxVolunteers <= CharityEvent.Volunteers.Count)
+                                {
+                                    <button class="btn btn-primary" disabled="disabled">Add</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-primary" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</button>
+                                }
                             </div>
                         </li>
                     }
                 }
             </tr>
         </tbody>
-        <br>
-        <br>
-        <button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
-        <button class="btn btn-primary" @onclick="DeleteEvent">Delete event</button>
     }
     else
     {

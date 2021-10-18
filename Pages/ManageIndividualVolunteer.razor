@@ -63,7 +63,14 @@
                             <td>
                                 @if (charityEvent.ManagerId == CurrentUserId)
                                 {
-                                    <button class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</button>
+                                    @if (charityEvent.Volunteers.Count >= charityEvent.MaxVolunteers)
+                                    {
+                                        <button class="btn btn-primary" disabled="disabled">Add</button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</button>
+                                    }
                                 }
                             </td>
                         </tr>
