@@ -6,24 +6,19 @@
 @using System.Security.Claims
 @inject IJSRuntime m_jsRuntime
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
+
 @using System.Text.RegularExpressions;
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
     if (CharityEvent.ManagerId == CurrentUserId)
     {
-        <h1>Edit charity event</h1>
-
-        <label for="fname">Event title:</label>
-        <input type="text" @bind="@CharityEvent.Name" @oninput="@((e) => { CharityEvent.Name = (string)e.Value; })" />
+        <h1 class="mat">Edit charity event</h1>
+        <MatTextField @bind-Value="@CharityEvent.Name" @oninput="@((e) => { CharityEvent.Name = (string)e.Value; })" Label="Event Title" Outlined="true"></MatTextField>
         <br>
+        <MatTextField @bind-Value="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" Label="Event Description" Outlined="true"></MatTextField>
         <br>
-        <label for="fname">Event description:</label>
-        <input type="" @bind="@CharityEvent.Description" @oninput="@((a) => { CharityEvent.Description = (string)a.Value; })" />
-        <br>
-        <br>
-        <label for="fname">Maximum number of volunteers in this project:</label>
-        <input type="number" min="0" max="1000000" @bind="@CharityEvent.MaxVolunteers" />
+        <MatTextField type="number min="0" max="1000000" @bind-Value="@CharityEvent.MaxVolunteers" Label="Maximum number of volunteers" Outlined="true"></MatTextField>
         @if (CharityEvent.MaxVolunteers < 0)
         {
             <p>
@@ -44,79 +39,90 @@
         {
             <br>
         }
-        @if (CharityEvent.MaxVolunteers < 0 || CharityEvent.MaxVolunteers < CharityEvent.Volunteers.Count)
-        {
-            <button class="btn btn-primary" disabled="disabled">Update event</button>
-        }
-        else
-        {
-            <button class="btn btn-primary" @onclick="UpdateEvent">Update event</button>
-        }
-        <button class="btn btn-primary" @onclick="DeleteEvent">Delete event</button>
+        <label for="fname">Event description:</label>
+        <input type="text" @bind="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" />
         <br>
-        <br>
-        <h5>Filter volunteers: </h5>
-        <input @bind-value="FilterValue" @bind-value:event="oninput" />
-        <tbody>
-            <tr>
-                <th>Volunteers that are working on this event</th>
-            </tr>
-            <tr>
-                @foreach (var volunteer in GetVolunteersInThisEvent())
-                {
-                    nameSurname = volunteer.Name + " " + volunteer.Surname;
-                    surnameName = volunteer.Surname + " " + volunteer.Name;
-                    var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                    var matches = regex.Matches(nameSurname + surnameName);
-                    @if (matches.Count > 0)
-                    {
-                        <li>
-                            @volunteer.Name
-                            @volunteer.Surname
-                            <div align="left">
-                                <button class="btn btn-primary" @onclick="() => RemoveVolunteerFromEvent(volunteer.Id)">Remove</button>
-                            </div>
-                        </li>
-                    }
-                }
-            </tr>
-        </tbody>
-        <br>
-        <br>
-        <tbody>
-            <tr>
-                <th>Volunteers that could be added to this event</th>
-                <th></th>
-            </tr>
-            <tr>
-                @foreach (var volunteer in GetVolunteersNotInThisEvent())
-                {
-                    var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                    var matches = regex.Matches(volunteer.Name + volunteer.Surname);
-                    @if (matches.Count > 0)
-                    {
-                        <li>
-                            @volunteer.Name
-                            @volunteer.Surname
-                            <div align="left">
-                                @if (CharityEvent.MaxVolunteers < 0 || CharityEvent.MaxVolunteers <= CharityEvent.Volunteers.Count)
+        <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search" Icon="search" IconTrailing="true"></MatTextField>
+        <MatAccordion Multi="true">
+            <MatExpansionPanel @bind-Expanded="@panelOpenState1">
+                <MatExpansionPanelSummary>
+                    <MatExpansionPanelHeader>Volunteers that are working on this event</MatExpansionPanelHeader>
+                </MatExpansionPanelSummary>
+                <MatExpansionPanelDetails>
+                    <MatList>
+                        @foreach (var volunteer in GetVolunteersInThisEvent())
+                        {
+                            nameSurname = volunteer.Name + " " + volunteer.Surname;
+                            surnameName = volunteer.Surname + " " + volunteer.Name;
+                            var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                            var matches = regex.Matches(nameSurname + surnameName);
+                            @if (matches.Count > 0)
+                            {
+                                <MatListItem display: inline-block; width: 100%;>
+                                    <div>
+                                        <div style="float:left">
+                                            @volunteer.Name
+                                            @volunteer.Surname
+                                        </div>
+                                        <div style="float:right">
+                                            <MatButton Outlined="true" @onclick="() => RemoveVolunteerFromEvent(volunteer.Id)">Remove</MatButton>
+
+                                        </div>
+                                    </div>
+                                </MatListItem>
+                            }
+                        }
+                    </MatList>
+                </MatExpansionPanelDetails>
+            </MatExpansionPanel>
+
+            <MatExpansionPanel @bind-Expanded="@panelOpenState2">
+                <MatExpansionPanelSummary>
+                    <MatExpansionPanelHeader>Volunteers that could be added to this event</MatExpansionPanelHeader>
+                </MatExpansionPanelSummary>
+                <MatExpansionPanelDetails>
+                    <MatList>
+                        @foreach (var volunteer in GetVolunteersNotInThisEvent())
+                        {
+                            var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                            var matches = regex.Matches(volunteer.Name + volunteer.Surname);
+                            @if (matches.Count > 0)
+                            {
+                                <MatListItem display: inline-block; width: 100%;>
+                                    <div style="float:left">
+                                        @volunteer.Name
+                                        @volunteer.Surname
+                                    </div>
+                                    <div style="float:right">
+                                        @if (CharityEvent.MaxVolunteers < 0 || CharityEvent.MaxVolunteers <= CharityEvent.Volunteers.Count)
                                 {
-                                    <button class="btn btn-primary" disabled="disabled">Add</button>
+                                    <MatButton Outlined="true" disabbled="disabled">Add</MatButton>
                                 }
                                 else
                                 {
-                                    <button class="btn btn-primary" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</button>
+                                    <MatButton Outlined="true" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</MatButton>
                                 }
-                            </div>
-                        </li>
-                    }
-                }
-            </tr>
-        </tbody>
+                                    </div>
+                                </MatListItem>
+                            }
+                        }
+                    </MatList>
+                </MatExpansionPanelDetails>
+            </MatExpansionPanel>
+        </MatAccordion>
+@if (CharityEvent.MaxVolunteers < 0 || CharityEvent.MaxVolunteers < CharityEvent.Volunteers.Count)
+        {
+            <MatButton Outlined="true" class="btn btn-primary" disabled="disabled">Update event</MatButton>
+        }
+        else
+        {
+            <MatButton Outlined="true" class="btn btn-primary" @onclick="UpdateEvent">Update event</MatButton>
+        }
+        <MatButton Raised="true" class="btn btn-primary" @onclick="DeleteEvent">Delete event</MatButton>
     }
     else
     {
-        <h1>Cannot access this event</h1>
+        <h1 class="mat">Cannot access this event</h1>
     }
 }
 
@@ -129,23 +135,25 @@
     private string FilterValue { get; set; } = "";
     private String nameSurname { get; set; } = "";
     private String surnameName { get; set; } = "";
+    bool panelOpenState1 = true;
+    bool panelOpenState2 = true;
 
     string CurrentUserId { get; set; }
 
-    private async Task UpdateEvent()
+    private void UpdateEvent()
     {
         KarmaContext.Events.Update(CharityEvent);
         KarmaContext.SaveChanges();
         m_uriHelper.NavigateTo("");
-        await m_jsRuntime.InvokeVoidAsync("alert", "The event has been updated");
+        m_notificationPopup.ShowMessage("The event has been updated");
     }
 
-    private async Task DeleteEvent()
+    private void DeleteEvent()
     {
         KarmaContext.Events.Where(x => x.Id == Id).Delete();
         KarmaContext.SaveChanges();
         m_uriHelper.NavigateTo("");
-        await m_jsRuntime.InvokeVoidAsync("alert", "The event has been deleted");
+        m_notificationPopup.ShowMessage("The event has been deleted");
     }
 
     protected override void OnInitialized()

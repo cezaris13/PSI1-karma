@@ -5,19 +5,17 @@
 @using System.Security.Claims
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 
-<h1>Add charity event</h1>
+<h1 class="mat">Add charity event</h1>
 
 @if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
-    <label for="fname">Event title:</label>
-    <input type="text" @bind="@EventTitle" @oninput="@((e) => { EventTitle = (string)e.Value; })" />
+    <MatTextField @bind-Value="@EventTitle"  @oninput="@((e) => { EventTitle = (string)e.Value; })" Label="Event Title" Outlined="true"></MatTextField>
     <br>
     <br>
-    <label for="fname">Event description:</label>
-    <input type="text" @bind="@EventDescription" @oninput="@((e) => { EventDescription = (string)e.Value; })" />
+    <MatTextField @bind-Value="@EventDescription"  @oninput="@((e) => { EventDescription = (string)e.Value; })" Label="Event Description" Outlined="true"></MatTextField>
     <br>
     <br>
-    <button class="btn btn-primary" @onclick="AddEvent">Add event</button>
+    <MatButton Raised="true" class="btn btn-primary" @onclick="AddEvent">Add event</MatButton>
 }
 else
 {
@@ -36,12 +34,12 @@ else
         CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 
-    private async Task AddEvent()
+    private void AddEvent()
     {
         var ev = new CharityEvent(EventTitle, EventDescription, Guid.NewGuid(), CurrentUserId);
         KarmaContext.Events.Add(ev);
         KarmaContext.SaveChanges();
         m_uriHelper.NavigateTo("");
-        await m_jsRuntime.InvokeVoidAsync("alert", "The event has been created");
+        m_notificationPopup.ShowMessage("The event has been created");
     }
 }
