@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using System.Text.RegularExpressions;
 @using Karma.Models
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
 
 <style>
     .demo-mat-card {
@@ -20,6 +21,11 @@
         margin: 0px;
     }
 </style>
+
+@if (!m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+{
+    m_uriHelper.NavigateTo("Identity/Account/Login");
+}
 
 <h1 class="mat">Karma</h1>
 
