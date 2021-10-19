@@ -5,35 +5,28 @@
 @using System.Security.Claims
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 
-@if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+@if (charityEvent != null)
 {
-    @if (charityEvent != null)
-    {
-        <h1 class="mat">@charityEvent.Name</h1>
+    <h1 class="mat">@charityEvent.Name</h1>
 
-        <h2 class="mat">@charityEvent.Description</h2>
+    <h2 class="mat">@charityEvent.Description</h2>
 
-        <h3 class="mat">@charityEvent.State.ToString()</h3>
+    <h3 class="mat">@charityEvent.State.ToString()</h3>
 
-        <ol>
-            @foreach (var volunteer in GetVolunteers())
-            {
-                <li>@volunteer</li>
-            }
-        </ol>
-        if (CurrentUserId == charityEvent.ManagerId)
+    <ol>
+        @foreach (var volunteer in GetVolunteers())
         {
-            <MatButton Raised="true" class="btn btn-primary" @onclick="NavigateToEditEvent">Update event</MatButton>
+            <li>@volunteer</li>
         }
-    }
-    else
+    </ol>
+    if (CurrentUserId == charityEvent.ManagerId)
     {
-        <h1 class="mat">Sorry,but this event was not found</h1>
+        <MatButton Raised="true" class="btn btn-primary" @onclick="NavigateToEditEvent">Update event</MatButton>
     }
 }
 else
 {
-    <label for="fname">Please LogIn</label>
+    <h1 class="mat">Sorry,but this event was not found</h1>
 }
 
 @code
