@@ -18,7 +18,9 @@
         <br>
         <MatTextField @bind-Value="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" Label="Event Description" Outlined="true"></MatTextField>
         <br>
-        <MatTextField type="number min="0" max="1000000" @bind-Value="@CharityEvent.MaxVolunteers" Label="Maximum number of volunteers" Outlined="true"></MatTextField>
+        <MatTextField type="number" min="0" max="1000000" @bind-Value="@CharityEvent.MaxVolunteers" Label="Maximum number of volunteers" Outlined="true"></MatTextField>
+        <br>
+        <MatTextField @bind-Value="@CharityEvent.PhotoPath" @oninput="@((e) => { CharityEvent.PhotoPath = (string)e.Value; })" Label="Picture URL" Outlined="true"></MatTextField>
         @if (CharityEvent.MaxVolunteers < 0)
         {
             <p>
@@ -39,9 +41,6 @@
         {
             <br>
         }
-        <label for="fname">Event description:</label>
-        <input type="text" @bind="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" />
-        <br>
         <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search" Icon="search" IconTrailing="true"></MatTextField>
         <MatAccordion Multi="true">
             <MatExpansionPanel @bind-Expanded="@panelOpenState1">
@@ -58,7 +57,7 @@
                             var matches = regex.Matches(nameSurname + surnameName);
                             @if (matches.Count > 0)
                             {
-                                <MatListItem display: inline-block; width: 100%;>
+                                <MatListItem>
                                     <div>
                                         <div style="float:left">
                                             @volunteer.Name
@@ -88,20 +87,16 @@
                             var matches = regex.Matches(volunteer.Name + volunteer.Surname);
                             @if (matches.Count > 0)
                             {
-                                <MatListItem display: inline-block; width: 100%;>
+                                <MatListItem>
                                     <div style="float:left">
                                         @volunteer.Name
                                         @volunteer.Surname
                                     </div>
                                     <div style="float:right">
-                                        @if (CharityEvent.MaxVolunteers < 0 || CharityEvent.MaxVolunteers <= CharityEvent.Volunteers.Count)
-                                {
-                                    <MatButton Outlined="true" disabbled="disabled">Add</MatButton>
-                                }
-                                else
-                                {
-                                    <MatButton Outlined="true" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</MatButton>
-                                }
+                                        @if (CharityEvent.MaxVolunteers >= 0 && CharityEvent.MaxVolunteers > CharityEvent.Volunteers.Count)
+                                        {
+                                            <MatButton Outlined="true" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</MatButton>
+                                        }
                                     </div>
                                 </MatListItem>
                             }
@@ -110,11 +105,7 @@
                 </MatExpansionPanelDetails>
             </MatExpansionPanel>
         </MatAccordion>
-@if (CharityEvent.MaxVolunteers < 0 || CharityEvent.MaxVolunteers < CharityEvent.Volunteers.Count)
-        {
-            <MatButton Outlined="true" class="btn btn-primary" disabled="disabled">Update event</MatButton>
-        }
-        else
+        @if (CharityEvent.MaxVolunteers >= 0 && CharityEvent.MaxVolunteers >= CharityEvent.Volunteers.Count)
         {
             <MatButton Outlined="true" class="btn btn-primary" @onclick="UpdateEvent">Update event</MatButton>
         }
