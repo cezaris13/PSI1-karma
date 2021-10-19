@@ -8,9 +8,9 @@ Arentas, Martinas, Pijus
 1. Launch (after launch the app should be accessible on localhost)
 
 # DB update
-1. Change KarmaContext
-1. run `dotnet ef migrations add NameOfMigration --context KarmaContext`
-1. run `dotnet ef database update --context=KarmaContext`
+1. Change KarmaContext or any model
+1. run `dotnet ef migrations add NameOfMigration --context KarmaContext` in package manager console
+1. run `dotnet ef database update --context=KarmaContext` in package manager console
 
 Notes:
 - DB browser for sqlite is great for checking DB itself.
