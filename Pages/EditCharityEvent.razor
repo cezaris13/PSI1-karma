@@ -17,28 +17,29 @@
     <MatTextField @bind-Value="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" Label="Event Description" Outlined="true"></MatTextField>
     <br>
     <MatTextField type="number" min="0" max="1000000" @bind-Value="@CharityEvent.MaxVolunteers" Label="Maximum number of volunteers" Outlined="true"></MatTextField>
-        @if (CharityEvent.MaxVolunteers < 0)
-        {
-            <p>
-                Illegal volunteer count, please choose a positive number.
-            </p>
-        }
-        else
-        {
-            <br>
-        }
-        @if (CharityEvent.MaxVolunteers < CharityEvent.Volunteers.Count)
-        {
-            <p>
-                Illegal volunteer count, please choose a value grater than currently assigned volunteeer count or reduce the number of volunteers in this event.
-            </p>
-        }
-        else
-        {
-            <br>
-        }
+    @if (CharityEvent.MaxVolunteers < 0)
+    {
+        <p>
+            Illegal volunteer count, please choose a positive number.
+        </p>
+    }
+    else
+    {
         <br>
-        <MatTextField @bind-Value="@CharityEvent.PhotoPath" @oninput="@((e) => { CharityEvent.PhotoPath = (string)e.Value; })" Label="Picture URL" Outlined="true"></MatTextField>
+    }
+    @if (CharityEvent.MaxVolunteers < CharityEvent.Volunteers.Count)
+    {
+        <p>
+            Illegal volunteer count, please choose a value grater than currently assigned volunteeer count or reduce the number of volunteers in this event.
+        </p>
+    }
+    else
+    {
+        <br>
+    }
+    <br>
+    <MatTextField @bind-Value="@CharityEvent.PhotoPath" @oninput="@((e) => { CharityEvent.PhotoPath = (string)e.Value; })" Label="Picture URL" Outlined="true"></MatTextField>
+    <br>
     <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search" Icon="search" IconTrailing="true"></MatTextField>
     <MatAccordion Multi="true">
         <MatExpansionPanel @bind-Expanded="@panelOpenState1">
@@ -55,7 +56,7 @@
                         var matches = regex.Matches(nameSurname + surnameName);
                         @if (matches.Count > 0)
                         {
-                            <MatListItem display: inline-block; width: 100%;>
+                            <MatListItem style=" display: inline-block; width: 100%;">
                                 <div>
                                     <div style="float:left">
                                         @volunteer.Name
@@ -92,9 +93,9 @@
                                 </div>
                                 <div style="float:right">
                                     @if (CharityEvent.MaxVolunteers >= 0 && CharityEvent.MaxVolunteers > CharityEvent.Volunteers.Count)
-                                        {
-                                            <MatButton Outlined="true" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</MatButton>
-                                        }
+                                    {
+                                        <MatButton Outlined="true" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</MatButton>
+                                    }
                                 </div>
                             </MatListItem>
                         }
@@ -104,9 +105,9 @@
         </MatExpansionPanel>
     </MatAccordion>
     @if (CharityEvent.MaxVolunteers >= 0 && CharityEvent.MaxVolunteers >= CharityEvent.Volunteers.Count)
-        {
-            <MatButton Outlined="true" class="btn btn-primary" @onclick="UpdateEvent">Update event</MatButton>
-        }
+    {
+        <MatButton Outlined="true" class="btn btn-primary" @onclick="UpdateEvent">Update event</MatButton>
+    }
     <MatButton Raised="true" class="btn btn-primary" @onclick="DeleteEvent">Delete event</MatButton>
 }
 
