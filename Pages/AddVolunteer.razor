@@ -1,6 +1,7 @@
 ﻿@page "/addvolunteer"
 @using Karma.Models
 @using Karma.Data
+@using System.Security.Claims
 @inject IJSRuntime m_jsRuntime
 @using Microsoft.EntityFrameworkCore;
 
@@ -51,12 +52,18 @@
                 {
                     @if (listOfCharityEvents == null || !listOfCharityEvents.Contains(charityEvent))
                     {
-                        <MatListItem style=" display: inline-block; width: 100%;">>
+                        <MatListItem style=" display: inline-block; width: 100%;">
                             <div style="float:left; margin: 0">
                                 @charityEvent.Name
                             </div>
                             <div style="float:right">
-                                <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
+                                @if (charityEvent.ManagerId == CurrentUserId)
+                                {
+                                    @if (charityEvent.Volunteers.Count < charityEvent.MaxVolunteers)
+                                    {
+                                        <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
+                                    }
+                                }
                             </div>
                         </MatListItem>
                     }
@@ -76,6 +83,13 @@
     KarmaContext m_context = new KarmaContext();
     bool panelOpenState1 = true;
     bool panelOpenState2 = true;
+    string CurrentUserId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        var principal = m_httpContextAccessor.HttpContext.User;
+        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+    }
 
     private void AddThisVolunteer()
     {
@@ -93,7 +107,7 @@
 
     public IEnumerable<ICharityEvent> GetEventsNotOfThisVolunteer()
     {
-        return m_context.Events;
+        return m_context.Events.Include(p => p.Volunteers);
     }
 
     private void AddEventToVolunteerList(Guid id)

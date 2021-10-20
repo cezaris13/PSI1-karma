@@ -11,5 +11,7 @@ namespace Karma.Models
         string Description { get; set; }
 
         string ManagerId { get; set; }
+
+        string PhotoPath { get; set; }
     }
 }

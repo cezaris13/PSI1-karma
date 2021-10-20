@@ -18,6 +18,10 @@ namespace Karma.Models
 
         public string ManagerId { get; set; }
 
+        public int MaxVolunteers { get; set; }
+
+        public string PhotoPath { get; set; }
+
         public CharityEvent(string name, string description, Guid id, string managerId, CharityEventState state = CharityEventState.Undefined)
         {
             Id = id;
@@ -26,6 +30,8 @@ namespace Karma.Models
             State = state;
             Volunteers = new List<Volunteer>();
             ManagerId = managerId;
+            MaxVolunteers = 10;
+            PhotoPath = "https://iber.or.id/wp-content/themes/consultix/images/no-image-found-360x250.png";
         }
 
         public int CompareTo(object obj)
@@ -33,12 +39,12 @@ namespace Karma.Models
             if (obj == null)
                 return 1;
             CharityEvent tempCharityEvent = obj as CharityEvent;
-            if(tempCharityEvent == null)
+            if (tempCharityEvent == null)
                 throw new ArgumentException("Object is not a Charity event");
             else
             {
-                int compareResult= Name.CompareTo(tempCharityEvent.Name);
-                if (compareResult!= 0)
+                int compareResult = Name.CompareTo(tempCharityEvent.Name);
+                if (compareResult != 0)
                 {
                     return compareResult;
                 }

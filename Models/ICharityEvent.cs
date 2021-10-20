@@ -10,5 +10,7 @@ namespace Karma.Models
         CharityEventState State { get; set; }
 
         List<Volunteer> Volunteers { get; set; }
+
+        int MaxVolunteers { get; set; }
     }
 }

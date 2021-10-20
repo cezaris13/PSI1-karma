@@ -24,7 +24,7 @@
 
 @if (!m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
-    m_uriHelper.NavigateTo("Identity/Account/Login");
+    //m_uriHelper.NavigateTo("Identity/Account/Login");
 }
 
 <h1 class="mat">Karma</h1>
@@ -50,7 +50,7 @@ Ready to aquire karma points by helping out others?
                     </MatHeadline6>
                 </div>
                 <MatCardContent>
-                    <MatCardMedia Wide="true" ImageUrl="https://material-components.github.io/material-components-web-catalog/static/media/photos/3x2/2.jpg"></MatCardMedia>
+                    <MatCardMedia Wide="true" ImageUrl=@karmaEvent.PhotoPath></MatCardMedia>
                     <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">
                         @karmaEvent.Description
                     </MatBody2>

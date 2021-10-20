@@ -32,7 +32,7 @@
                         var matches = regex.Matches(charityEvent.Name + charityEvent.Description);
                         @if (matches.Count > 0)
                         {
-                            <MatListItem display: inline-block; width: 100%;>
+                            <MatListItem style=" display: inline-block; width: 100%;">
                                 <div style="float:left">
                                     @charityEvent.Name
                                 </div>
@@ -62,14 +62,17 @@
                         var matches = regex.Matches(charityEvent.Name + charityEvent.Description);
                         @if (matches.Count > 0)
                         {
-                            <MatListItem  display: inline-block; width: 100%;>
+                            <MatListItem style=" display: inline-block; width: 100%;">
                                 <div style="float:left">
                                     @charityEvent.Name
                                 </div>
                                 <div style="float:right">
                                     @if (charityEvent.ManagerId == CurrentUserId)
                                     {
-                                        <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
+                                        @if (charityEvent.Volunteers.Count < charityEvent.MaxVolunteers)
+                                        {
+                                            <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
+                                        }
                                     }
                                 </div>
                             </MatListItem>
