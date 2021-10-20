@@ -5,42 +5,36 @@
 
 <p>Here you can find the special equipment each volunteer owns.</p>
 
-@if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
-{
-    <table class="table">
-        <tbody>
+<table class="table">
+    <tbody>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Equipment</th>
+        </tr>
+        @foreach (var pair in GetPairsOfVolunteersAndEquipment())
+        {
             <tr>
-                <th>Name</th>
-                <th>Surname</th>
-                <th>Equipment</th>
-            </tr>
-            @foreach (var pair in GetPairsOfVolunteersAndEquipment())
-            {
-                <tr>
-                    <td>@pair.VolunteerName</td>
-                    <td>@pair.VolunteerSurname</td>
-                    <td>
-                        @if (pair.EquipmentList != null)
+                <td>@pair.VolunteerName</td>
+                <td>@pair.VolunteerSurname</td>
+                <td>
+                    @if (pair.EquipmentList != null)
+                    {
+
+                        @foreach(var equipmentItemName in pair.EquipmentList)
                         {
-
-                            @foreach(var equipmentItemName in pair.EquipmentList)
-                            {
-                                <div>
-                                    @equipmentItemName
-                                </div>
-                            }
+                            <div>
+                                @equipmentItemName
+                            </div>
                         }
+                    }
 
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <label for="fname">Please LogIn</label>
-}
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 @code
 {
     private KarmaContext KarmaContext { get; } = new KarmaContext();

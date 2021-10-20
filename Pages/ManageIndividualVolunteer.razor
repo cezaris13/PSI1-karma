@@ -7,95 +7,88 @@
 @inject IJSRuntime m_jsRuntime
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 
-@if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+@if (volunteer != null)
 {
-    @if (volunteer != null)
-    {
-        <h1 class="mat">Manage volunteer</h1>
-        <MatTextField @bind-Value="@volunteer.Name" @oninput="@((e) => { volunteer.Name = (string)e.Value; })" Label="Volunteer Name" Outlined="true"></MatTextField>
-        <br>
-        <br>
-        <MatTextField @bind-Value="@volunteer.Surname" @oninput="@((e) => { volunteer.Surname = (string)e.Value; })" Label="Volunteer Surname" Outlined="true"></MatTextField>
-        <br>
-        <br>
-        <br>
-        <br>
-        <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Charity Events" Icon="search" IconTrailing="true"></MatTextField>
-        <MatAccordion Multi="true">
-            <MatExpansionPanel @bind-Expanded="@panelOpenState1">
-                <MatExpansionPanelSummary>
-                    <MatExpansionPanelHeader>Charity events that this volunteer is working on</MatExpansionPanelHeader>
-                </MatExpansionPanelSummary>
-                <MatExpansionPanelDetails>
-                    <MatList>
-                        @foreach (var charityEvent in GetEventsOfThisVolunteer())
+    <h1 class="mat">Manage volunteer</h1>
+    <MatTextField @bind-Value="@volunteer.Name" @oninput="@((e) => { volunteer.Name = (string)e.Value; })" Label="Volunteer Name" Outlined="true"></MatTextField>
+    <br>
+    <br>
+    <MatTextField @bind-Value="@volunteer.Surname" @oninput="@((e) => { volunteer.Surname = (string)e.Value; })" Label="Volunteer Surname" Outlined="true"></MatTextField>
+    <br>
+    <br>
+    <br>
+    <br>
+    <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Charity Events" Icon="search" IconTrailing="true"></MatTextField>
+    <MatAccordion Multi="true">
+        <MatExpansionPanel @bind-Expanded="@panelOpenState1">
+            <MatExpansionPanelSummary>
+                <MatExpansionPanelHeader>Charity events that this volunteer is working on</MatExpansionPanelHeader>
+            </MatExpansionPanelSummary>
+            <MatExpansionPanelDetails>
+                <MatList>
+                    @foreach (var charityEvent in GetEventsOfThisVolunteer())
+                    {
+                        var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                        var matches = regex.Matches(charityEvent.Name + charityEvent.Description);
+                        @if (matches.Count > 0)
                         {
-                            var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                            var matches = regex.Matches(charityEvent.Name + charityEvent.Description);
-                            @if (matches.Count > 0)
-                            {
-                                <MatListItem>
-                                    <div style="float:left">
-                                        @charityEvent.Name
-                                    </div>
-                                    <div style="float:right">
-                                        @if (charityEvent.ManagerId == CurrentUserId)
-                                        {
-                                            <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</MatButton>
-                                        }
-                                    </div>
-                                </MatListItem>
+                            <MatListItem style=" display: inline-block; width: 100%;">
+                                <div style="float:left">
+                                    @charityEvent.Name
+                                </div>
+                                <div style="float:right">
+                                    @if (charityEvent.ManagerId == CurrentUserId)
+                                    {
+                                        <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</MatButton>
+                                    }
+                                </div>
+                            </MatListItem>
 
-                            }
                         }
-                    </MatList>
-                </MatExpansionPanelDetails>
-            </MatExpansionPanel>
+                    }
+                </MatList>
+            </MatExpansionPanelDetails>
+        </MatExpansionPanel>
 
-            <MatExpansionPanel @bind-Expanded="@panelOpenState2">
-                <MatExpansionPanelSummary>
-                    <MatExpansionPanelHeader>Charity events that this volunteer could be a part of</MatExpansionPanelHeader>
-                </MatExpansionPanelSummary>
-                <MatExpansionPanelDetails>
-                    <MatList>
-                        @foreach (var charityEvent in GetEventsNotOfThisVolunteer())
+        <MatExpansionPanel @bind-Expanded="@panelOpenState2">
+            <MatExpansionPanelSummary>
+                <MatExpansionPanelHeader>Charity events that this volunteer could be a part of</MatExpansionPanelHeader>
+            </MatExpansionPanelSummary>
+            <MatExpansionPanelDetails>
+                <MatList>
+                    @foreach (var charityEvent in GetEventsNotOfThisVolunteer())
+                    {
+                        var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                        var matches = regex.Matches(charityEvent.Name + charityEvent.Description);
+                        @if (matches.Count > 0)
                         {
-                            var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                            var matches = regex.Matches(charityEvent.Name + charityEvent.Description);
-                            @if (matches.Count > 0)
-                            {
-                                <MatListItem>
-                                    <div style="float:left">
-                                        @charityEvent.Name
-                                    </div>
-                                    <div style="float:right">
-                                        @if (charityEvent.ManagerId == CurrentUserId)
-                                        {
-                                            @if (charityEvent.Volunteers.Count < charityEvent.MaxVolunteers)
+                            <MatListItem style=" display: inline-block; width: 100%;">
+                                <div style="float:left">
+                                    @charityEvent.Name
+                                </div>
+                                <div style="float:right">
+                                    @if (charityEvent.ManagerId == CurrentUserId)
+                                    {
+                                        @if (charityEvent.Volunteers.Count < charityEvent.MaxVolunteers)
                                             {
                                                 <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
                                             }
-                                        }
-                                    </div>
-                                </MatListItem>
-                            }
+                                    }
+                                </div>
+                            </MatListItem>
                         }
-                    </MatList>
-                </MatExpansionPanelDetails>
-            </MatExpansionPanel>
-        </MatAccordion>
-        <br>
-        <br>
-        <MatButton Raised="true" class="btn btn-primary" @onclick="UpdateVolunteerData">Update volunteer data</MatButton>
-    }
-    else
-    {
-        <h1 class="mat">Sorry,but this volunteer was not found</h1>
-    }
+                    }
+                </MatList>
+            </MatExpansionPanelDetails>
+        </MatExpansionPanel>
+    </MatAccordion>
+    <br>
+    <br>
+    <MatButton Raised="true" class="btn btn-primary" @onclick="UpdateVolunteerData">Update volunteer data</MatButton>
 }
 else
 {
-    <label for="fname">Please LogIn</label>
+    <h1 class="mat">Sorry,but this volunteer was not found</h1>
 }
 
 @code
