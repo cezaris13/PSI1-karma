@@ -9,84 +9,77 @@
 
 @using System.Text.RegularExpressions;
 
-@if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+@if (CharityEvent.ManagerId == CurrentUserId)
 {
-    if (CharityEvent.ManagerId == CurrentUserId)
-    {
-        <h1 class="mat">Edit charity event</h1>
-        <MatTextField @bind-Value="@CharityEvent.Name" @oninput="@((e) => { CharityEvent.Name = (string)e.Value; })" Label="Event Title" Outlined="true"></MatTextField>
-        <br>
-        <MatTextField @bind-Value="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" Label="Event Description" Outlined="true"></MatTextField>
-        <br>
-        <br>
-        <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search" Icon="search" IconTrailing="true"></MatTextField>
-        <MatAccordion Multi="true">
-            <MatExpansionPanel @bind-Expanded="@panelOpenState1">
-                <MatExpansionPanelSummary>
-                    <MatExpansionPanelHeader>Volunteers that are working on this event</MatExpansionPanelHeader>
-                </MatExpansionPanelSummary>
-                <MatExpansionPanelDetails>
-                    <MatList>
-                        @foreach (var volunteer in GetVolunteersInThisEvent())
+    <h1 class="mat">Edit charity event</h1>
+    <MatTextField @bind-Value="@CharityEvent.Name" @oninput="@((e) => { CharityEvent.Name = (string)e.Value; })" Label="Event Title" Outlined="true"></MatTextField>
+    <br>
+    <MatTextField @bind-Value="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" Label="Event Description" Outlined="true"></MatTextField>
+    <br>
+    <br>
+    <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search" Icon="search" IconTrailing="true"></MatTextField>
+    <MatAccordion Multi="true">
+        <MatExpansionPanel @bind-Expanded="@panelOpenState1">
+            <MatExpansionPanelSummary>
+                <MatExpansionPanelHeader>Volunteers that are working on this event</MatExpansionPanelHeader>
+            </MatExpansionPanelSummary>
+            <MatExpansionPanelDetails>
+                <MatList>
+                    @foreach (var volunteer in GetVolunteersInThisEvent())
+                    {
+                        nameSurname = volunteer.Name + " " + volunteer.Surname;
+                        surnameName = volunteer.Surname + " " + volunteer.Name;
+                        var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                        var matches = regex.Matches(nameSurname + surnameName);
+                        @if (matches.Count > 0)
                         {
-                            nameSurname = volunteer.Name + " " + volunteer.Surname;
-                            surnameName = volunteer.Surname + " " + volunteer.Name;
-                            var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                            var matches = regex.Matches(nameSurname + surnameName);
-                            @if (matches.Count > 0)
-                            {
-                                <MatListItem display: inline-block; width: 100%;>
-                                    <div>
-                                        <div style="float:left">
-                                            @volunteer.Name
-                                            @volunteer.Surname
-                                        </div>
-                                        <div style="float:right">
-                                            <MatButton Outlined="true" @onclick="() => RemoveVolunteerFromEvent(volunteer.Id)">Remove</MatButton>
-
-                                        </div>
-                                    </div>
-                                </MatListItem>
-                            }
-                        }
-                    </MatList>
-                </MatExpansionPanelDetails>
-            </MatExpansionPanel>
-
-            <MatExpansionPanel @bind-Expanded="@panelOpenState2">
-                <MatExpansionPanelSummary>
-                    <MatExpansionPanelHeader>Volunteers that could be added to this event</MatExpansionPanelHeader>
-                </MatExpansionPanelSummary>
-                <MatExpansionPanelDetails>
-                    <MatList>
-                        @foreach (var volunteer in GetVolunteersNotInThisEvent())
-                        {
-                            var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                            var matches = regex.Matches(volunteer.Name + volunteer.Surname);
-                            @if (matches.Count > 0)
-                            {
-                                <MatListItem display: inline-block; width: 100%;>
+                            <MatListItem display: inline-block; width: 100%;>
+                                <div>
                                     <div style="float:left">
                                         @volunteer.Name
                                         @volunteer.Surname
                                     </div>
                                     <div style="float:right">
-                                        <MatButton Outlined="true" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</MatButton>
+                                        <MatButton Outlined="true" @onclick="() => RemoveVolunteerFromEvent(volunteer.Id)">Remove</MatButton>
+
                                     </div>
-                                </MatListItem>
-                            }
+                                </div>
+                            </MatListItem>
                         }
-                    </MatList>
-                </MatExpansionPanelDetails>
-            </MatExpansionPanel>
-        </MatAccordion>
-        <MatButton Outlined="true" class="btn btn-primary" @onclick="UpdateEvent">Update event</MatButton>
-        <MatButton Raised="true" class="btn btn-primary" @onclick="DeleteEvent">Delete event</MatButton>
-    }
-    else
-    {
-        <h1 class="mat">Cannot access this event</h1>
-    }
+                    }
+                </MatList>
+            </MatExpansionPanelDetails>
+        </MatExpansionPanel>
+
+        <MatExpansionPanel @bind-Expanded="@panelOpenState2">
+            <MatExpansionPanelSummary>
+                <MatExpansionPanelHeader>Volunteers that could be added to this event</MatExpansionPanelHeader>
+            </MatExpansionPanelSummary>
+            <MatExpansionPanelDetails>
+                <MatList>
+                    @foreach (var volunteer in GetVolunteersNotInThisEvent())
+                    {
+                        var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                        var matches = regex.Matches(volunteer.Name + volunteer.Surname);
+                        @if (matches.Count > 0)
+                        {
+                            <MatListItem display: inline-block; width: 100%;>
+                                <div style="float:left">
+                                    @volunteer.Name
+                                    @volunteer.Surname
+                                </div>
+                                <div style="float:right">
+                                    <MatButton Outlined="true" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</MatButton>
+                                </div>
+                            </MatListItem>
+                        }
+                    }
+                </MatList>
+            </MatExpansionPanelDetails>
+        </MatExpansionPanel>
+    </MatAccordion>
+    <MatButton Outlined="true" class="btn btn-primary" @onclick="UpdateEvent">Update event</MatButton>
+    <MatButton Raised="true" class="btn btn-primary" @onclick="DeleteEvent">Delete event</MatButton>
 }
 
 @code

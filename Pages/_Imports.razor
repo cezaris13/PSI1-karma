@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Http
 @using MatBlazor
-@using Karma.Services 
+@using Karma.Services
 @inject IHttpContextAccessor m_httpContextAccessor
 @inject NavigationManager m_uriHelper
-@inject INotificationPopup m_notificationPopup 
+@inject INotificationPopup m_notificationPopup
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]

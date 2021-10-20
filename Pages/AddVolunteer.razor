@@ -6,74 +6,68 @@
 
 <h1 class="mat">Add volunteer</h1>
 
-@if (m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
-{
-    <MatTextField @bind-Value="@VolunteerName" @oninput="@((e) => { VolunteerName = (string)e.Value; })" Label=" Volunteer Name" Outlined="true"></MatTextField>
-    <br>
-    <br>
-    <MatTextField @bind-Value="@VolunteerSurname" @oninput="@((e) => { VolunteerSurname = (string)e.Value; })" Label=" Volunteer Surname" Outlined="true"></MatTextField>
-    <br>
-    <br>
-    <MatButton Raised="true" class="btn btn-primary" @onclick="AddThisVolunteer">Add volunteer</MatButton>
-    <br>
-    <br>
-    <br>
-    <br>
-    <MatAccordion Multi="true">
-        <MatExpansionPanel @bind-Expanded="@panelOpenState1">
-            <MatExpansionPanelSummary>
-                <MatExpansionPanelHeader>Charity events that this volunteer is working on</MatExpansionPanelHeader>
-            </MatExpansionPanelSummary>
-            <MatExpansionPanelDetails>
-                <MatList>
-                    @if (GetEventsOfThisVolunteer() != null)
+<MatTextField @bind-Value="@VolunteerName" @oninput="@((e) => { VolunteerName = (string)e.Value; })" Label=" Volunteer Name" Outlined="true"></MatTextField>
+<br>
+<br>
+<MatTextField @bind-Value="@VolunteerSurname" @oninput="@((e) => { VolunteerSurname = (string)e.Value; })" Label=" Volunteer Surname" Outlined="true"></MatTextField>
+<br>
+<br>
+<MatButton Raised="true" class="btn btn-primary" @onclick="AddThisVolunteer">Add volunteer</MatButton>
+<br>
+<br>
+<br>
+<br>
+<MatAccordion Multi="true">
+    <MatExpansionPanel @bind-Expanded="@panelOpenState1">
+        <MatExpansionPanelSummary>
+            <MatExpansionPanelHeader>Charity events that this volunteer is working on</MatExpansionPanelHeader>
+        </MatExpansionPanelSummary>
+        <MatExpansionPanelDetails>
+            <MatList>
+                @if (GetEventsOfThisVolunteer() != null)
+                {
+                    @foreach (var charityEvent in GetEventsOfThisVolunteer())
                     {
-                        @foreach (var charityEvent in GetEventsOfThisVolunteer())
-                        {
-                            <MatListItem style=" display: inline-block; width: 100%;">
-                                <div style="float:left; margin: 0">
-                                    @charityEvent.Name
-                                </div>
-                                <div style="float:right">
-                                    <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</MatButton>
-                                </div>
-                            </MatListItem>
-                        }
+                        <MatListItem style=" display: inline-block; width: 100%;">
+                            <div style="float:left; margin: 0">
+                                @charityEvent.Name
+                            </div>
+                            <div style="float:right">
+                                <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</MatButton>
+                            </div>
+                        </MatListItem>
                     }
-                </MatList>
-            </MatExpansionPanelDetails>
-        </MatExpansionPanel>
-        <MatExpansionPanel @bind-Expanded="@panelOpenState2">
-            <MatExpansionPanelSummary>
-                <MatExpansionPanelHeader>Charity events that this volunteer could be a part of:</MatExpansionPanelHeader>
-            </MatExpansionPanelSummary>
-            <MatExpansionPanelDetails>
-                <MatList>
-                    @foreach (var charityEvent in GetEventsNotOfThisVolunteer())
+                }
+            </MatList>
+        </MatExpansionPanelDetails>
+    </MatExpansionPanel>
+    <MatExpansionPanel @bind-Expanded="@panelOpenState2">
+        <MatExpansionPanelSummary>
+            <MatExpansionPanelHeader>Charity events that this volunteer could be a part of:</MatExpansionPanelHeader>
+        </MatExpansionPanelSummary>
+        <MatExpansionPanelDetails>
+            <MatList>
+                @foreach (var charityEvent in GetEventsNotOfThisVolunteer())
+                {
+                    @if (listOfCharityEvents == null || !listOfCharityEvents.Contains(charityEvent))
                     {
-                        @if (listOfCharityEvents == null || !listOfCharityEvents.Contains(charityEvent))
-                        {
-                            <MatListItem style=" display: inline-block; width: 100%;">>
-                                <div style="float:left; margin: 0">
-                                    @charityEvent.Name
-                                </div>
-                                <div style="float:right">
-                                    <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
-                                </div>
-                            </MatListItem>
-                        }
+                        <MatListItem style=" display: inline-block; width: 100%;">>
+                            <div style="float:left; margin: 0">
+                                @charityEvent.Name
+                            </div>
+                            <div style="float:right">
+                                <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
+                            </div>
+                        </MatListItem>
                     }
-                </MatList>
-            </MatExpansionPanelDetails>
-        </MatExpansionPanel>
-    </MatAccordion>
-    <br>
-    <br>
-}
-else
-{
-    <label for="fname">Please LogIn:</label>
-}
+                }
+            </MatList>
+        </MatExpansionPanelDetails>
+    </MatExpansionPanel>
+</MatAccordion>
+<br>
+<br>
+
 @code
 {
     string VolunteerName { get; set; }
