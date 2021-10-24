@@ -4,6 +4,7 @@
 @using Microsoft.EntityFrameworkCore;
 @using System.Security.Claims
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
+@inject IWeatherForecast m_weatherForecast
 
 @if (charityEvent != null)
 {
@@ -12,6 +13,10 @@
     <h2 class="mat">@charityEvent.Description</h2>
 
     <h3 class="mat">@charityEvent.State.ToString()</h3>
+
+    <h3 class="mat">@charityEvent.Location</h3>
+
+    <h3 class="mat">@WeatherForecast</h3>
 
     <ol>
         @foreach (var volunteer in GetVolunteers())
@@ -36,12 +41,14 @@ else
     private CharityEvent charityEvent;
     KarmaContext KarmaContext = new KarmaContext();
     string CurrentUserId { get; set; }
+    string WeatherForecast { get; set; } = "loading weather forecast";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         charityEvent = KarmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
         var principal = m_httpContextAccessor.HttpContext.User;
         CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        WeatherForecast = await m_weatherForecast.GetWeather(charityEvent.Location);
     }
 
     public void NavigateToEditEvent()
@@ -51,6 +58,6 @@ else
 
     public IEnumerable<string> GetVolunteers()
     {
-        return KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p =>p).Select(p=>$"{p.Name} {p.Surname}");
+        return KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p).Select(p => $"{p.Name} {p.Surname}");
     }
 }
