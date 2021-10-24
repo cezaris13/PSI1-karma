@@ -107,7 +107,7 @@ else
         m_context.Volunteers.Update(volunteer);
         m_context.SaveChanges();
         m_uriHelper.NavigateTo("/volunteers");
-        m_notificationPopup.ShowMessage("The volunteer has been updated");
+        m_notifactionTransmitter.ShowMessage("The volunteer has been updated");
     }
 
     protected override void OnInitialized()

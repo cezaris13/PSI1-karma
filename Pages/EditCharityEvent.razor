@@ -130,7 +130,7 @@
         KarmaContext.Events.Update(CharityEvent);
         KarmaContext.SaveChanges();
         m_uriHelper.NavigateTo("");
-        m_notificationPopup.ShowMessage("The event has been updated");
+        m_notifactionTransmitter.ShowMessage("The event has been updated");
     }
 
     private void DeleteEvent()
@@ -138,7 +138,7 @@
         KarmaContext.Events.Where(x => x.Id == Id).Delete();
         KarmaContext.SaveChanges();
         m_uriHelper.NavigateTo("");
-        m_notificationPopup.ShowMessage("The event has been deleted");
+        m_notifactionTransmitter.ShowMessage("The event has been deleted");
     }
 
     protected override void OnInitialized()

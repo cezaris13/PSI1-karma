@@ -86,7 +86,7 @@
     {
         KarmaContext.Volunteers.Where(x => x.Id == id).DeleteFromQuery();
         KarmaContext.SaveChanges();
-        m_notificationPopup.ShowMessage("The volunteer has been removed");
+        m_notifactionTransmitter.ShowMessage("The volunteer has been removed");
     }
 
     public void NavigateToManageVolunteer(Guid id)

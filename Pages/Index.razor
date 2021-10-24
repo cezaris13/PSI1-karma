@@ -68,6 +68,9 @@ Ready to aquire karma points by helping out others?
 
     public IEnumerable<IGenericKarmaItem> GetEvents()
     {
+        //var c = new Counter();
+        //c.ThresholdReached += c_ThresholdReached;
+        //c.doStuff();
         var result = KarmaContext.Events.ToList();
         result.Sort();
         return result;
@@ -77,4 +80,37 @@ Ready to aquire karma points by helping out others?
     {
         m_uriHelper.NavigateTo($"event/{id}");
     }
+    /*
+    class Counter
+    {
+        protected virtual void OnThresholdReached(ThresholdReachedEventArgs e)
+        {
+            ThresholdReachedEventHandler handler = ThresholdReached;
+            handler?.Invoke(this, e);
+        }
+
+        public event ThresholdReachedEventHandler ThresholdReached;
+
+        public void doStuff()
+        {
+            ThresholdReachedEventArgs args = new ThresholdReachedEventArgs();
+            args.Threshold = 5;
+            args.TimeReached = DateTime.Now;
+            OnThresholdReached(args);
+        }
+
+        // provide remaining implementation for the class
+    }
+
+    public delegate void ThresholdReachedEventHandler(object sender, ThresholdReachedEventArgs e);
+    public class ThresholdReachedEventArgs : EventArgs
+    {
+        public int Threshold { get; set; }
+        public DateTime TimeReached { get; set; }
+    }
+
+    static void c_ThresholdReached(Object sender, ThresholdReachedEventArgs e)
+    {
+        Console.WriteLine("The threshold was reached.");
+    }*/
 }

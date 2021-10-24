@@ -39,7 +39,8 @@ namespace Karma
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
-            services.AddScoped<INotificationPopup, NotificationPopup>();
+            services.AddScoped<INotifactionTransmitter, NotificationTransmitter>();
+            services.AddScoped<NotificationToaster>();
 
             services.AddHttpContextAccessor();
             services.AddMatBlazor();
