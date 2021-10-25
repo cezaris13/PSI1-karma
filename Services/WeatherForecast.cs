@@ -30,7 +30,7 @@ namespace Karma.Services
         {
             try
             {
-                var forward = m_geocoder.Geocode(location);// check if ok(next commit)
+                var forward = m_geocoder.Geocode(location);
                 var point = forward.Results[0].Geometry;
                 HttpRequestMessage message = new HttpRequestMessage
                 {

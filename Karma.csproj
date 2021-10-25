@@ -26,4 +26,8 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\js\GetMap.js" />
+  </ItemGroup>
+
 </Project>

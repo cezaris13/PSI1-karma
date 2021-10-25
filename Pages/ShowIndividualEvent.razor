@@ -5,6 +5,9 @@
 @using System.Security.Claims
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 @inject IWeatherForecast m_weatherForecast
+@inject IJSRuntime jsRuntime
+@using OpenCage.Geocode
+@inject IGeocoder m_geocoder
 
 @if (charityEvent != null)
 {
@@ -24,6 +27,7 @@
             <li>@volunteer</li>
         }
     </ol>
+    <div id="mapid" style="height:500px;width:500px"></div>
     if (CurrentUserId == charityEvent.ManagerId)
     {
         <MatButton Raised="true" class="btn btn-primary" @onclick="NavigateToEditEvent">Update event</MatButton>
@@ -49,6 +53,9 @@ else
         var principal = m_httpContextAccessor.HttpContext.User;
         CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
         WeatherForecast = await m_weatherForecast.GetWeather(charityEvent.Location);
+        var location = m_geocoder.Geocode(charityEvent.Location);
+        var coords = location.Results[0].Geometry;
+        await jsRuntime.InvokeVoidAsync("GetMap", coords.Latitude, coords.Longitude);
     }
 
     public void NavigateToEditEvent()
