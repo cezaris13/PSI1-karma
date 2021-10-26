@@ -61,6 +61,9 @@
                                     <div style="float:left">
                                         @volunteer.Name
                                         @volunteer.Surname
+                                        (
+                                        @GetNumberOfEquipmentOfThisVolunteer(volunteer.Id)
+                                        )
                                     </div>
                                     <div style="float:right">
                                         <MatButton Outlined="true" @onclick="() => RemoveVolunteerFromEvent(volunteer.Id)">Remove</MatButton>
@@ -90,6 +93,9 @@
                                 <div style="float:left">
                                     @volunteer.Name
                                     @volunteer.Surname
+                                    (
+                                    @GetNumberOfEquipmentOfThisVolunteer(volunteer.Id)
+                                    )
                                 </div>
                                 <div style="float:right">
                                     @if (CharityEvent.MaxVolunteers >= 0 && CharityEvent.MaxVolunteers > CharityEvent.Volunteers.Count)
@@ -168,5 +174,18 @@
     {
         CharityEvent.Volunteers.Remove(KarmaContext.Volunteers.Where(p => p.Id == id).FirstOrDefault());
         KarmaContext.SaveChanges();
+    }
+
+    private int GetNumberOfEquipmentOfThisVolunteer(Guid volunteerId)
+    {
+        var equipmentList = new List<ISpecialEquipment>();
+        foreach (var equipment in KarmaContext.SpecialEquipment.Include(p => p.Owner))
+        {
+            if (equipment.Owner.Id == volunteerId)
+            {
+                equipmentList.Add(equipment);
+            }
+        }
+        return equipmentList.Count();
     }
 }

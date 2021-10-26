@@ -12,17 +12,30 @@
     <h2 class="mat">@charityEvent.Description</h2>
 
     <h3 class="mat">@charityEvent.State.ToString()</h3>
-
-    <ol>
-        @foreach (var volunteer in GetVolunteers())
-        {
-            <li>@volunteer</li>
-        }
-    </ol>
     if (CurrentUserId == charityEvent.ManagerId)
     {
         <MatButton Raised="true" class="btn btn-primary" @onclick="NavigateToEditEvent">Update event</MatButton>
     }
+    <br>
+    <br>
+    <div style="float:left; width:40%">
+        <p>Event volunteers:</p>
+        <ol>
+            @foreach (var volunteer in GetVolunteers())
+            {
+                <li>@volunteer</li>
+            }
+        </ol>
+    </div>
+    <div style="float:right; width:40%">
+        <p>Event equipment:</p>
+        <ol>
+            @foreach (var equipment in GetEquipment())
+            {
+                <li>@equipment</li>
+            }
+        </ol>
+    </div>
 }
 else
 {
@@ -51,6 +64,22 @@ else
 
     public IEnumerable<string> GetVolunteers()
     {
-        return KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p =>p).Select(p=>$"{p.Name} {p.Surname}");
+        return KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p).Select(p => $"{p.Name} {p.Surname}");
+    }
+
+    public IEnumerable<string> GetEquipment()
+    {
+        var eventEquipment = new List<string>();
+        foreach (var equipment in KarmaContext.SpecialEquipment.Include(p => p.Owner))
+        {
+            foreach (var volunteer in KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p))
+            {
+                if(equipment.Owner.Id == volunteer.Id)
+                {
+                    eventEquipment.Add(equipment.Name);
+                }
+            }
+        }
+        return eventEquipment;
     }
 }
