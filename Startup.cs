@@ -41,9 +41,10 @@ namespace Karma
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
-            services.AddScoped<INotificationPopup, NotificationPopup>();
             services.AddSingleton<IWeatherForecast, WeatherForecast>();
             services.AddSingleton<IGeocoder>(p=>new Geocoder(Configuration["OpenCageGeocodingSecret"]));
+            services.AddScoped<INotifactionTransmitter, NotificationTransmitter>();
+            services.AddScoped<NotificationToaster>();
 
             services.AddHttpClient();
             services.AddHttpContextAccessor();
