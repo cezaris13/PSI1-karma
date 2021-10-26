@@ -34,7 +34,6 @@
 
     private void AddEvent()
     {
-        // add check if location is valid
         var ev = new CharityEvent(EventTitle, EventDescription, Guid.NewGuid(), CurrentUserId, EventLocation);
         KarmaContext.Events.Add(ev);
         KarmaContext.SaveChanges();
