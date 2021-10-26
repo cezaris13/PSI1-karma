@@ -3,5 +3,6 @@
 @using Karma.Services
 @inject IHttpContextAccessor m_httpContextAccessor
 @inject NavigationManager m_uriHelper
-@inject INotificationPopup m_notificationPopup
+@inject INotifactionTransmitter m_notifactionTransmitter
+@inject NotificationToaster veryBadWayToDoThings
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
