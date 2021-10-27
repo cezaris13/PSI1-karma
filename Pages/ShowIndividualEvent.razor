@@ -21,7 +21,7 @@
 
     <h3 class="mat">@WeatherForecast</h3>
 
-<div id="mapid" style="height:500px;width:500px"></div>
+    <div id="mapid" style="height:500px;width:500px"></div>
 
     if (CurrentUserId == charityEvent.ManagerId)
     {
@@ -88,13 +88,7 @@ else
         var eventEquipment = new List<string>();
         foreach (var equipment in KarmaContext.SpecialEquipment.Include(p => p.Owner))
         {
-            foreach (var volunteer in KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p))
-            {
-                if(equipment.Owner.Id == volunteer.Id)
-                {
-                    eventEquipment.Add(equipment.Name);
-                }
-            }
+            eventEquipment.Add(KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).Select(P => p.Id == equipment.owner.Id).SelectMany(p => p).Select(p => $"{p.Name}"));
         }
         return eventEquipment;
     }

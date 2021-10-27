@@ -99,7 +99,6 @@
                                     <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEquipment(equipment.Id)">Remove</MatButton>
                                 </div>
                             </MatListItem>
-
                         }
                     }
                 </MatList>
@@ -172,15 +171,7 @@ else
 
     public IEnumerable<ISpecialEquipment> GetEquipmentOfThisVolunteer()
     {
-        var equipmentList = new List<ISpecialEquipment>();
-        foreach (var equipment in m_context.SpecialEquipment.Include(p => p.Owner))
-        {
-            if (equipment.Owner.Id == Id)
-            {
-                equipmentList.Add(equipment);
-            }
-        }
-        return equipmentList;
+        return m_context.SpecialEquipment.Include(p => p.Owner).Where(p => p.Owner.Id == Id);
     }
 
     private void RemoveEquipment(Guid id)

@@ -180,14 +180,6 @@
 
     private int GetNumberOfEquipmentOfThisVolunteer(Guid volunteerId)
     {
-        var equipmentList = new List<ISpecialEquipment>();
-        foreach (var equipment in KarmaContext.SpecialEquipment.Include(p => p.Owner))
-        {
-            if (equipment.Owner.Id == volunteerId)
-            {
-                equipmentList.Add(equipment);
-            }
-        }
-        return equipmentList.Count();
+        return KarmaContext.SpecialEquipment.Include(p => p.Owner).Where(p => p.Owner.Id == volunteerId).Count();
     }
 }
