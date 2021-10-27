@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using System;
 using System.Threading.Tasks;
 
 namespace Karma.Services
@@ -17,15 +18,16 @@ namespace Karma.Services
 
         public Task SendEmailAsync(string email, string subject, string message)
         {
-            return Execute(m_config["SendGridApiKey"], subject, message, email);
+            Func<string, string, EmailAddress> constructFrom = (x, y) => new EmailAddress(x, y);
+            return Execute(m_config["SendGridApiKey"], subject, message, email, constructFrom);
         }
 
-        public Task Execute(string apiKey, string subject, string message, string email)
+        public Task Execute(string apiKey, string subject, string message, string email, Func<string, string, EmailAddress> constructFrom)
         {
             var client = new SendGridClient(apiKey);
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress(m_config["KarmaEmail"], m_config["PasswordConfirmationName"]),
+                From = constructFrom(m_config["KarmaEmail"], m_config["PasswordConfirmationName"]),
                 Subject = subject,
                 PlainTextContent = message,
                 HtmlContent = message

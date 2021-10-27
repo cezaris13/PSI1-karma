@@ -18,6 +18,8 @@ namespace Karma.Services
 
         private void DisplayNotification(string title)
         {
+            Func<int, int> square = x => x * x;
+            var y = square(5);
             m_toaster.Add(title, MatToastType.Success, "", "", config =>
             {
                 config.MaximumOpacity = Convert.ToInt32(100);
