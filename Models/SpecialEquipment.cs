@@ -5,7 +5,7 @@ using System;
 
 namespace Karma.Models
 {
-    public class SpecialEquipment
+    public class SpecialEquipment : ISpecialEquipment
     {
         public Guid Id { get; set; }
 
@@ -17,6 +17,13 @@ namespace Karma.Models
         {
             Id = id;
             Name = name;
+        }
+
+        public SpecialEquipment(Guid id, string name, Volunteer owner)
+        {
+            Id = id;
+            Name = name;
+            Owner = owner;
         }
     }
 }
