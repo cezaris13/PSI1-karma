@@ -17,7 +17,7 @@
 
     <h3 class="mat">@charityEvent.State.ToString()</h3>
 
-    <h3 class="mat">@charityEvent.Location</h3>
+    <h3 class="mat">@charityEvent.Address</h3>
 
     <h3 class="mat">@WeatherForecast</h3>
 
@@ -52,8 +52,8 @@ else
         charityEvent = KarmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
         var principal = m_httpContextAccessor.HttpContext.User;
         CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        WeatherForecast = await m_weatherForecast.GetWeather(charityEvent.Location);
-        var location = m_geocoder.Geocode(charityEvent.Location);
+        WeatherForecast = await m_weatherForecast.GetWeather(charityEvent.Address);
+        var location = m_geocoder.Geocode(charityEvent.Address);
         var coords = location.Results[0].Geometry;
         await jsRuntime.InvokeVoidAsync("GetMap", coords.Latitude, coords.Longitude);
     }

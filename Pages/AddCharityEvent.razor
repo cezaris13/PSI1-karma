@@ -13,7 +13,7 @@
 <MatTextField @bind-Value="@EventDescription" @oninput="@((e) => { EventDescription = (string)e.Value; })" Label="Event Description" Outlined="true"></MatTextField>
 <br>
 <br>
-<MatTextField @bind-Value="@EventLocation" @oninput="@((e) => { EventLocation = (string)e.Value; })" Label="Event Location" Outlined="true"></MatTextField>
+<MatTextField @bind-Value="@EventAddress" @oninput="@((e) => { EventAddress = (string)e.Value; })" Label="Event Location" Outlined="true"></MatTextField>
 <br>
 <br>
 <MatButton Raised="true" class="btn btn-primary" @onclick="AddEvent">Add event</MatButton>
@@ -24,7 +24,7 @@
     string EventTitle { get; set; }
     string EventDescription { get; set; }
     string CurrentUserId { get; set; }
-    string EventLocation { get; set; }
+    string EventAddress { get; set; }
 
     protected override void OnInitialized()
     {
@@ -34,7 +34,7 @@
 
     private void AddEvent()
     {
-        var ev = new CharityEvent(EventTitle, EventDescription, Guid.NewGuid(), CurrentUserId, EventLocation);
+        var ev = new CharityEvent(EventTitle, EventDescription, Guid.NewGuid(), CurrentUserId, EventAddress);
         KarmaContext.Events.Add(ev);
         KarmaContext.SaveChanges();
         m_uriHelper.NavigateTo("");

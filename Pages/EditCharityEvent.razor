@@ -16,7 +16,7 @@
     <br>
     <MatTextField @bind-Value="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" Label="Event Description" Outlined="true"></MatTextField>
     <br>
-    <MatTextField @bind-Value="@CharityEvent.Location" @oninput="@((e) => { CharityEvent.Location = (string)e.Value; })" Label="Event Location" Outlined="true"></MatTextField>
+    <MatTextField @bind-Value="@CharityEvent.Address" @oninput="@((e) => { CharityEvent.Address = (string)e.Value; })" Label="Event Location" Outlined="true"></MatTextField>
     <br>
     <MatTextField type="number" min="0" max="1000000" @bind-Value="@CharityEvent.MaxVolunteers" Label="Maximum number of volunteers" Outlined="true"></MatTextField>
     @if (CharityEvent.MaxVolunteers < 0)
