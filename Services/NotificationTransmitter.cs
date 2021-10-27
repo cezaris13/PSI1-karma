@@ -9,8 +9,9 @@ namespace Karma.Services
     {
         private void OnNotificationEvent(NotificationEventArgs args)
         {
-            var handler = NotificationEvent;
-            handler?.Invoke(this, args);
+            //var handler = NotificationEvent; //Alternative events
+            //handler?.Invoke(this, args); //Alternative events
+            NotificationEvent(this, args);
         }
 
         //public event NotificationEventHandler NotificationEvent; //Alternative events
