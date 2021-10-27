@@ -4,6 +4,10 @@
 @using Microsoft.EntityFrameworkCore;
 @using System.Security.Claims
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
+@inject IWeatherForecast m_weatherForecast
+@inject IJSRuntime jsRuntime
+@using OpenCage.Geocode
+@inject IGeocoder m_geocoder
 
 @if (charityEvent != null)
 {
@@ -12,6 +16,13 @@
     <h2 class="mat">@charityEvent.Description</h2>
 
     <h3 class="mat">@charityEvent.State.ToString()</h3>
+
+    <h3 class="mat">@charityEvent.Address</h3>
+
+    <h3 class="mat">@WeatherForecast</h3>
+
+<div id="mapid" style="height:500px;width:500px"></div>
+
     if (CurrentUserId == charityEvent.ManagerId)
     {
         <MatButton Raised="true" class="btn btn-primary" @onclick="NavigateToEditEvent">Update event</MatButton>
@@ -49,12 +60,17 @@ else
     private CharityEvent charityEvent;
     KarmaContext KarmaContext = new KarmaContext();
     string CurrentUserId { get; set; }
+    string WeatherForecast { get; set; } = "loading weather forecast";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         charityEvent = KarmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
         var principal = m_httpContextAccessor.HttpContext.User;
         CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        WeatherForecast = await m_weatherForecast.GetWeather(charityEvent.Address);
+        var location = m_geocoder.Geocode(charityEvent.Address);
+        var coords = location.Results[0].Geometry;
+        await jsRuntime.InvokeVoidAsync("GetMap", coords.Latitude, coords.Longitude);
     }
 
     public void NavigateToEditEvent()

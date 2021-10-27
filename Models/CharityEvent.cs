@@ -22,7 +22,9 @@ namespace Karma.Models
 
         public string PhotoPath { get; set; }
 
-        public CharityEvent(string name, string description, Guid id, string managerId, CharityEventState state = CharityEventState.Undefined)
+        public string Address { get; set; }
+
+        public CharityEvent(string name, string description, Guid id, string managerId, string address, CharityEventState state = CharityEventState.Undefined)
         {
             Id = id;
             Name = name;
@@ -32,6 +34,7 @@ namespace Karma.Models
             ManagerId = managerId;
             MaxVolunteers = 10;
             PhotoPath = "https://iber.or.id/wp-content/themes/consultix/images/no-image-found-360x250.png";
+            Address = address;
         }
 
         public int CompareTo(object obj)
