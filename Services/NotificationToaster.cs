@@ -16,24 +16,24 @@ namespace Karma.Services
             transmitter.NotificationEvent += HandleEvent;
         }
 
-        private void DisplayNotification(string title)
-        {
-            m_toaster.Add(title, MatToastType.Success, "", "", config =>
-            {
-                config.MaximumOpacity = Convert.ToInt32(100);
-
-                config.ShowTransitionDuration = Convert.ToInt32(500);
-                config.VisibleStateDuration = Convert.ToInt32(3000);
-                config.HideTransitionDuration = Convert.ToInt32(500);
-
-                config.RequireInteraction = false;
-            });
-
-        }
+        private delegate void DisplayNotification(string title);
 
         private void HandleEvent(Object sender, NotificationEventArgs e)
         {
-            DisplayNotification(e.Message);
+            DisplayNotification displayNotification = delegate (string title) {
+                m_toaster.Add(title, MatToastType.Success, "", "", config =>
+                {
+                    config.MaximumOpacity = Convert.ToInt32(100);
+
+                    config.ShowTransitionDuration = Convert.ToInt32(500);
+                    config.VisibleStateDuration = Convert.ToInt32(3000);
+                    config.HideTransitionDuration = Convert.ToInt32(500);
+
+                    config.RequireInteraction = false;
+                });
+            };
+
+            displayNotification(e.Message);
         }
     }
 }
