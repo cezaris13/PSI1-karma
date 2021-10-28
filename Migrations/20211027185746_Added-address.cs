@@ -2,12 +2,12 @@
 
 namespace Karma.Migrations
 {
-    public partial class Addedeventlocation : Migration
+    public partial class Addedaddress : Migration
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
+       protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "Location",
+                name: "Address",
                 table: "Events",
                 type: "TEXT",
                 nullable: true,
@@ -18,7 +18,7 @@ namespace Karma.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<int>(
-                name: "Location",
+                name: "Address",
                 table: "Events",
                 type: "TEXT",
                 nullable: false,
