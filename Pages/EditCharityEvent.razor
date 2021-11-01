@@ -18,27 +18,8 @@
     <br>
     <MatTextField @bind-Value="@CharityEvent.Address" @oninput="@((e) => { CharityEvent.Address = (string)e.Value; })" Label="Event Location" Outlined="true"></MatTextField>
     <br>
-    <MatTextField type="number" min="0" max="1000000" @bind-Value="@CharityEvent.MaxVolunteers" Label="Maximum number of volunteers" Outlined="true"></MatTextField>
-    @if (CharityEvent.MaxVolunteers < 0)
-    {
-        <p>
-            Illegal volunteer count, please choose a positive number.
-        </p>
-    }
-    else
-    {
-        <br>
-    }
-    @if (CharityEvent.MaxVolunteers < CharityEvent.Volunteers.Count)
-    {
-        <p>
-            Illegal volunteer count, please choose a value grater than currently assigned volunteeer count or reduce the number of volunteers in this event.
-        </p>
-    }
-    else
-    {
-        <br>
-    }
+    <MatTextField type="number" min="0" max="1000000" OnFocus="@OnFocusHandler" OnFocusOut="OnFocusOutHandler" @bind-Value="@VolunteerCount" Label="Maximum number of volunteers" Outlined="true"></MatTextField>
+    <div style="color:red">@ErrorMessage</div>
     <br>
     <MatTextField @bind-Value="@CharityEvent.PhotoPath" @oninput="@((e) => { CharityEvent.PhotoPath = (string)e.Value; })" Label="Picture URL" Outlined="true"></MatTextField>
     <br>
@@ -126,19 +107,50 @@
     KarmaContext KarmaContext = new KarmaContext();
     public CharityEvent CharityEvent;
     private string FilterValue { get; set; } = "";
-    private String nameSurname { get; set; } = "";
-    private String surnameName { get; set; } = "";
+    private string nameSurname { get; set; } = "";
+    private string surnameName { get; set; } = "";
+    private string ErrorMessage { get; set; } = "";
+    private int VolunteerCount { get; set; }
     bool panelOpenState1 = true;
     bool panelOpenState2 = true;
 
     string CurrentUserId { get; set; }
 
+    private void OnFocusHandler(FocusEventArgs e)
+    {
+        ErrorMessage = "";
+    }
+
+    private void OnFocusOutHandler(FocusEventArgs e)
+    {
+        var value = VolunteerCount;
+        if (value > 0 && value >= CharityEvent.Volunteers.Count)
+        {
+            CharityEvent.MaxVolunteers = value;
+        }
+        else if (value < 0)
+        {
+            ErrorMessage = "Illegal volunteer count, please choose a positive number.";
+        }
+        else
+        {
+            ErrorMessage = "Illegal volunteer count, please choose a value grater than currently assigned volunteeer count or reduce the number of volunteers in this event.";
+        }
+    }
+
     private void UpdateEvent()
     {
-        KarmaContext.Events.Update(CharityEvent);
-        KarmaContext.SaveChanges();
-        m_uriHelper.NavigateTo("");
-        m_notifactionTransmitter.ShowMessage("The event has been updated");
+        if (ObjectChecker.IsAnyNullOrEmpty(CharityEvent))
+        {
+            m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
+        }
+        else
+        {
+            KarmaContext.Events.Update(CharityEvent);
+            KarmaContext.SaveChanges();
+            m_uriHelper.NavigateTo("");
+            m_notifactionTransmitter.ShowMessage("The event has been updated", MatToastType.Success);
+        }
     }
 
     private void DeleteEvent()
@@ -146,7 +158,7 @@
         KarmaContext.Events.Where(x => x.Id == Id).Delete();
         KarmaContext.SaveChanges();
         m_uriHelper.NavigateTo("");
-        m_notifactionTransmitter.ShowMessage("The event has been deleted");
+        m_notifactionTransmitter.ShowMessage("The event has been deleted", MatToastType.Success);
     }
 
     protected override void OnInitialized()
@@ -154,6 +166,7 @@
         CharityEvent = KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).FirstOrDefault();
         var principal = m_httpContextAccessor.HttpContext.User;
         CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        VolunteerCount = CharityEvent.Volunteers.Count;
     }
 
     public IEnumerable<IVolunteer> GetVolunteersInThisEvent()

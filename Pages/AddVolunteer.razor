@@ -94,10 +94,17 @@
     private void AddThisVolunteer()
     {
         var vol = new Volunteer(name: VolunteerName, surname: VolunteerSurname, Guid.NewGuid(), listOfCharityEvents);
-        m_context.Volunteers.Add(vol);
-        m_context.SaveChanges();
-        m_uriHelper.NavigateTo("/volunteers");
-        m_notifactionTransmitter.ShowMessage("The volunteer has been added");
+        if (ObjectChecker.IsAnyNullOrEmpty(vol))
+        {
+            m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
+        }
+        else
+        {
+            m_context.Volunteers.Add(vol);
+            m_context.SaveChanges();
+            m_uriHelper.NavigateTo("/volunteers");
+            m_notifactionTransmitter.ShowMessage("The volunteer has been added", MatToastType.Success);
+        }
     }
 
     public IEnumerable<ICharityEvent> GetEventsOfThisVolunteer()
