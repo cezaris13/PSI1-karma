@@ -28,29 +28,26 @@ namespace Karma.Services
 
         public async Task<string> GetWeather(string location)
         {
-            try
+            var forward = m_geocoder.Geocode(location);
+            if (forward.Results.Length == 0)
             {
-                var forward = m_geocoder.Geocode(location);
-                var point = forward.Results[0].Geometry;
-                HttpRequestMessage message = new HttpRequestMessage
-                {
-                    RequestUri = new Uri($"https://api.gismeteo.net/v2/weather/current/?latitude={point.Latitude}&longitude={point.Longitude}&lang=en"),
-                    Headers =
+                throw new InvalidAddressException(location);
+            }
+            var point = forward.Results[0].Geometry;
+            HttpRequestMessage message = new HttpRequestMessage
+            {
+                RequestUri = new Uri($"https://api.gismeteo.net/v2/weather/current/?latitude={point.Latitude}&longitude={point.Longitude}&lang=en"),
+                Headers =
                     {
                         { "X-Gismeteo-Token", m_configuration["X-Gismeteo-Token"] }
                     },
-                    Method = HttpMethod.Get
-                };
-                var response = await m_httpClient.SendAsync(message);
-                var weatherForecast = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<WeatherForecastData>(weatherForecast);
+                Method = HttpMethod.Get
+            };
+            var response = await m_httpClient.SendAsync(message);
+            var weatherForecast = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<WeatherForecastData>(weatherForecast);
 
-                return $"Cloudiness : {result.Cloudiness}% Temperature: {result.Temperature}°C Humidity:{result.Humidity}%";
-            }
-            catch (Exception ex)
-            {
-                return $"something went wrong while trying to get weather forecast of :{location}";
-            }
+            return $"Cloudiness : {result.Cloudiness}% Temperature: {result.Temperature}°C Humidity:{result.Humidity}%";
         }
     }
 }

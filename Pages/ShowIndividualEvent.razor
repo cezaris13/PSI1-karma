@@ -67,10 +67,18 @@ else
         charityEvent = KarmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
         var principal = m_httpContextAccessor.HttpContext.User;
         CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        WeatherForecast = await m_weatherForecast.GetWeather(charityEvent.Address);
-        var location = m_geocoder.Geocode(charityEvent.Address);
-        var coords = location.Results[0].Geometry;
-        await jsRuntime.InvokeVoidAsync("GetMap", coords.Latitude, coords.Longitude);
+        try
+        {
+            WeatherForecast = await m_weatherForecast.GetWeather(charityEvent.Address);
+            var location = m_geocoder.Geocode(charityEvent.Address);
+            var coords = location.Results[0].Geometry;
+            await jsRuntime.InvokeVoidAsync("GetMap", coords.Latitude, coords.Longitude);
+        }
+        catch (InvalidAddressException ex)
+        {
+            m_notifactionTransmitter.ShowMessage("could not provide weather forecast:" + ex.Message, MatToastType.Danger);
+            WeatherForecast = "failed";
+        }
     }
 
     public void NavigateToEditEvent()
