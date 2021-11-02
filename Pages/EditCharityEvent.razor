@@ -114,6 +114,7 @@
     private int VolunteerCount { get; set; }
     bool panelOpenState1 = true;
     bool panelOpenState2 = true;
+    bool updateSuccess = false;
 
     string CurrentUserId { get; set; }
 
@@ -125,17 +126,16 @@
     private void OnFocusOutHandler(FocusEventArgs e)
     {
         var value = VolunteerCount;
-        if (value > 0 && value >= CharityEvent.Volunteers.Count)
+        if (value > 0)
         {
-            CharityEvent.MaxVolunteers = value;
-        }
-        else if (value < 0)
-        {
-            ErrorMessage = "Illegal volunteer count, please choose a positive number.";
+            if (value < CharityEvent.Volunteers.Count)
+                ErrorMessage = "Illegal volunteer count, please choose a value greater than currently assigned volunteeer count or reduce the number of volunteers in this event.";
+            else
+                CharityEvent.MaxVolunteers = value;
         }
         else
         {
-            ErrorMessage = "Illegal volunteer count, please choose a value grater than currently assigned volunteeer count or reduce the number of volunteers in this event.";
+            ErrorMessage = "Illegal volunteer count, please choose a positive number.";
         }
     }
 
@@ -149,15 +149,32 @@
         {
             Thread thread1 = new Thread(() =>
             {
-                KarmaContext.Events.Update(CharityEvent);
-                KarmaContext.SaveChanges();
+                try
+                {
+                    KarmaContext.Events.Update(CharityEvent);
+                    KarmaContext.SaveChanges();
+                    updateSuccess = true;
+                    //throw new DbUpdateException();// demonstration purposes
+                }
+                catch(DbUpdateException)
+                {
+                    updateSuccess = false;
+                }
             });
             Thread thread2 = new Thread(() =>
             {
-                m_uriHelper.NavigateTo("");
-                m_notifactionTransmitter.ShowMessage("The event has been updated", MatToastType.Success);
+                if (updateSuccess)
+                {
+                    m_uriHelper.NavigateTo("");
+                    m_notifactionTransmitter.ShowMessage("The event has been updated", MatToastType.Success);
+                }
+                else
+                {
+                    m_notifactionTransmitter.ShowMessage("An error occured while updating the event", MatToastType.Danger);
+                }
             });
             thread1.Start();
+            thread1.Join();
             thread2.Start();
         }
     }

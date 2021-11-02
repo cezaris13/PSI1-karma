@@ -33,7 +33,7 @@
 
     private void AddEvent()
     {
-        var ev = new CharityEvent(EventTitle, EventDescription, Guid.NewGuid(), CurrentUserId, EventAddress);// check if empty fields or sth like that
+        var ev = new CharityEvent(EventTitle, EventDescription, Guid.NewGuid(), CurrentUserId, EventAddress);
         if (ObjectChecker.IsAnyNullOrEmpty(ev))
         {
             m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
