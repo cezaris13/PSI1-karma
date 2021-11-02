@@ -16,24 +16,25 @@ namespace Karma.Services
             transmitter.NotificationEvent += HandleEvent;
         }
 
-        private delegate void DisplayNotification(string title);
+        private delegate void DisplayNotification(string title, MatToastType notificationType);
 
         private void HandleEvent(Object sender, NotificationEventArgs e)
         {
-            DisplayNotification displayNotification = delegate (string title) {
-                m_toaster.Add(title, MatToastType.Success, "", "", config =>
-                {
-                    config.MaximumOpacity = Convert.ToInt32(100);
+            DisplayNotification displayNotification = delegate (string title, MatToastType notificationType)
+            {
+                m_toaster.Add(title, notificationType, configure: config =>
+                 {
+                     config.MaximumOpacity = Convert.ToInt32(100);
 
-                    config.ShowTransitionDuration = Convert.ToInt32(500);
-                    config.VisibleStateDuration = Convert.ToInt32(3000);
-                    config.HideTransitionDuration = Convert.ToInt32(500);
+                     config.ShowTransitionDuration = Convert.ToInt32(500);
+                     config.VisibleStateDuration = Convert.ToInt32(3000);
+                     config.HideTransitionDuration = Convert.ToInt32(500);
 
-                    config.RequireInteraction = false;
-                });
+                     config.RequireInteraction = false;
+                 });
             };
 
-            displayNotification(e.Message);
+            displayNotification(e.Message, e.NotificationType);
         }
     }
 }

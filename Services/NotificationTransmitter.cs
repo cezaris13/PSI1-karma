@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
+using MatBlazor;
 
 namespace Karma.Services
 {
@@ -18,9 +19,9 @@ namespace Karma.Services
         //public delegate void NotificationEventHandler(object sender, NotificationEventArgs e); //Alternative events
         public event EventHandler<NotificationEventArgs> NotificationEvent;
 
-        public void ShowMessage(string message)
+        public void ShowMessage(string message, MatToastType notificationType)
         {
-            var args = new NotificationEventArgs(message);
+            var args = new NotificationEventArgs(message,notificationType);
             OnNotificationEvent(args);
         }
     }

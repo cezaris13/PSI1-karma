@@ -7,10 +7,13 @@
 @inject IWeatherForecast m_weatherForecast
 @inject IJSRuntime jsRuntime
 @using OpenCage.Geocode
+@using System.Threading
 @inject IGeocoder m_geocoder
 
 @if (charityEvent != null)
 {
+    <h1 class="mat">@LoadingMessage</h1>
+
     <h1 class="mat">@charityEvent.Name</h1>
 
     <h2 class="mat">@charityEvent.Description</h2>
@@ -21,7 +24,7 @@
 
     <h3 class="mat">@WeatherForecast</h3>
 
-    <div id="mapid" style="height:500px;width:500px"></div>
+    <div id="mapid" style="height: 500px; width: 500px; z-index: 0;"></div>
 
     if (CurrentUserId == charityEvent.ManagerId)
     {
@@ -32,7 +35,7 @@
     <div style="float:left; width:40%">
         <p>Event volunteers:</p>
         <ol>
-            @foreach (var volunteer in GetVolunteers())
+            @foreach (var volunteer in Volunteers)
             {
                 <li>@volunteer</li>
             }
@@ -41,12 +44,20 @@
     <div style="float:right; width:40%">
         <p>Event equipment:</p>
         <ol>
-            @foreach (var equipment in GetEquipment())
+            @foreach (var equipment in Equipment)
             {
                 <li>@equipment</li>
             }
         </ol>
     </div>
+    <br />
+    <br />
+    <br />
+    <h2 class="mat">charity event photos</h2>
+    @foreach (var image in Images)
+    {
+        <img src=@image style="width:400px;height:400px">
+    }
 }
 else
 {
@@ -58,37 +69,90 @@ else
     [Parameter]
     public Guid Id { get; set; }
     private CharityEvent charityEvent;
-    KarmaContext KarmaContext = new KarmaContext();
-    string CurrentUserId { get; set; }
-    string WeatherForecast { get; set; } = "loading weather forecast";
+    private int totalLoadedTasks = 0;
+    public string LoadingMessage = "Loading...";
+    public string CurrentUserId { get; set; }
+    public string WeatherForecast { get; set; } = "loading weather forecast";
+    public List<string> Images = new List<string>();
+    public List<string> Equipment = new List<string>() { "Loading..." };
+    public List<string> Volunteers = new List<string>() { "Loading..." };
+    private List<Thread> listOfThreads = new List<Thread>();
 
     protected override async Task OnInitializedAsync()
     {
-        charityEvent = KarmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
+        var karmaContext = new KarmaContext();
+        charityEvent = karmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
         var principal = m_httpContextAccessor.HttpContext.User;
         CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        WeatherForecast = await m_weatherForecast.GetWeather(charityEvent.Address);
-        var location = m_geocoder.Geocode(charityEvent.Address);
-        var coords = location.Results[0].Geometry;
-        await jsRuntime.InvokeVoidAsync("GetMap", coords.Latitude, coords.Longitude);
-    }
+        try
+        {
+            WeatherForecast = await m_weatherForecast.GetWeather(charityEvent.Address);
+            var location = m_geocoder.Geocode(charityEvent.Address);
+            var coords = location.Results[0].Geometry;
+            await jsRuntime.InvokeVoidAsync("GetMap", coords.Latitude, coords.Longitude);
+        }
+        catch (InvalidAddressException ex)
+        {
+            m_notifactionTransmitter.ShowMessage("could not provide weather forecast:" + ex.Message, MatToastType.Danger);
+            WeatherForecast = "failed";
+        }
 
+        listOfThreads.Add(new Thread(
+            () =>
+            {
+            //Thread.Sleep(2000); //demonstation purposes
+            GetImages();
+            }));
+        listOfThreads.Add(new Thread(
+            () =>
+            {
+            //Thread.Sleep(3000);//demonstation purposes
+            GetVolunteers();
+            }));
+        listOfThreads.Add(new Thread(
+            () => { GetEquipment(); }));
+
+        foreach (var thread in listOfThreads)
+        {
+            thread.Start();
+        }
+    }
+ 
     public void NavigateToEditEvent()
     {
         m_uriHelper.NavigateTo($"editcharityevent/{Id}");
     }
 
-    public IEnumerable<string> GetVolunteers()
+    private void GetImages()
     {
-        return KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p).Select(p => $"{p.Name} {p.Surname}");
+        var karmaContext = new KarmaContext();
+        Images = karmaContext.EventImages
+            .Where(p => p.EventId == Id)
+            .Select(p => p.ImageUrl)
+            .ToList();
+        totalLoadedTasks++;
+        LoadingMessage = totalLoadedTasks.ToString() + "/" + listOfThreads.Count();
+        this.InvokeAsync(() => this.StateHasChanged());
+        CheckThreads();
     }
 
-    public IEnumerable<string> GetEquipment()
+    private void GetVolunteers()
     {
+        var karmaContext = new KarmaContext();
+        Volunteers = karmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p).Select(p => $"{p.Name} {p.Surname}").ToList();
+        totalLoadedTasks++;
+        LoadingMessage = totalLoadedTasks.ToString() + "/" + listOfThreads.Count();
+        this.InvokeAsync(() => this.StateHasChanged());
+        CheckThreads();
+    }
+
+    private void GetEquipment()
+    {
+        var karmaContext = new KarmaContext();
         var eventEquipment = new List<string>();
-        foreach (var equipment in KarmaContext.SpecialEquipment.Include(p => p.Owner))
+        foreach (var equipment in karmaContext.SpecialEquipment.Include(p => p.Owner))
         {
-            foreach (var volunteer in KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p))
+            foreach (var volunteer in karmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p))
             {
                 if (equipment.Owner.Id == volunteer.Id)
                 {
@@ -96,6 +160,20 @@ else
                 }
             }
         }
-        return eventEquipment;
+        Equipment = eventEquipment;
+        totalLoadedTasks++;
+        LoadingMessage = totalLoadedTasks.ToString() + "/" + listOfThreads.Count();
+        this.InvokeAsync(() => this.StateHasChanged());
+        CheckThreads();
+    }
+
+    private void CheckThreads()
+    {
+        if (totalLoadedTasks == listOfThreads.Count)
+        {
+            LoadingMessage = "";
+            this.InvokeAsync(() => this.StateHasChanged());
+            m_notifactionTransmitter.ShowMessage("Loaded all elements of the event", MatToastType.Info);
+        }
     }
 }

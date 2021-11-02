@@ -134,10 +134,17 @@ else
 
     private void UpdateVolunteerData()
     {
-        m_context.Volunteers.Update(volunteer);
-        m_context.SaveChanges();
-        m_uriHelper.NavigateTo("/volunteers");
-        m_notifactionTransmitter.ShowMessage("The volunteer has been updated");
+        if (ObjectChecker.IsAnyNullOrEmpty(volunteer))
+        {
+            m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
+        }
+        else
+        {
+            m_context.Volunteers.Update(volunteer);
+            m_context.SaveChanges();
+            m_uriHelper.NavigateTo("/volunteers");
+            m_notifactionTransmitter.ShowMessage("The volunteer has been updated", MatToastType.Success);
+        }
     }
 
     protected override void OnInitialized()
