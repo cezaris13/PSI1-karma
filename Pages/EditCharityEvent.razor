@@ -4,6 +4,7 @@
 @using Z.EntityFramework.Plus;
 @using Microsoft.EntityFrameworkCore;
 @using System.Security.Claims
+@using System.Threading
 @inject IJSRuntime m_jsRuntime
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 
@@ -146,10 +147,18 @@
         }
         else
         {
-            KarmaContext.Events.Update(CharityEvent);
-            KarmaContext.SaveChanges();
-            m_uriHelper.NavigateTo("");
-            m_notifactionTransmitter.ShowMessage("The event has been updated", MatToastType.Success);
+            Thread thread1 = new Thread(() =>
+            {
+                KarmaContext.Events.Update(CharityEvent);
+                KarmaContext.SaveChanges();
+            });
+            Thread thread2 = new Thread(() =>
+            {
+                m_uriHelper.NavigateTo("");
+                m_notifactionTransmitter.ShowMessage("The event has been updated", MatToastType.Success);
+            });
+            thread1.Start();
+            thread2.Start();
         }
     }
 
