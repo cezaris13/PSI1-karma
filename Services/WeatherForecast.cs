@@ -16,13 +16,13 @@ namespace Karma.Services
     public class WeatherForecast : IWeatherForecast
     {
         private readonly IGeocoder m_geocoder;
-        private readonly HttpClient m_httpClient;
+        private readonly Lazy<HttpClient> m_httpClient;
         private readonly IConfiguration m_configuration;
 
         public WeatherForecast(IGeocoder geocoder, IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             m_geocoder = geocoder;
-            m_httpClient = httpClientFactory.CreateClient();
+            m_httpClient = new Lazy<HttpClient>(() => httpClientFactory.CreateClient());
             m_configuration = configuration;
         }
 
@@ -43,7 +43,7 @@ namespace Karma.Services
                     },
                 Method = HttpMethod.Get
             };
-            var response = await m_httpClient.SendAsync(message);
+            var response = await m_httpClient.Value.SendAsync(message);
             var weatherForecast = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<WeatherForecastData>(weatherForecast);
 
