@@ -3,11 +3,12 @@
 @using Karma.Models
 @using Microsoft.EntityFrameworkCore;
 @using System.Security.Claims
-@inject AuthenticationStateProvider GetAuthenticationStateAsync
-@inject IWeatherForecast m_weatherForecast
-@inject IJSRuntime jsRuntime
 @using OpenCage.Geocode
 @using System.Threading
+@using MudBlazor
+@inject IJSRuntime jsRuntime
+@inject IWeatherForecast m_weatherForecast
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
 @inject IGeocoder m_geocoder
 
 @if (charityEvent != null)
@@ -50,13 +51,20 @@
             }
         </ol>
     </div>
-    <br />
-    <br />
-    <br />
-    <h2 class="mat">charity event photos</h2>
-    @foreach (var image in Images)
+    if (Images.Count > 0)
     {
-        <img src=@image style="width:400px;height:400px">
+        <br />
+        <br />
+        <br />
+        <h2 class="mat">charity event photos</h2>
+        <MudCarousel Style="height:400px;width:400px" ShowArrows="true" ShowDelimiters="false" AutoCycle="true" TData="object">
+            @foreach (var image in Images)
+            {
+                <MudCarouselItem Transition="Transition.Slide">
+                    <img src=@image style="width:400px;height:400px">
+                </MudCarouselItem>
+            }
+        </MudCarousel>
     }
 }
 else
@@ -117,7 +125,7 @@ else
             thread.Start();
         }
     }
- 
+
     public void NavigateToEditEvent()
     {
         m_uriHelper.NavigateTo($"editcharityevent/{Id}");
@@ -172,7 +180,7 @@ else
         if (totalLoadedTasks == listOfThreads.Count)
         {
             LoadingMessage = "";
-            this.InvokeAsync(() => this.StateHasChanged());
+            //this.InvokeAsync(() => this.StateHasChanged());
             m_notifactionTransmitter.ShowMessage("Loaded all elements of the event", MatToastType.Info);
         }
     }
