@@ -150,17 +150,8 @@ else
     {
         var karmaContext = new KarmaContext();
         var eventEquipment = new List<string>();
-        foreach (var equipment in karmaContext.SpecialEquipment.Include(p => p.Owner))
-        {
-            foreach (var volunteer in karmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p))
-            {
-                if (equipment.Owner.Id == volunteer.Id)
-                {
-                    eventEquipment.Add(equipment.Name);
-                }
-            }
-        }
-        Equipment = eventEquipment;
+        var vols = karmaContext.Events.Include(e => e.Volunteers).Where(x => x.Id == Id).FirstOrDefault().Volunteers;
+        Equipment = karmaContext.SpecialEquipment.Where(x => vols.Contains(x.Owner)).Select(se => se.Name).ToList();
         totalLoadedTasks++;
         LoadingMessage = totalLoadedTasks.ToString() + "/" + listOfThreads.Count();
         this.InvokeAsync(() => this.StateHasChanged());
