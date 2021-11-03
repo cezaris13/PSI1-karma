@@ -24,6 +24,9 @@
 
     <h3 class="mat">@WeatherForecast</h3>
 
+    <h3 class="mat-subtitle1">Participants @CurrentParticipants / @NeededParticipants</h3>
+    <MatProgressBar Progress=@ParticipantsProgress></MatProgressBar>
+
     <div id="mapid" style="height: 500px; width: 500px; z-index: 0;"></div>
 
     if (CurrentUserId == charityEvent.ManagerId)
@@ -73,6 +76,9 @@ else
     public string LoadingMessage = "Loading...";
     public string CurrentUserId { get; set; }
     public string WeatherForecast { get; set; } = "loading weather forecast";
+    public int CurrentParticipants { get; set; } = 0;
+    public int NeededParticipants { get; set; } = 0;
+    public double ParticipantsProgress { get; set; } = 0;
     public List<string> Images = new List<string>();
     public List<string> Equipment = new List<string>() { "Loading..." };
     public List<string> Volunteers = new List<string>() { "Loading..." };
@@ -111,13 +117,15 @@ else
             }));
         listOfThreads.Add(new Thread(
             () => { GetEquipment(); }));
+        listOfThreads.Add(new Thread(
+            () => { CalculateParticipants(); }));
 
         foreach (var thread in listOfThreads)
         {
             thread.Start();
         }
     }
- 
+
     public void NavigateToEditEvent()
     {
         m_uriHelper.NavigateTo($"editcharityevent/{Id}");
@@ -154,6 +162,17 @@ else
         Equipment = karmaContext.SpecialEquipment.Where(x => vols.Contains(x.Owner)).Select(se => se.Name).ToList();
         totalLoadedTasks++;
         LoadingMessage = totalLoadedTasks.ToString() + "/" + listOfThreads.Count();
+        this.InvokeAsync(() => this.StateHasChanged());
+        CheckThreads();
+    }
+
+    private void CalculateParticipants()
+    {
+        var karmaContext = new KarmaContext();
+        var ev = karmaContext.Events.Include(x => x.Volunteers).FirstOrDefault(y => y.Id == Id);
+        CurrentParticipants = ev.Volunteers.Count;
+        NeededParticipants = ev.MaxVolunteers;
+        ParticipantsProgress = (double)CurrentParticipants / NeededParticipants;
         this.InvokeAsync(() => this.StateHasChanged());
         CheckThreads();
     }
