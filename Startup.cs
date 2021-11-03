@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MudBlazor.Services;
 using OpenCage.Geocode;
 
 namespace Karma
@@ -49,6 +50,7 @@ namespace Karma
             services.AddHttpClient();
             services.AddHttpContextAccessor();
             services.AddMatBlazor();
+            services.AddMudServices();
             services.AddMatToaster(config =>
             {
                 config.Position = MatToastPosition.BottomRight;
