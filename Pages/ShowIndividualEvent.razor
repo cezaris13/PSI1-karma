@@ -169,7 +169,7 @@ else
 
     private void CheckThreads()
     {
-        if (totalLoadedTasks == listOfThreads.Count)
+        if (totalLoadedTasks == listOfThreads.Count && WeatherForecast != "failed")
         {
             LoadingMessage = "";
             this.InvokeAsync(() => this.StateHasChanged());
