@@ -30,6 +30,54 @@ a, .btn-link {
     color: red;
 }
 
+.centerContainer {
+    margin: auto;
+    width: 95%;
+}
+
+.element {
+    width: 100%;
+    margin-top: 15px;
+}
+
+.elementSeparate::after {
+    display: block;
+    margin-top: 15px;
+}
+
+.box {
+    margin: auto;
+    width: 30%;
+    padding: 10px;
+    background-color: #F7F7F7;
+}
+
+.demo-mat-card {
+    display: flex;
+    min-width: 18rem;
+    max-width: 30.5%;
+    flex-grow: 1;
+    flex-basis: 0;
+    margin-bottom: 10px;
+}
+
+.demo-mat-card-content {
+    padding: 1rem;
+    display: inline-block;
+}
+
+.demo-mat-card-clean-margin {
+    margin: 0px;
+}
+
+.containter {
+    margin-bottom: 10px;
+}
+
+.leftAlign {
+    margin-left: 0;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;

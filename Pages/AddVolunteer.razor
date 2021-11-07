@@ -1,23 +1,23 @@
 ﻿@page "/addvolunteer"
 @using Karma.Models
-@using Karma.Data
+@using Microsoft.EntityFrameworkCore;
 @using System.Security.Claims
 @inject IJSRuntime m_jsRuntime
-@using Microsoft.EntityFrameworkCore;
 
-<h1 class="mat">Add volunteer</h1>
+<head>
+    <link href="css/site.css" rel="stylesheet" />
+</head>
 
-<MatTextField @bind-Value="@VolunteerName" @oninput="@((e) => { VolunteerName = (string)e.Value; })" Label=" Volunteer Name" Outlined="true"></MatTextField>
-<br>
-<br>
-<MatTextField @bind-Value="@VolunteerSurname" @oninput="@((e) => { VolunteerSurname = (string)e.Value; })" Label=" Volunteer Surname" Outlined="true"></MatTextField>
-<br>
-<br>
-<MatButton Raised="true" class="btn btn-primary" @onclick="AddThisVolunteer">Add volunteer</MatButton>
-<br>
-<br>
-<br>
-<br>
+<h1 class="mat" style="text-align:center">Add volunteer</h1>
+
+<div class="box containter">
+    <div class="centerContainer">
+        <MatTextField @bind-Value="@VolunteerName" @oninput="@((e) => { VolunteerName = (string)e.Value; })" Label=" Volunteer Name" Outlined="false" Class="element"></MatTextField>
+        <MatTextField @bind-Value="@VolunteerSurname" @oninput="@((e) => { VolunteerSurname = (string)e.Value; })" Label=" Volunteer Surname" Outlined="false" Class="element"></MatTextField>
+        <MatButton Raised="true" class="btn btn-primary element" @onclick="AddThisVolunteer">Add volunteer</MatButton>
+    </div>
+</div>
+
 <MatAccordion Multi="true">
     <MatExpansionPanel @bind-Expanded="@panelOpenState1">
         <MatExpansionPanelSummary>
@@ -72,8 +72,6 @@
         </MatExpansionPanelDetails>
     </MatExpansionPanel>
 </MatAccordion>
-<br>
-<br>
 
 @code
 {

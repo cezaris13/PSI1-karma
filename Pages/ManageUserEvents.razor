@@ -4,33 +4,14 @@
 @using System.Security.Claims
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 
-<style>
-    .demo-mat-card {
-        display: flex;
-        min-width: 18rem;
-        max-width: 30.5%;
-        flex-grow: 1;
-        flex-basis: 0;
-        margin-bottom: 10px;
-    }
-
-    .demo-mat-card-content {
-        padding: 1rem;
-        display: inline-block;
-    }
-
-    .demo-mat-card-clean-margin {
-        margin: 0px;
-    }
-</style>
+<head>
+    <link href="css/site.css" rel="stylesheet" />
+</head>
 
 <h1 class="mat">Karma</h1>
 
-Ready to aquire karma points by helping out others?
+<p class"mat">Ready to aquire karma points by helping out others?</p>
 
-<br />
-<br />
-<br />
 <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Events" Icon="search" IconTrailing="true"></MatTextField>
 
 <div class="card-deck">
@@ -59,7 +40,6 @@ Ready to aquire karma points by helping out others?
         }
     }
 </div>
-
 
 @code {
     private string FilterValue { get; set; } = "";

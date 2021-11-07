@@ -4,16 +4,19 @@
 @using System.Text.RegularExpressions;
 @using System.Linq;
 @using System.Security.Claims
-@inject IJSRuntime m_jsRuntime
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
-<h1 class="mat">Volunteers</h1>
+@inject IJSRuntime m_jsRuntime
 
-<p>
-    Here you can find the list of volunteers working on various projects.
-    <br />
-    <MatButton Raised="true" class="btn btn-primary" @onclick="NavigateToAddVolunteer">Add a new volunteer</MatButton>
-</p>
-<MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Volunteers" Icon="search" IconTrailing="true"></MatTextField>
+<head>
+    <link href="css/site.css" rel="stylesheet" />
+</head>
+
+<h1 class="mat">Volunteers</h1>
+<p>Here you can find the list of volunteers working on various projects.</p>
+<div class="container leftAlign" style="width:20%">
+    <MatButton Raised="true" class="btn btn-primary element" @onclick="NavigateToAddVolunteer">Add a new volunteer</MatButton>
+    <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Volunteers" Icon="search" IconTrailing="true" Class="element"></MatTextField>
+</div>
 <table class="table">
     <tbody>
         <tr>

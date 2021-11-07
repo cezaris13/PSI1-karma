@@ -11,20 +11,18 @@
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 @inject IGeocoder m_geocoder
 
+<head>
+    <link href="css/site.css" rel="stylesheet" />
+</head>
+
 @if (charityEvent != null)
 {
     <h1 class="mat">@LoadingMessage</h1>
-
     <h1 class="mat">@charityEvent.Name</h1>
-
     <h2 class="mat">@charityEvent.Description</h2>
-
     <h3 class="mat">@charityEvent.State.ToString()</h3>
-
     <h3 class="mat">@charityEvent.Address</h3>
-
     <h3 class="mat">@WeatherForecast</h3>
-
     <h3 class="mat-subtitle1">Participants @CurrentParticipants / @NeededParticipants</h3>
     <MatProgressBar Progress=@ParticipantsProgress></MatProgressBar>
 
@@ -34,40 +32,39 @@
     {
         <MatButton Raised="true" class="btn btn-primary" @onclick="NavigateToEditEvent">Update event</MatButton>
     }
-    <br>
-    <br>
-    <div style="float:left; width:40%">
-        <p>Event volunteers:</p>
-        <ol>
-            @foreach (var volunteer in Volunteers)
-            {
-                <li>@volunteer</li>
-            }
-        </ol>
-    </div>
-    <div style="float:right; width:40%">
-        <p>Event equipment:</p>
-        <ol>
-            @foreach (var equipment in Equipment)
-            {
-                <li>@equipment</li>
-            }
-        </ol>
+    <div class="container" style="overflow: auto;">
+        <div style="float:left; width:40%">
+            <p>Event volunteers:</p>
+            <ol>
+                @foreach (var volunteer in Volunteers)
+                {
+                    <li>@volunteer</li>
+                }
+            </ol>
+        </div>
+        <div style="float:right; width:40%">
+            <p>Event equipment:</p>
+            <ol>
+                @foreach (var equipment in Equipment)
+                {
+                    <li>@equipment</li>
+                }
+            </ol>
+        </div>
     </div>
     if (Images.Count > 0)
     {
-        <br />
-        <br />
-        <br />
-        <h2 class="mat">charity event photos</h2>
-        <MudCarousel Style="height:400px;width:400px" ShowArrows="true" ShowDelimiters="false" AutoCycle="true" TData="object">
-            @foreach (var image in Images)
-            {
-                <MudCarouselItem Transition="Transition.Slide">
-                    <img src=@image style="width:400px;height:400px">
-                </MudCarouselItem>
-            }
-        </MudCarousel>
+        <div class="container leftAlign">
+            <h2 class="mat">charity event photos</h2>
+            <MudCarousel Style="height:400px;width:400px" ShowArrows="true" ShowDelimiters="false" AutoCycle="true" TData="object">
+                @foreach (var image in Images)
+                {
+                    <MudCarouselItem Transition="Transition.Slide">
+                        <img src=@image style="width:400px;height:400px">
+                    </MudCarouselItem>
+                }
+            </MudCarousel>
+        </div>
     }
 }
 else

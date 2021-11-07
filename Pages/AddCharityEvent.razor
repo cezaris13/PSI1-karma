@@ -1,21 +1,24 @@
 ﻿@page "/addcharityevent"
 @using Karma.Models
-@inject IJSRuntime m_jsRuntime
+@using MudBlazor
 @using System.Security.Claims
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
+@inject IJSRuntime m_jsRuntime
 
-<h1 class="mat">Add charity event</h1>
+<head>
+    <link href="css/site.css" rel="stylesheet" />
+</head>
 
-<MatTextField @bind-Value="@EventTitle" @oninput="@((e) => { EventTitle = (string)e.Value; })" Label="Event Title" Outlined="true"></MatTextField>
-<br>
-<br>
-<MatTextField @bind-Value="@EventDescription" @oninput="@((e) => { EventDescription = (string)e.Value; })" Label="Event Description" Outlined="true"></MatTextField>
-<br>
-<br>
-<MatTextField @bind-Value="@EventAddress" @oninput="@((e) => { EventAddress = (string)e.Value; })" Label="Event Location" Outlined="true"></MatTextField>
-<br>
-<br>
-<MatButton Raised="true" class="btn btn-primary" @onclick="AddEvent">Add event</MatButton>
+<h1 class="mat" style="text-align:center">Add charity event</h1>
+
+<MudPaper Elevation="10" class="box">
+    <div class="centerContainer">
+        <MatTextField @bind-Value="@EventTitle" @oninput="@((e) => { EventTitle = (string)e.Value; })" Label="Event Title" Outlined="false" Class="element"></MatTextField>
+        <MatTextField @bind-Value="@EventDescription" @oninput="@((e) => { EventDescription = (string)e.Value; })" Label="Event Description" Outlined="false" Class="element"></MatTextField>
+        <MatTextField @bind-Value="@EventAddress" @oninput="@((e) => { EventAddress = (string)e.Value; })" Label="Event Location" Outlined="false" Class="element"></MatTextField>
+        <MatButton Raised="true" class="btn btn-primary element" @onclick="AddEvent">Add event</MatButton>
+    </div>
+</MudPaper>
 
 @code
 {

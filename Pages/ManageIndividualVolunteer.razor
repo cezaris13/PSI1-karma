@@ -7,17 +7,17 @@
 @inject IJSRuntime m_jsRuntime
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 
+<head>
+    <link href="css/site.css" rel="stylesheet" />
+</head>
+
 @if (volunteer != null)
 {
     <h1 class="mat">Manage volunteer</h1>
-    <MatTextField @bind-Value="@volunteer.Name" @oninput="@((e) => { volunteer.Name = (string)e.Value; })" Label="Volunteer Name" Outlined="true"></MatTextField>
-    <br>
-    <br>
-    <MatTextField @bind-Value="@volunteer.Surname" @oninput="@((e) => { volunteer.Surname = (string)e.Value; })" Label="Volunteer Surname" Outlined="true"></MatTextField>
-    <br>
-    <br>
-    <br>
-    <br>
+    <div class="container leftAlign" style="width: 20%">
+        <MatTextField @bind-Value="@volunteer.Name" @oninput="@((e) => { volunteer.Name = (string)e.Value; })" Label="Volunteer Name" Outlined="true" Class="element" Style=""></MatTextField>
+        <MatTextField @bind-Value="@volunteer.Surname" @oninput="@((e) => { volunteer.Surname = (string)e.Value; })" Label="Volunteer Surname" Outlined="true" Class="element"></MatTextField>
+    </div>
     <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Charity Events" Icon="search" IconTrailing="true"></MatTextField>
     <MatAccordion Multi="true">
         <MatExpansionPanel @bind-Expanded="@panelOpenState1">
@@ -90,29 +90,24 @@
                 <MatList>
                     @foreach (var equipment in GetEquipmentOfThisVolunteer())
                     {
-                        {
-                            <MatListItem style=" display: inline-block; width: 100%;">
-                                <div style="float:left">
-                                    @equipment.Name
-                                </div>
-                                <div style="float:right">
-                                    <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEquipment(equipment.Id)">Remove</MatButton>
-                                </div>
-                            </MatListItem>
-                        }
+                        <MatListItem style=" display: inline-block; width: 100%;">
+                            <div style="float:left">
+                                @equipment.Name
+                            </div>
+                            <div style="float:right">
+                                <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEquipment(equipment.Id)">Remove</MatButton>
+                            </div>
+                        </MatListItem>
                     }
                 </MatList>
             </MatExpansionPanelDetails>
         </MatExpansionPanel>
     </MatAccordion>
-    <br>
-    <br>
-    <MatTextField @bind-Value="@EquipmentName" @oninput="@((e) => { EquipmentName = (string)e.Value; })" Label="Name of new equipment" Outlined="true"></MatTextField>
-    <br>
-    <MatButton Raised="true" class="btn btn-primary" @onclick="AddNewEquipmentToVolunteer">Add this equipment</MatButton>
-    <br>
-    <br>
-    <MatButton Raised="true" class="btn btn-primary" @onclick="UpdateVolunteerData">Update volunteer data</MatButton>
+    <div class="container leftAlign" style="width:20%">
+        <MatTextField @bind-Value="@EquipmentName" @oninput="@((e) => { EquipmentName = (string)e.Value; })" Label="Name of new equipment" Outlined="true" Class="element"></MatTextField>
+        <MatButton Raised="true" class="btn btn-primary element" @onclick="AddNewEquipmentToVolunteer">Add this equipment</MatButton>
+        <MatButton Raised="true" class="btn btn-primary element" @onclick="UpdateVolunteerData">Update volunteer data</MatButton>
+    </div>
 }
 else
 {
