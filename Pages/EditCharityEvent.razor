@@ -1,30 +1,29 @@
 ﻿@page "/editcharityevent/{Id:guid}"
 @using Karma.Models
-@using Karma.Data
 @using Z.EntityFramework.Plus;
 @using Microsoft.EntityFrameworkCore;
 @using System.Security.Claims
 @using System.Threading
 @inject IJSRuntime m_jsRuntime
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
-
 @using System.Text.RegularExpressions;
+
+<head>
+    <link href="css/site.css" rel="stylesheet" />
+</head>
 
 @if (CharityEvent.ManagerId == CurrentUserId)
 {
-    <h1 class="mat">Edit charity event</h1>
-    <MatTextField @bind-Value="@CharityEvent.Name" @oninput="@((e) => { CharityEvent.Name = (string)e.Value; })" Label="Event Title" Outlined="true"></MatTextField>
-    <br>
-    <MatTextField @bind-Value="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" Label="Event Description" Outlined="true"></MatTextField>
-    <br>
-    <MatTextField @bind-Value="@CharityEvent.Address" @oninput="@((e) => { CharityEvent.Address = (string)e.Value; })" Label="Event Location" Outlined="true"></MatTextField>
-    <br>
-    <MatTextField type="number" min="0" max="1000000" OnFocus="@OnFocusHandler" OnFocusOut="OnFocusOutHandler" @bind-Value="@VolunteerCount" Label="Maximum number of volunteers" Outlined="true"></MatTextField>
-    <div style="color:red">@ErrorMessage</div>
-    <br>
-    <MatTextField @bind-Value="@CharityEvent.PhotoPath" @oninput="@((e) => { CharityEvent.PhotoPath = (string)e.Value; })" Label="Picture URL" Outlined="true"></MatTextField>
-    <br>
-    <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search" Icon="search" IconTrailing="true"></MatTextField>
+    <div class="container leftAlign" style="width: 20%">
+        <h1 class="mat">Edit charity event</h1>
+        <MatTextField @bind-Value="@CharityEvent.Name" @oninput="@((e) => { CharityEvent.Name = (string)e.Value; })" Label="Event Title" Outlined="true" Class="element"></MatTextField>
+        <MatTextField @bind-Value="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" Label="Event Description" Outlined="true" Class="element"></MatTextField>
+        <MatTextField @bind-Value="@CharityEvent.Address" @oninput="@((e) => { CharityEvent.Address = (string)e.Value; })" Label="Event Location" Outlined="true" Class="element"></MatTextField>
+        <MatTextField type="number" min="0" max="1000000" OnFocus="@OnFocusHandler" OnFocusOut="OnFocusOutHandler" @bind-Value="@VolunteerCount" Label="Maximum number of volunteers" Outlined="true" Class="element"></MatTextField>
+        <div style="color:red" class="element">@ErrorMessage</div>
+        <MatTextField @bind-Value="@CharityEvent.PhotoPath" @oninput="@((e) => { CharityEvent.PhotoPath = (string)e.Value; })" Label="Picture URL" Outlined="true" Class="element"></MatTextField>
+        <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search" Icon="search" IconTrailing="true" Class="element"></MatTextField>
+    </div>
     <MatAccordion Multi="true">
         <MatExpansionPanel @bind-Expanded="@panelOpenState1">
             <MatExpansionPanelSummary>
@@ -154,9 +153,9 @@
                     KarmaContext.Events.Update(CharityEvent);
                     KarmaContext.SaveChanges();
                     updateSuccess = true;
-                    //throw new DbUpdateException();// demonstration purposes
-                }
-                catch(DbUpdateException)
+                //throw new DbUpdateException();// demonstration purposes
+            }
+                catch (DbUpdateException)
                 {
                     updateSuccess = false;
                 }
