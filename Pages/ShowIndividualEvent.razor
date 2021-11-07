@@ -178,6 +178,7 @@ else
         CurrentParticipants = ev.Volunteers.Count;
         NeededParticipants = ev.MaxVolunteers;
         ParticipantsProgress = (double)CurrentParticipants / NeededParticipants;
+        totalLoadedTasks++;
         this.InvokeAsync(() => this.StateHasChanged());
         CheckThreads();
     }
