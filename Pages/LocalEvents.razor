@@ -1,0 +1,88 @@
+﻿@page "/localevents"
+@using System.Text.RegularExpressions;
+@using Karma.Models
+@using Newtonsoft.Json;
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+@using Microsoft.Extensions.Configuration;
+
+<h1 class="mat">Events near you</h1>
+<br>
+
+<MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Events" Icon="search" IconTrailing="true"></MatTextField>
+
+<div class="card-deck">
+    @if (listOfLocalCharityEvents.Any())
+    {
+        @foreach (var karmaEvent in listOfLocalCharityEvents)
+        {
+            var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());
+            @if (matches.Count > 0)
+            {
+                <MatCard class="demo-mat-card mx-3" @onclick="() => NavigateToIndividualEvent(karmaEvent.Id)">
+                    <div class="demo-mat-card-content">
+                        <MatHeadline6 class="demo-mat-card-clean-margin">
+                            @karmaEvent.Name
+                        </MatHeadline6>
+                    </div>
+                    <MatCardContent>
+                        <MatCardMedia Wide="true" ImageUrl=@karmaEvent.PhotoPath></MatCardMedia>
+                        <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">
+                            @karmaEvent.Description
+                        </MatBody2>
+                    </MatCardContent>
+                </MatCard>
+            }
+        }
+    }
+    else
+    {
+        <p>Sorry, but we couldn't find any events near you</p>
+    }
+</div>
+
+
+@code {
+    private IEnumerable<ICharityEvent> listOfLocalCharityEvents = new List<CharityEvent>();
+
+    private string FilterValue { get; set; } = "";
+
+    private string address { get; set; } = "";
+
+    readonly string baseUrl = "https://localhost:44336/";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCityString();
+        await GetNearbyEvents();
+    }
+
+    public void NavigateToIndividualEvent(Guid id)
+    {
+        m_uriHelper.NavigateTo($"event/{id}");
+    }
+
+    public async Task GetCityString()
+    {
+        var client = new HttpClient();
+        var city = await client.GetStringAsync("https://api.ipdata.co/?api-key=8d20d954b7d0b37810754c6749acb7a9c7ab4fb392aae46e4a1f0369&fields=city");
+        city = city.Remove(0, 15);
+        address = city.Remove(city.Length - 3, 3);
+    }
+
+    public async Task GetNearbyEvents()
+    {
+        List<CharityEvent>
+    givenEvents = new List<CharityEvent>
+        ();
+        var client = new HttpClient();
+        client.BaseAddress = new Uri(baseUrl);
+        HttpResponseMessage Res = await client.GetAsync($"api/Event?address={address}");
+        if (Res.IsSuccessStatusCode)
+        {
+            var EmpResponse = await Res.Content.ReadAsStringAsync();
+            givenEvents = JsonConvert.DeserializeObject<List<CharityEvent>>(EmpResponse);
+        }
+        listOfLocalCharityEvents = givenEvents;
+    }
+}
