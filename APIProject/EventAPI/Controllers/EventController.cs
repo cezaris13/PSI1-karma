@@ -16,7 +16,7 @@ namespace EventAPI.Controllers
     public class EventController : ControllerBase
     {
         [HttpGet]
-        public string GetEvents(string address)
+        public ActionResult<List<CharityEvent>> GetEvents(string address)
         {
             KarmaContext KarmaContext = new KarmaContext();
             List<CharityEvent> localEvents = new List<CharityEvent>();
@@ -29,7 +29,11 @@ namespace EventAPI.Controllers
                     localEvents.Add(karmaEvent);
                 }
             }
-            return JsonConvert.SerializeObject(localEvents);
+            if (localEvents.Count == 0)
+            {
+                return new NotFoundObjectResult(localEvents) { Value = "no matches found" };
+            }
+            return localEvents;
         }
     }
 }

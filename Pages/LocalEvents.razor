@@ -4,6 +4,7 @@
 @using Newtonsoft.Json;
 @attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
 @using Microsoft.Extensions.Configuration;
+@inject IConfiguration m_configuration
 
 <h1 class="mat">Events near you</h1>
 <br>
@@ -65,16 +66,13 @@
     public async Task GetCityString()
     {
         var client = new HttpClient();
-        var city = await client.GetStringAsync("https://api.ipdata.co/?api-key=8d20d954b7d0b37810754c6749acb7a9c7ab4fb392aae46e4a1f0369&fields=city");
-        city = city.Remove(0, 15);
-        address = city.Remove(city.Length - 3, 3);
+        var city = await client.GetStringAsync($"https://api.ipdata.co/?api-key={m_configuration["IpDataKey"]}&fields=city");
+        address = JsonConvert.DeserializeObject<JsonToString>(city).city;
     }
 
     public async Task GetNearbyEvents()
     {
-        List<CharityEvent>
-    givenEvents = new List<CharityEvent>
-        ();
+        List<CharityEvent> givenEvents = new List<CharityEvent>();
         var client = new HttpClient();
         client.BaseAddress = new Uri(baseUrl);
         HttpResponseMessage Res = await client.GetAsync($"api/Event?address={address}");
@@ -84,5 +82,10 @@
             givenEvents = JsonConvert.DeserializeObject<List<CharityEvent>>(EmpResponse);
         }
         listOfLocalCharityEvents = givenEvents;
+    }
+
+    public class JsonToString
+    {
+        public string city = string.Empty;
     }
 }
