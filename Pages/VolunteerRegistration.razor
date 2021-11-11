@@ -1,9 +1,5 @@
 ﻿@page "/registration"
 @using Karma.Models
-@using Microsoft.EntityFrameworkCore;
-@using System.Text.RegularExpressions;
-@using System.Linq;
-@using System.Security.Claims
 @attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 @inject IJSRuntime m_jsRuntime
@@ -30,24 +26,6 @@
     private String Surname { get; set; } = "";
     private String PhoneNumber { get; set; } = "";
     KarmaContext KarmaContext = new KarmaContext();
-    private String nameSurname { get; set; } = "";
-    private String surnameName { get; set; } = "";
-    string CurrentUserId { get; set; }
-
-    public IEnumerable<IVolunteer> GetVolunteers()
-    {
-        return KarmaContext.Volunteers.Include(x => x.Events);
-    }
-
-    public void NavigateToIndividualEvent(Guid id)
-    {
-        m_uriHelper.NavigateTo($"event/{id}");
-    }
-
-    public void NavigateToAddVolunteer()
-    {
-        m_uriHelper.NavigateTo("addvolunteer");
-    }
 
     private void CreatePendingVolunteer()
     {
@@ -58,16 +36,5 @@
         Name = "";
         Surname = "";
         PhoneNumber = "";
-    }
-
-    public void NavigateToManageVolunteer(Guid id)
-    {
-        m_uriHelper.NavigateTo($"volunteer/{id}");
-    }
-
-    protected override void OnInitialized()
-    {
-        var principal = m_httpContextAccessor.HttpContext.User;
-        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 }
