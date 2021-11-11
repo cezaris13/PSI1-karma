@@ -3,14 +3,12 @@
 
 using System;
 using MatBlazor;
-using static Karma.Services.NotificationTransmitter;
 
 namespace Karma.Services
 {
     public interface INotifactionTransmitter
     {
         void ShowMessage(string message, MatToastType notificationType);
-        //event NotificationEventHandler NotificationEvent; //Alternative events
         event EventHandler<NotificationEventArgs> NotificationEvent;
     }
 }

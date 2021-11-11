@@ -9,13 +9,16 @@ namespace Karma.Models
     public struct VolunteerAndEquipment
     {
         public string VolunteerName { get; set; }
+
         public string VolunteerSurname { get; set; }
+
         public string[] EquipmentList { get; set; }
 
         public long Size
         {
-            get { return EquipmentList.Count(); }
+            get { return EquipmentList.Length; }
         }
+
         public VolunteerAndEquipment(string name, string surname, IEnumerable<string> equipment)
         {
             VolunteerName = name;
@@ -23,6 +26,7 @@ namespace Karma.Models
             EquipmentList = equipment.ToArray();
         }
     }
+
     public static class VolunteerAndEquipmentExtension
     {
         public static List<VolunteerAndEquipment> OrderByEquipmentCount(this List<VolunteerAndEquipment> list)
