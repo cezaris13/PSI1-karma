@@ -6,12 +6,14 @@ using System.Security.Claims;
 using Karma.Models;
 using Karma.Services;
 using MatBlazor;
+using Microsoft.AspNetCore.Components;
 
 namespace Karma.Pages
 {
     public partial class AddCharityEvent
     {
-        private KarmaContext m_karmaContext = new();
+        [Inject]
+        private IDBServiceProvider m_DBServiceProvider { get; set; }
         public string EventTitle { get; set; }
         public string EventDescription { get; set; }
         public string CurrentUserId { get; set; }
@@ -26,17 +28,11 @@ namespace Karma.Pages
         private void AddEvent()
         {
             var charityEvent = new CharityEvent(EventTitle, EventDescription, Guid.NewGuid(), CurrentUserId, EventAddress);
-            if (ObjectChecker.IsAnyNullOrEmpty(charityEvent))
-            {
-                m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
-            }
-            else
-            {
-                m_karmaContext.Events.Add(charityEvent);
-                m_karmaContext.SaveChanges();
+            int result = m_DBServiceProvider.AddToDB(charityEvent);
+            if (result == 0)
                 m_uriHelper.NavigateTo("");
-                m_notifactionTransmitter.ShowMessage("The event has been created", MatToastType.Success);
-            }
+            else if (result == -1)
+                m_notifactionTransmitter.ShowMessage("An error occured while adding event to the database", MatToastType.Danger);
         }
     }
 }

@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace Karma.Services
 {
-    public static class ObjectChecker
+    public class ObjectChecker : IObjectChecker
     {
-        public static bool IsAnyNullOrEmpty(object myObject)
+        public bool IsAnyNullOrEmpty(object myObject)
         {
             return myObject.GetType().GetProperties()
                 .Where(pi => pi.PropertyType == typeof(string))

@@ -19,6 +19,9 @@ namespace Karma.Pages
         [Inject]
         public IJSRuntime m_jsRuntime { get; set; }
 
+        [Inject]
+        public IDBServiceProvider m_DBServiceProvider { get; set; }
+
         public string VolunteerName { get; set; }
         public string VolunteerSurname { get; set; }
         public List<CharityEvent> listOfCharityEvents = new();
@@ -35,18 +38,12 @@ namespace Karma.Pages
 
         public void AddVolunteerToDB()
         {
-            var vol = new Volunteer(VolunteerName, VolunteerSurname, Guid.NewGuid(), listOfCharityEvents);
-            if (ObjectChecker.IsAnyNullOrEmpty(vol))
-            {
-                m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
-            }
-            else
-            {
-                m_karmaContext.Volunteers.Add(vol);
-                m_karmaContext.SaveChanges();
+            var volunteer = new Volunteer(VolunteerName, VolunteerSurname, Guid.NewGuid(), listOfCharityEvents);
+            int result = m_DBServiceProvider.AddToDB(volunteer);
+            if (result == 0)
                 m_uriHelper.NavigateTo("/volunteers");
-                m_notifactionTransmitter.ShowMessage("The volunteer has been added", MatToastType.Success);
-            }
+            else if (result == -1)
+                m_notifactionTransmitter.ShowMessage("An error occured while adding volunteer to the database", MatToastType.Danger);
         }
 
         public IEnumerable<ICharityEvent> GetEventsOfThisVolunteer()

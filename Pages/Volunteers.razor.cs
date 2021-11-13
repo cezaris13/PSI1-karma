@@ -7,12 +7,16 @@ using System.Linq;
 using System.Security.Claims;
 using Karma.Models;
 using MatBlazor;
+using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
 namespace Karma.Pages
 {
     public partial class Volunteers
     {
+        [Inject]
+        private NavigationManager m_navigationManager { get; set; }
+
         public string FilterValue = "";
 
         private KarmaContext m_karmaContext = new();
@@ -26,24 +30,24 @@ namespace Karma.Pages
 
         public void NavigateToIndividualEvent(Guid id)
         {
-            m_uriHelper.NavigateTo($"event/{id}");
+            m_navigationManager.NavigateTo($"event/{id}");
         }
 
         public void NavigateToAddVolunteer()
         {
-            m_uriHelper.NavigateTo("addvolunteer");
+            m_navigationManager.NavigateTo("addvolunteer");
         }
 
         public void RemoveVolunteer(Guid id)
         {
             m_karmaContext.Volunteers.Where(x => x.Id == id).DeleteFromQuery();
             m_karmaContext.SaveChanges();
-            m_notifactionTransmitter.ShowMessage("The volunteer has been removed", MatToastType.Success);
+            m_notificationTransmitter.ShowMessage("The volunteer has been removed", MatToastType.Success);
         }
 
         public void NavigateToManageVolunteer(Guid id)
         {
-            m_uriHelper.NavigateTo($"volunteer/{id}");
+            m_navigationManager.NavigateTo($"volunteer/{id}");
         }
 
         protected override void OnInitialized()

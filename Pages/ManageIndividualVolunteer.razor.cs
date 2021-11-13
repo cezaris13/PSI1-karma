@@ -20,6 +20,8 @@ namespace Karma.Pages
         public Guid Id { get; set; }
         [Inject]
         public IJSRuntime m_jsRuntime { get; set; }
+        [Inject]
+        public IDBServiceProvider m_DBServiceProvider { get; set; }
         public Volunteer volunteer;
         private KarmaContext m_karmaContext = new();
         private string FilterValue { get; set; } = "";
@@ -31,17 +33,11 @@ namespace Karma.Pages
 
         private void UpdateVolunteerData()
         {
-            if (ObjectChecker.IsAnyNullOrEmpty(volunteer))
-            {
-                m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
-            }
-            else
-            {
-                m_karmaContext.Volunteers.Update(volunteer);
-                m_karmaContext.SaveChanges();
+            int result = m_DBServiceProvider.UpdateEntityInDB(volunteer);
+            if (result == 0)
                 m_uriHelper.NavigateTo("/volunteers");
-                m_notifactionTransmitter.ShowMessage("The volunteer has been updated", MatToastType.Success);
-            }
+            else if (result == -1)
+                m_notifactionTransmitter.ShowMessage("An error occured while trying to update Volunteer", MatToastType.Danger);
         }
 
         protected override void OnInitialized()
@@ -86,7 +82,7 @@ namespace Karma.Pages
 
         private void AddNewEquipmentToVolunteer()
         {
-            var equipment = new Karma.Models.SpecialEquipment(Guid.NewGuid(), EquipmentName, volunteer);
+            var equipment = new Models.SpecialEquipment(Guid.NewGuid(), EquipmentName, volunteer);
             m_karmaContext.SpecialEquipment.Add(equipment);
             EquipmentName = string.Empty;
             m_karmaContext.SaveChanges();

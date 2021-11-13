@@ -22,6 +22,9 @@ namespace Karma.Pages
         public Guid Id { get; set; }
         [Inject]
         public IJSRuntime m_jsRuntime { get; set; }
+        [Inject]
+        public IDBServiceProvider m_DBServiceProvider { get; set; }
+
         private KarmaContext m_karmaContext = new();
         public CharityEvent charityEvent;
         public string filterValue = "";
@@ -54,32 +57,19 @@ namespace Karma.Pages
 
         public void UpdateEvent()
         {
-            if (ObjectChecker.IsAnyNullOrEmpty(charityEvent))
-            {
-                m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
-            }
-            else
-            {
-                try
-                {
-                    m_karmaContext.Events.Update(charityEvent);
-                    m_karmaContext.SaveChanges();
-                    m_uriHelper.NavigateTo("");
-                    m_notifactionTransmitter.ShowMessage("The event has been updated", MatToastType.Success);
-                }
-                catch (DbUpdateException)
-                {
-                    m_notifactionTransmitter.ShowMessage("An error occured while updating the event", MatToastType.Danger);
-                }
-            }
+            int result = m_DBServiceProvider.UpdateEntityInDB(charityEvent);
+            if (result == 0)
+                m_uriHelper.NavigateTo("");
+            else if (result == -1)
+                m_notifactionTransmitter.ShowMessage("An error occured while updating the event", MatToastType.Danger);
         }
 
         public void DeleteEvent()
         {
-            m_karmaContext.Events.Where(x => x.Id == Id).Delete();
-            m_karmaContext.SaveChanges();
-            m_uriHelper.NavigateTo("");
-            m_notifactionTransmitter.ShowMessage("The event has been deleted", MatToastType.Success);
+            if (m_DBServiceProvider.RemoveFromDB<CharityEvent>(Id) == 0)
+                m_uriHelper.NavigateTo("");
+            else
+                m_notifactionTransmitter.ShowMessage("An error occured while removing event from ", MatToastType.Danger);
         }
 
         protected override void OnInitialized()
