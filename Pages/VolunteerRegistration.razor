@@ -1,0 +1,46 @@
+﻿@page "/registration"
+@using Karma.Models
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+@inject IJSRuntime m_jsRuntime
+
+
+<head>
+    <link href="css/site.css" rel="stylesheet" />
+</head>
+
+<h1 class="mat">Volunteers</h1>
+<p>Want to join awesome volunteer team? Leave us your details and we will contact you within 3 working days.</p>
+<div class="box containter">
+    <div class="centerContainer">
+        <MatTextField @bind-Value="@Name" @oninput="@((e) => { Name = (string)e.Value; })" Label=" Name" Outlined="false" Class="element"></MatTextField>
+        <MatTextField @bind-Value="@Surname" @oninput="@((e) => { Surname = (string)e.Value; })" Label=" Surname" Outlined="false" Class="element"></MatTextField>
+        <MatTextField @bind-Value="@PhoneNumber" @oninput="@((e) => { PhoneNumber = (string)e.Value; })" Label=" Phone Number" Outlined="false" Class="element"></MatTextField>
+        <MatButton Raised="true" class="btn btn-primary element" @onclick="CreatePendingVolunteer">Register</MatButton>
+    </div>
+</div>
+
+@code
+{
+    private String Name { get; set; } = "";
+    private String Surname { get; set; } = "";
+    private String PhoneNumber { get; set; } = "";
+    KarmaContext KarmaContext = new KarmaContext();
+
+    private void CreatePendingVolunteer()
+    {
+        var volunteer = new PendingVolunteer(Name, Surname, PhoneNumber, Guid.NewGuid());
+        KarmaContext.PendingVolunteers.Add(volunteer);
+        KarmaContext.SaveChanges();
+        m_notifactionTransmitter.ShowMessage("Registration Succesful", MatToastType.Success);
+        Name = "";
+        Surname = "";
+        PhoneNumber = "";
+        NavigateToMain();
+    }
+
+    public void NavigateToMain()
+    {
+        m_uriHelper.NavigateTo("/");
+    }
+}
