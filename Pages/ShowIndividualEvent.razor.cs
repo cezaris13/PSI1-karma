@@ -12,7 +12,6 @@ using Karma.Models;
 using Karma.Services;
 using MatBlazor;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
 using OpenCage.Geocode;

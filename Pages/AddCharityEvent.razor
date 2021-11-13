@@ -1,9 +1,5 @@
 ﻿@page "/addcharityevent"
-@using Karma.Models
 @using MudBlazor
-@using System.Security.Claims
-@inject AuthenticationStateProvider GetAuthenticationStateAsync
-@inject IJSRuntime m_jsRuntime
 
 <head>
     <link href="css/site.css" rel="stylesheet" />
@@ -19,34 +15,3 @@
         <MatButton Raised="true" class="btn btn-primary element" @onclick="AddEvent">Add event</MatButton>
     </div>
 </MudPaper>
-
-@code
-{
-    KarmaContext KarmaContext = new KarmaContext();
-    string EventTitle { get; set; }
-    string EventDescription { get; set; }
-    string CurrentUserId { get; set; }
-    string EventAddress { get; set; }
-
-    protected override void OnInitialized()
-    {
-        var principal = m_httpContextAccessor.HttpContext.User;
-        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-    }
-
-    private void AddEvent()
-    {
-        var ev = new CharityEvent(EventTitle, EventDescription, Guid.NewGuid(), CurrentUserId, EventAddress);
-        if (ObjectChecker.IsAnyNullOrEmpty(ev))
-        {
-            m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
-        }
-        else
-        {
-            KarmaContext.Events.Add(ev);
-            KarmaContext.SaveChanges();
-            m_uriHelper.NavigateTo("");
-            m_notifactionTransmitter.ShowMessage("The event has been created", MatToastType.Success);
-        }
-    }
-}

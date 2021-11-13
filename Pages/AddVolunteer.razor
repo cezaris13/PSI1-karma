@@ -1,8 +1,4 @@
 ﻿@page "/addvolunteer"
-@using Karma.Models
-@using Microsoft.EntityFrameworkCore;
-@using System.Security.Claims
-@inject IJSRuntime m_jsRuntime
 
 <head>
     <link href="css/site.css" rel="stylesheet" />
@@ -72,56 +68,3 @@
         </MatExpansionPanelDetails>
     </MatExpansionPanel>
 </MatAccordion>
-
-@code
-{
-    string VolunteerName { get; set; }
-    string VolunteerSurname { get; set; }
-    private List<CharityEvent> listOfCharityEvents = new List<CharityEvent>();
-    KarmaContext m_context = new KarmaContext();
-    bool panelOpenState1 = true;
-    bool panelOpenState2 = true;
-    string CurrentUserId { get; set; }
-
-    protected override void OnInitialized()
-    {
-        var principal = m_httpContextAccessor.HttpContext.User;
-        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-    }
-
-    private void AddThisVolunteer()
-    {
-        var vol = new Volunteer(name: VolunteerName, surname: VolunteerSurname, Guid.NewGuid(), listOfCharityEvents);
-        if (ObjectChecker.IsAnyNullOrEmpty(vol))
-        {
-            m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
-        }
-        else
-        {
-            m_context.Volunteers.Add(vol);
-            m_context.SaveChanges();
-            m_uriHelper.NavigateTo("/volunteers");
-            m_notifactionTransmitter.ShowMessage("The volunteer has been added", MatToastType.Success);
-        }
-    }
-
-    public IEnumerable<ICharityEvent> GetEventsOfThisVolunteer()
-    {
-        return listOfCharityEvents;
-    }
-
-    public IEnumerable<ICharityEvent> GetEventsNotOfThisVolunteer()
-    {
-        return m_context.Events.Include(p => p.Volunteers);
-    }
-
-    private void AddEventToVolunteerList(Guid id)
-    {
-        listOfCharityEvents.Add(m_context.Events.Where(p => p.Id == id).FirstOrDefault());
-    }
-
-    private void RemoveEventFromList(Guid id)
-    {
-        listOfCharityEvents.Remove(m_context.Events.Where(p => p.Id == id).FirstOrDefault());
-    }
-}

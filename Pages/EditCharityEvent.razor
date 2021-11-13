@@ -1,28 +1,22 @@
 ﻿@page "/editcharityevent/{Id:guid}"
 @using Karma.Models
-@using Z.EntityFramework.Plus;
-@using Microsoft.EntityFrameworkCore;
-@using System.Security.Claims
-@using System.Threading
-@inject IJSRuntime m_jsRuntime
-@inject AuthenticationStateProvider GetAuthenticationStateAsync
 @using System.Text.RegularExpressions;
 
 <head>
     <link href="css/site.css" rel="stylesheet" />
 </head>
 
-@if (CharityEvent.ManagerId == CurrentUserId)
+@if (charityEvent.ManagerId == CurrentUserId)
 {
     <div class="container leftAlign" style="width: 20%">
         <h1 class="mat">Edit charity event</h1>
-        <MatTextField @bind-Value="@CharityEvent.Name" @oninput="@((e) => { CharityEvent.Name = (string)e.Value; })" Label="Event Title" Outlined="true" Class="element"></MatTextField>
-        <MatTextField @bind-Value="@CharityEvent.Description" @oninput="@((e) => { CharityEvent.Description = (string)e.Value; })" Label="Event Description" Outlined="true" Class="element"></MatTextField>
-        <MatTextField @bind-Value="@CharityEvent.Address" @oninput="@((e) => { CharityEvent.Address = (string)e.Value; })" Label="Event Location" Outlined="true" Class="element"></MatTextField>
+        <MatTextField @bind-Value="@charityEvent.Name" @oninput="@((e) => { charityEvent.Name = (string)e.Value; })" Label="Event Title" Outlined="true" Class="element"></MatTextField>
+        <MatTextField @bind-Value="@charityEvent.Description" @oninput="@((e) => { charityEvent.Description = (string)e.Value; })" Label="Event Description" Outlined="true" Class="element"></MatTextField>
+        <MatTextField @bind-Value="@charityEvent.Address" @oninput="@((e) => { charityEvent.Address = (string)e.Value; })" Label="Event Location" Outlined="true" Class="element"></MatTextField>
         <MatTextField type="number" min="0" max="1000000" OnFocus="@OnFocusHandler" OnFocusOut="OnFocusOutHandler" @bind-Value="@VolunteerCount" Label="Maximum number of volunteers" Outlined="true" Class="element"></MatTextField>
-        <div style="color:red" class="element">@ErrorMessage</div>
-        <MatTextField @bind-Value="@CharityEvent.PhotoPath" @oninput="@((e) => { CharityEvent.PhotoPath = (string)e.Value; })" Label="Picture URL" Outlined="true" Class="element"></MatTextField>
-        <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search" Icon="search" IconTrailing="true" Class="element"></MatTextField>
+        <div style="color:red" class="element">@errorMessage</div>
+        <MatTextField @bind-Value="@charityEvent.PhotoPath" @oninput="@((e) => { charityEvent.PhotoPath = (string)e.Value; })" Label="Picture URL" Outlined="true" Class="element"></MatTextField>
+        <MatTextField @bind-Value="@filterValue" OnInput="@(e => filterValue = e.Value.ToString())" Label="Search" Icon="search" IconTrailing="true" Class="element"></MatTextField>
     </div>
     <MatAccordion Multi="true">
         <MatExpansionPanel @bind-Expanded="@panelOpenState1">
@@ -33,9 +27,9 @@
                 <MatList>
                     @foreach (var volunteer in GetVolunteersInThisEvent())
                     {
-                        nameSurname = volunteer.Name + " " + volunteer.Surname;
-                        surnameName = volunteer.Surname + " " + volunteer.Name;
-                        var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                        var nameSurname = volunteer.Name + " " + volunteer.Surname;
+                        var surnameName = volunteer.Surname + " " + volunteer.Name;
+                        var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                         var matches = regex.Matches(nameSurname + surnameName);
                         @if (matches.Count > 0)
                         {
@@ -68,7 +62,7 @@
                 <MatList>
                     @foreach (var volunteer in GetVolunteersNotInThisEvent())
                     {
-                        var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                        var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                         var matches = regex.Matches(volunteer.Name + volunteer.Surname);
                         @if (matches.Count > 0)
                         {
@@ -81,7 +75,7 @@
                                     )
                                 </div>
                                 <div style="float:right">
-                                    @if (CharityEvent.MaxVolunteers >= 0 && CharityEvent.MaxVolunteers > CharityEvent.Volunteers.Count)
+                                    @if (charityEvent.MaxVolunteers >= 0 && charityEvent.MaxVolunteers > charityEvent.Volunteers.Count)
                                     {
                                         <MatButton Outlined="true" @onclick="() => AddVolunteerToEvent(volunteer.Id)">Add</MatButton>
                                     }
@@ -93,131 +87,9 @@
             </MatExpansionPanelDetails>
         </MatExpansionPanel>
     </MatAccordion>
-    @if (CharityEvent.MaxVolunteers >= 0 && CharityEvent.MaxVolunteers >= CharityEvent.Volunteers.Count)
+    @if (charityEvent.MaxVolunteers >= 0 && charityEvent.MaxVolunteers >= charityEvent.Volunteers.Count)
     {
         <MatButton Outlined="true" class="btn btn-primary" @onclick="UpdateEvent">Update event</MatButton>
     }
     <MatButton Raised="true" class="btn btn-primary" @onclick="DeleteEvent">Delete event</MatButton>
-}
-
-@code
-{
-    [Parameter]
-    public Guid Id { get; set; }
-    KarmaContext KarmaContext = new KarmaContext();
-    public CharityEvent CharityEvent;
-    private string FilterValue { get; set; } = "";
-    private string nameSurname { get; set; } = "";
-    private string surnameName { get; set; } = "";
-    private string ErrorMessage { get; set; } = "";
-    private int VolunteerCount { get; set; }
-    bool panelOpenState1 = true;
-    bool panelOpenState2 = true;
-    bool updateSuccess = false;
-
-    string CurrentUserId { get; set; }
-
-    private void OnFocusHandler(FocusEventArgs e)
-    {
-        ErrorMessage = "";
-    }
-
-    private void OnFocusOutHandler(FocusEventArgs e)
-    {
-        var value = VolunteerCount;
-        if (value > 0)
-        {
-            if (value < CharityEvent.Volunteers.Count)
-                ErrorMessage = "Illegal volunteer count, please choose a value greater than currently assigned volunteeer count or reduce the number of volunteers in this event.";
-            else
-                CharityEvent.MaxVolunteers = value;
-        }
-        else
-        {
-            ErrorMessage = "Illegal volunteer count, please choose a positive number.";
-        }
-    }
-
-    private void UpdateEvent()
-    {
-        if (ObjectChecker.IsAnyNullOrEmpty(CharityEvent))
-        {
-            m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
-        }
-        else
-        {
-            Thread thread1 = new Thread(() =>
-            {
-                try
-                {
-                    KarmaContext.Events.Update(CharityEvent);
-                    KarmaContext.SaveChanges();
-                    updateSuccess = true;
-                //throw new DbUpdateException();// demonstration purposes
-            }
-                catch (DbUpdateException)
-                {
-                    updateSuccess = false;
-                }
-            });
-            Thread thread2 = new Thread(() =>
-            {
-                if (updateSuccess)
-                {
-                    m_uriHelper.NavigateTo("");
-                    m_notifactionTransmitter.ShowMessage("The event has been updated", MatToastType.Success);
-                }
-                else
-                {
-                    m_notifactionTransmitter.ShowMessage("An error occured while updating the event", MatToastType.Danger);
-                }
-            });
-            thread1.Start();
-            thread1.Join();
-            thread2.Start();
-        }
-    }
-
-    private void DeleteEvent()
-    {
-        KarmaContext.Events.Where(x => x.Id == Id).Delete();
-        KarmaContext.SaveChanges();
-        m_uriHelper.NavigateTo("");
-        m_notifactionTransmitter.ShowMessage("The event has been deleted", MatToastType.Success);
-    }
-
-    protected override void OnInitialized()
-    {
-        CharityEvent = KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).FirstOrDefault();
-        var principal = m_httpContextAccessor.HttpContext.User;
-        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        VolunteerCount = CharityEvent.Volunteers.Count;
-    }
-
-    public IEnumerable<IVolunteer> GetVolunteersInThisEvent()
-    {
-        return KarmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p);
-    }
-
-    public IEnumerable<IVolunteer> GetVolunteersNotInThisEvent()
-    {
-        return KarmaContext.Volunteers.Include(p => p.Events).Where(p => !p.Events.Contains(CharityEvent));
-    }
-
-    private void AddVolunteerToEvent(Guid id)
-    {
-        CharityEvent.Volunteers.Add(KarmaContext.Volunteers.Where(p => p.Id == id).FirstOrDefault());
-        KarmaContext.SaveChanges();
-    }
-
-    private void RemoveVolunteerFromEvent(Guid id)
-    {
-        CharityEvent.Volunteers.Remove(KarmaContext.Volunteers.Where(p => p.Id == id).FirstOrDefault());
-        KarmaContext.SaveChanges();
-    }
-
-    private int GetNumberOfEquipmentOfThisVolunteer(Guid volunteerId)
-    {
-        return KarmaContext.SpecialEquipment.Include(p => p.Owner).Where(p => p.Owner.Id == volunteerId).Count();
-    }
 }
