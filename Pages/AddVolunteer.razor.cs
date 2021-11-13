@@ -33,9 +33,9 @@ namespace Karma.Pages
             CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
         }
 
-        public void AddThisVolunteer()
+        public void AddVolunteerToDB()
         {
-            var vol = new Volunteer(name: VolunteerName, surname: VolunteerSurname, Guid.NewGuid(), listOfCharityEvents);
+            var vol = new Volunteer(VolunteerName, VolunteerSurname, Guid.NewGuid(), listOfCharityEvents);
             if (ObjectChecker.IsAnyNullOrEmpty(vol))
             {
                 m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);

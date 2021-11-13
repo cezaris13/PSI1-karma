@@ -10,7 +10,7 @@
     <div class="centerContainer">
         <MatTextField @bind-Value="@VolunteerName" @oninput="@((e) => { VolunteerName = (string)e.Value; })" Label=" Volunteer Name" Outlined="false" Class="element"></MatTextField>
         <MatTextField @bind-Value="@VolunteerSurname" @oninput="@((e) => { VolunteerSurname = (string)e.Value; })" Label=" Volunteer Surname" Outlined="false" Class="element"></MatTextField>
-        <MatButton Raised="true" class="btn btn-primary element" @onclick="AddThisVolunteer">Add volunteer</MatButton>
+        <MatButton Raised="true" class="btn btn-primary element" @onclick="AddVolunteerToDB">Add volunteer</MatButton>
     </div>
 </div>
 

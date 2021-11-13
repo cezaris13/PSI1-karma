@@ -21,7 +21,7 @@ namespace Karma.Pages
         [Inject]
         public IJSRuntime m_jsRuntime { get; set; }
         public Volunteer volunteer;
-        private KarmaContext m_karmaContext = new KarmaContext();
+        private KarmaContext m_karmaContext = new();
         private string FilterValue { get; set; } = "";
         public string CurrentUserId { get; set; }
         public string EquipmentName { get; set; }

@@ -12,7 +12,7 @@ namespace Karma.Pages
     {
         public string filterValue = "";
 
-        private KarmaContext m_karmaContext = new KarmaContext();
+        private KarmaContext m_karmaContext = new();
 
         public IEnumerable<IGenericKarmaItem> GetEvents()
         {

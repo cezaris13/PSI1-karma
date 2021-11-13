@@ -49,13 +49,13 @@ namespace Karma.Pages
         {
             var karmaContext = new KarmaContext();
             charityEvent = karmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
-            var principal = m_httpContextAccessor.HttpContext.User;
+            ClaimsPrincipal principal = m_httpContextAccessor.HttpContext.User;
             CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
             try
             {
                 weatherForecast = await m_weatherForecast.GetWeather(charityEvent.Address);
-                var location = m_geocoder.Geocode(charityEvent.Address);
-                var coords = location.Results[0].Geometry;
+                GeocoderResponse location = m_geocoder.Geocode(charityEvent.Address);
+                Point coords = location.Results[0].Geometry;
                 await m_jsRuntime.InvokeVoidAsync("GetMap", coords.Latitude, coords.Longitude);
             }
             catch (InvalidAddressException ex)
@@ -69,7 +69,7 @@ namespace Karma.Pages
             m_listOfThreads.Add(new Thread(() => GetEquipment()));
             m_listOfThreads.Add(new Thread(() => CalculateParticipants()));
 
-            foreach (var thread in m_listOfThreads)
+            foreach (Thread thread in m_listOfThreads)
             {
                 thread.Start();
             }
@@ -121,7 +121,7 @@ namespace Karma.Pages
             {
                 var karmaContext = new KarmaContext();
                 var eventEquipment = new List<string>();
-                var volunteers = karmaContext.Events.Include(e => e.Volunteers).Where(x => x.Id == Id).FirstOrDefault().Volunteers;
+                List<Volunteer> volunteers = karmaContext.Events.Include(e => e.Volunteers).Where(x => x.Id == Id).FirstOrDefault().Volunteers;
                 equipment = karmaContext.SpecialEquipment.Where(x => volunteers.Contains(x.Owner)).Select(se => se.Name).ToList();
                 m_totalLoadedTasks++;
                 InvokeAsync(() => StateHasChanged());
@@ -136,7 +136,7 @@ namespace Karma.Pages
         private void CalculateParticipants()
         {
             var karmaContext = new KarmaContext();
-            var events = karmaContext.Events.Include(x => x.Volunteers).FirstOrDefault(y => y.Id == Id);
+            CharityEvent events = karmaContext.Events.Include(x => x.Volunteers).FirstOrDefault(y => y.Id == Id);
             currentParticipants = events.Volunteers.Count;
             neededParticipants = events.MaxVolunteers;
             participantsProgress = (double) currentParticipants / neededParticipants;
@@ -151,7 +151,7 @@ namespace Karma.Pages
             {
                 m_notifactionTransmitter.ShowMessage("Loaded all elements of the event", MatToastType.Info);
             }
-            if (m_statusMessages.Count > 0)
+            if (!m_statusMessages.IsEmpty)
             {
                 string val = null;
                 while (val != "")

@@ -85,7 +85,7 @@ namespace Karma.Pages
         protected override void OnInitialized()
         {
             charityEvent = m_karmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).FirstOrDefault();
-            var principal = m_httpContextAccessor.HttpContext.User;
+            ClaimsPrincipal principal = m_httpContextAccessor.HttpContext.User;
             CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
             VolunteerCount = charityEvent.Volunteers.Count;
         }
