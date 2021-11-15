@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
@@ -15,8 +14,8 @@ namespace Karma.Areas.Identity
     public class RevalidatingIdentityAuthenticationStateProvider<TUser>
         : RevalidatingServerAuthenticationStateProvider where TUser : class
     {
-        private readonly IServiceScopeFactory _scopeFactory;
-        private readonly IdentityOptions _options;
+        private readonly IServiceScopeFactory m_scopeFactory;
+        private readonly IdentityOptions m_options;
 
         public RevalidatingIdentityAuthenticationStateProvider(
             ILoggerFactory loggerFactory,
@@ -24,8 +23,8 @@ namespace Karma.Areas.Identity
             IOptions<IdentityOptions> optionsAccessor)
             : base(loggerFactory)
         {
-            _scopeFactory = scopeFactory;
-            _options = optionsAccessor.Value;
+            m_scopeFactory = scopeFactory;
+            m_options = optionsAccessor.Value;
         }
 
         protected override TimeSpan RevalidationInterval => TimeSpan.FromMinutes(30);
@@ -34,10 +33,10 @@ namespace Karma.Areas.Identity
             AuthenticationState authenticationState, CancellationToken cancellationToken)
         {
             // Get the user manager from a new scope to ensure it fetches fresh data
-            var scope = _scopeFactory.CreateScope();
+            IServiceScope scope = m_scopeFactory.CreateScope();
             try
             {
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<TUser>>();
+                UserManager<TUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<TUser>>();
                 return await ValidateSecurityStampAsync(userManager, authenticationState.User);
             }
             finally
@@ -55,7 +54,7 @@ namespace Karma.Areas.Identity
 
         private async Task<bool> ValidateSecurityStampAsync(UserManager<TUser> userManager, ClaimsPrincipal principal)
         {
-            var user = await userManager.GetUserAsync(principal);
+            TUser user = await userManager.GetUserAsync(principal);
             if (user == null)
             {
                 return false;
@@ -66,8 +65,8 @@ namespace Karma.Areas.Identity
             }
             else
             {
-                var principalStamp = principal.FindFirstValue(_options.ClaimsIdentity.SecurityStampClaimType);
-                var userStamp = await userManager.GetSecurityStampAsync(user);
+                string principalStamp = principal.FindFirstValue(m_options.ClaimsIdentity.SecurityStampClaimType);
+                string userStamp = await userManager.GetSecurityStampAsync(user);
                 return principalStamp == userStamp;
             }
         }

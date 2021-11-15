@@ -8,15 +8,17 @@ namespace Karma.Services
 {
     public class NotificationEventArgs : EventArgs
     {
+        public string Message { get; set; }
+
+        public MatToastType NotificationType { get; set; }
+
+        public DateTime Time { get; set; }
+
         public NotificationEventArgs(string message, MatToastType notificationType)
         {
             Message = message;
             Time = DateTime.Now;
             NotificationType = notificationType;
         }
-
-        public string Message { get; set; }
-        public MatToastType NotificationType { get; set; }
-        public DateTime Time { get; set; }
     }
 }

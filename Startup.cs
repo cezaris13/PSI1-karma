@@ -1,4 +1,3 @@
-using System.Net.Http;
 using Karma.Areas.Identity;
 using Karma.Data;
 using Karma.Services;
@@ -43,9 +42,12 @@ namespace Karma
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddSingleton<IWeatherForecast, WeatherForecast>();
-            services.AddSingleton<IGeocoder>(p=>new Geocoder(Configuration["OpenCageGeocodingSecret"]));
+            services.AddSingleton<IGeocoder>(p => new Geocoder(Configuration["OpenCageGeocodingSecret"]));
             services.AddScoped<INotifactionTransmitter, NotificationTransmitter>();
             services.AddScoped<NotificationToaster>();
+            services.AddTransient<IDBServiceProvider, DBServiceProvider>();
+            services.AddTransient<IKarmaContextFactory, KarmaContextFactory>();
+            services.AddSingleton<IObjectChecker, ObjectChecker>();
 
             services.AddHttpClient();
             services.AddHttpContextAccessor();

@@ -1,8 +1,5 @@
 ﻿@page "/manageuserevents"
 @using System.Text.RegularExpressions;
-@using Karma.Models
-@using System.Security.Claims
-@inject AuthenticationStateProvider GetAuthenticationStateAsync
 
 <head>
     <link href="css/site.css" rel="stylesheet" />
@@ -12,12 +9,12 @@
 
 <p class"mat">Ready to aquire karma points by helping out others?</p>
 
-<MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Events" Icon="search" IconTrailing="true"></MatTextField>
+<MatTextField @bind-Value="@filterValue" OnInput="@(e => filterValue = e.Value.ToString())" Label="Search Events" Icon="search" IconTrailing="true"></MatTextField>
 
 <div class="card-deck">
     @foreach (var karmaEvent in GetEvents())
     {
-        var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());
         @if (matches.Count > 0)
         {
@@ -40,31 +37,3 @@
         }
     }
 </div>
-
-@code {
-    private string FilterValue { get; set; } = "";
-    string CurrentUserId { get; set; }
-
-    private KarmaContext KarmaContext { get; } = new KarmaContext();
-
-    public IEnumerable<IGenericKarmaItem> GetEvents()
-    {
-        return KarmaContext.Events.Where(p => p.ManagerId == CurrentUserId);
-    }
-
-    public void NavigateToIndividualEvent(Guid id)
-    {
-        m_uriHelper.NavigateTo($"event/{id}");
-    }
-
-    public void NavigateToEditEvent(Guid id)
-    {
-        m_uriHelper.NavigateTo($"editcharityevent/{id}");
-    }
-
-    protected override void OnInitialized()
-    {
-        var principal = m_httpContextAccessor.HttpContext.User;
-        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-    }
-}

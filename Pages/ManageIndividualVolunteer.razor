@@ -1,11 +1,5 @@
 ﻿@page "/volunteer/{Id:guid}"
-@using System.Linq
-@using Karma.Models
 @using System.Text.RegularExpressions;
-@using Microsoft.EntityFrameworkCore;
-@using System.Security.Claims
-@inject IJSRuntime m_jsRuntime
-@inject AuthenticationStateProvider GetAuthenticationStateAsync
 
 <head>
     <link href="css/site.css" rel="stylesheet" />
@@ -112,81 +106,4 @@
 else
 {
     <h1 class="mat">Sorry,but this volunteer was not found</h1>
-}
-
-@code
-{
-    [Parameter]
-    public Guid Id { get; set; }
-    private Volunteer volunteer;
-    KarmaContext m_context = new KarmaContext();
-    private string FilterValue { get; set; } = "";
-    string CurrentUserId { get; set; }
-    string EquipmentName { get; set; }
-    bool panelOpenState1 = true;
-    bool panelOpenState2 = true;
-    bool panelOpenState3 = true;
-
-    private void UpdateVolunteerData()
-    {
-        if (ObjectChecker.IsAnyNullOrEmpty(volunteer))
-        {
-            m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
-        }
-        else
-        {
-            m_context.Volunteers.Update(volunteer);
-            m_context.SaveChanges();
-            m_uriHelper.NavigateTo("/volunteers");
-            m_notifactionTransmitter.ShowMessage("The volunteer has been updated", MatToastType.Success);
-        }
-    }
-
-    protected override void OnInitialized()
-    {
-        volunteer = m_context.Volunteers.Include(p => p.Events).Where(p => p.Id == Id).FirstOrDefault();
-        var principal = m_httpContextAccessor.HttpContext.User;
-        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-    }
-
-    public IEnumerable<ICharityEvent> GetEventsOfThisVolunteer()
-    {
-        return m_context.Volunteers.Include(p => p.Events).Where(p => p.Id == Id).Select(p => p.Events).SelectMany(p => p);
-    }
-
-    public IEnumerable<ICharityEvent> GetEventsNotOfThisVolunteer()
-    {
-        return m_context.Events.Include(p => p.Volunteers).Where(p => !p.Volunteers.Contains(volunteer));
-    }
-
-    private void AddEventToVolunteerList(Guid id)
-    {
-        volunteer.Events.Add(m_context.Events.Where(p => p.Id == id).FirstOrDefault());
-        m_context.SaveChanges();
-    }
-
-    private void RemoveEventFromList(Guid id)
-    {
-        volunteer.Events.Remove(m_context.Events.Where(p => p.Id == id).FirstOrDefault());
-        m_context.SaveChanges();
-    }
-
-    public IEnumerable<ISpecialEquipment> GetEquipmentOfThisVolunteer()
-    {
-        return m_context.SpecialEquipment.Include(p => p.Owner).Where(p => p.Owner.Id == Id);
-    }
-
-    private void RemoveEquipment(Guid id)
-    {
-        m_context.Remove(m_context.SpecialEquipment.Where(p => p.Id == id).FirstOrDefault());
-        m_context.SaveChanges();
-    }
-
-    private void AddNewEquipmentToVolunteer()
-    {
-        var equipment = new Karma.Models.SpecialEquipment(Guid.NewGuid(), EquipmentName, volunteer);
-        m_context.SpecialEquipment.Add(equipment);
-        EquipmentName = string.Empty;
-        m_context.SaveChanges();
-    }
 }

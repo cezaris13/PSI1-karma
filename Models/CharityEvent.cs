@@ -41,8 +41,7 @@ namespace Karma.Models
         {
             if (obj == null)
                 return 1;
-            CharityEvent tempCharityEvent = obj as CharityEvent;
-            if (tempCharityEvent == null)
+            if (obj is not CharityEvent tempCharityEvent)
                 throw new ArgumentException("Object is not a Charity event");
             else
             {

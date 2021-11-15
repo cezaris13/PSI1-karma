@@ -6,8 +6,11 @@ namespace Karma.Models
     public class KarmaContext : DbContext
     {
         public DbSet<CharityEvent> Events { get; set; }
+
         public DbSet<Volunteer> Volunteers { get; set; }
+
         public DbSet<SpecialEquipment> SpecialEquipment { get; set; }
+
         public DbSet<EventImages> EventImages { get; set; }
         public DbSet<PendingVolunteer> PendingVolunteers { get; set; }
 
@@ -15,8 +18,8 @@ namespace Karma.Models
 
         public KarmaContext()
         {
-            var folder = Environment.SpecialFolder.LocalApplicationData;
-            var path = Environment.GetFolderPath(folder);
+            Environment.SpecialFolder folder = Environment.SpecialFolder.LocalApplicationData;
+            string path = Environment.GetFolderPath(folder);
             DbPath = $"{path}{System.IO.Path.DirectorySeparatorChar}karma.db";
         }
 

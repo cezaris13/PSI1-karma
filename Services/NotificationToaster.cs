@@ -18,7 +18,7 @@ namespace Karma.Services
 
         private delegate void DisplayNotification(string title, MatToastType notificationType);
 
-        private void HandleEvent(Object sender, NotificationEventArgs e)
+        private void HandleEvent(object sender, NotificationEventArgs e)
         {
             DisplayNotification displayNotification = delegate (string title, MatToastType notificationType)
             {

@@ -1,11 +1,6 @@
 ﻿@page "/volunteers"
-@using Karma.Models
-@using Microsoft.EntityFrameworkCore;
 @using System.Text.RegularExpressions;
-@using System.Linq;
-@using System.Security.Claims
-@inject AuthenticationStateProvider GetAuthenticationStateAsync
-@inject IJSRuntime m_jsRuntime
+@inject INotifactionTransmitter m_notificationTransmitter
 
 <head>
     <link href="css/site.css" rel="stylesheet" />
@@ -27,8 +22,8 @@
         </tr>
         @foreach (var volunteer in GetVolunteers())
         {
-            nameSurname = volunteer.Name + " " + volunteer.Surname;
-            surnameName = volunteer.Surname + " " + volunteer.Name;
+            var nameSurname = volunteer.Name + " " + volunteer.Surname;
+            var surnameName = volunteer.Surname + " " + volunteer.Name;
             var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             var matches = regex.Matches(nameSurname + surnameName);
             @if (matches.Count > 0)
@@ -47,7 +42,6 @@
                                 </div>
                             }
                         }
-
                     </td>
                     <td>
                         <MatButton class="btn btn-primary" Outlined="true" @onclick="() => NavigateToManageVolunteer(volunteer.Id)">Manage volunteer</MatButton>
@@ -61,45 +55,3 @@
         }
     </tbody>
 </table>
-
-@code
-{
-    private String FilterValue { get; set; } = "";
-    KarmaContext KarmaContext = new KarmaContext();
-    private String nameSurname { get; set; } = "";
-    private String surnameName { get; set; } = "";
-    string CurrentUserId { get; set; }
-
-    public IEnumerable<IVolunteer> GetVolunteers()
-    {
-        return KarmaContext.Volunteers.Include(x => x.Events);
-    }
-
-    public void NavigateToIndividualEvent(Guid id)
-    {
-        m_uriHelper.NavigateTo($"event/{id}");
-    }
-
-    public void NavigateToAddVolunteer()
-    {
-        m_uriHelper.NavigateTo("addvolunteer");
-    }
-
-    private void RemoveVolunteer(Guid id)
-    {
-        KarmaContext.Volunteers.Where(x => x.Id == id).DeleteFromQuery();
-        KarmaContext.SaveChanges();
-        m_notifactionTransmitter.ShowMessage("The volunteer has been removed", MatToastType.Success);
-    }
-
-    public void NavigateToManageVolunteer(Guid id)
-    {
-        m_uriHelper.NavigateTo($"volunteer/{id}");
-    }
-
-    protected override void OnInitialized()
-    {
-        var principal = m_httpContextAccessor.HttpContext.User;
-        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-    }
-}

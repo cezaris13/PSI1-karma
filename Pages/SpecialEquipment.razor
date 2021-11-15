@@ -1,6 +1,5 @@
 ﻿@page "/specialequipment"
-@using Karma.Models
-@using System.Linq;
+
 <h1 class="mat">Special Equipment</h1>
 
 <p>Here you can find the special equipment each volunteer owns.</p>
@@ -33,21 +32,3 @@
         }
     </tbody>
 </table>
-
-@code
-{
-    private KarmaContext KarmaContext { get; } = new KarmaContext();
-
-    private IEnumerable<VolunteerAndEquipment> GetPairsOfVolunteersAndEquipment()
-    {
-        var vols = KarmaContext.Volunteers.ToList();
-        var equipment = KarmaContext.SpecialEquipment.ToList();
-        var pairs = vols.GroupJoin(equipment,
-                         owner => owner,
-                         eq => eq.Owner,
-                         (owner, collection) =>
-                             new VolunteerAndEquipment(owner.Name, owner.Surname, collection.Select(x => x.Name)));
-        var orderedList = pairs.ToList().OrderByEquipmentCount();
-        return orderedList;
-    }
-}
