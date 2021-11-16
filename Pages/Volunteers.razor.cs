@@ -19,8 +19,12 @@ namespace Karma.Pages
         private NavigationManager m_navigationManager { get; set; }
 
         public string filterValue = "";
+        [Inject]
+        private IKarmaContextFactory m_karmaContextFactory { get; set; }
 
-        private KarmaContext m_karmaContext = new();
+        public string FilterValue = "";
+
+        private KarmaContext m_karmaContext;
 
         [Inject]
         public IDBServiceProvider m_DBServiceProvider { get; set; }
@@ -45,6 +49,7 @@ namespace Karma.Pages
 
         public void RemoveVolunteer(Guid id)
         {
+            m_karmaContext.SpecialEquipment.Where(x => x.Owner.Id == id).DeleteFromQuery();
             m_karmaContext.Volunteers.Where(x => x.Id == id).DeleteFromQuery();
             m_karmaContext.SaveChanges();
             m_notificationTransmitter.ShowMessage("The volunteer has been removed", MatToastType.Success);
@@ -58,6 +63,7 @@ namespace Karma.Pages
         //Pending volunteers tab:
         protected override void OnInitialized()
         {
+            m_karmaContext = m_karmaContextFactory.Create();
             ClaimsPrincipal principal = m_httpContextAccessor.HttpContext.User;
             CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
         }

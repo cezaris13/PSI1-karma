@@ -46,7 +46,7 @@ namespace Karma
             services.AddScoped<INotifactionTransmitter, NotificationTransmitter>();
             services.AddScoped<NotificationToaster>();
             services.AddTransient<IDBServiceProvider, DBServiceProvider>();
-            services.AddTransient<IKarmaContextFactory, KarmaContextFactory>();
+            services.AddSingleton<IKarmaContextFactory, KarmaContextFactory>();
             services.AddSingleton<IObjectChecker, ObjectChecker>();
 
             services.AddHttpClient();

@@ -22,8 +22,11 @@ namespace Karma.Pages
         [Inject]
         public IDBServiceProvider m_DBServiceProvider { get; set; }
 
+        [Inject]
+        public IKarmaContextFactory m_karmaContextFactory { get; set; }
+
         public PendingVolunteer potentialVolunteer;
-        private KarmaContext m_karmaContext = new();
+        private KarmaContext m_karmaContext;
         private string FilterValue { get; set; } = "";
         public string CurrentUserId { get; set; }
         public string EquipmentName { get; set; }
@@ -35,7 +38,8 @@ namespace Karma.Pages
 
         protected override void OnInitialized()
         {
-            potentialVolunteer = m_karmaContext.PendingVolunteers.FirstOrDefault();
+            m_karmaContext = m_karmaContextFactory.Create();
+            potentialVolunteer = m_karmaContext.PendingVolunteers.Where(p => p.Id == Id).FirstOrDefault();
             ClaimsPrincipal principal = m_httpContextAccessor.HttpContext.User;
             CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
         }
@@ -84,11 +88,12 @@ namespace Karma.Pages
         {
             var equipment = new SpecialEquipment(Guid.NewGuid(), EquipmentName);
             listOfEquipment.Add(equipment);
+            EquipmentName = string.Empty;
         }
 
         public void AddANewVolunteer()
         {
-            var volunteer = new Volunteer(potentialVolunteer.Name, potentialVolunteer.Surname, Guid.NewGuid());
+            var volunteer = new Volunteer(potentialVolunteer.Name, potentialVolunteer.Surname, Guid.NewGuid(), listOfCharityEvents);
             if (listOfEquipment.Count > 0)
             {
                 foreach (var equipment in listOfEquipment)
