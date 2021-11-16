@@ -1,0 +1,45 @@
+﻿@page "/pendingvolunteerslist"
+@using System.Text.RegularExpressions;
+@inject INotifactionTransmitter m_notificationTransmitter
+
+<head>
+    <link href="css/site.css" rel="stylesheet" />
+</head>
+
+<h1 class="mat">List of pending requests</h1>
+
+<p>Here are all the people that want to become volunteers. Remeber to only accept their requests after contacting them.</p>
+
+<div class="container leftAlign" style="width:20%">
+    <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search requests" Icon="search" IconTrailing="true" Class="element"></MatTextField>
+</div>
+
+<table class="table">
+    <tbody>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Phone number</th>
+            <th>Actions</th>
+        </tr>
+        @foreach (var potentialVolunteer in GetPendingVolunteers())
+        {
+        var nameSurname = potentialVolunteer.Name + " " + potentialVolunteer.Surname;
+        var surnameName = potentialVolunteer.Surname + " " + potentialVolunteer.Name;
+        var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        var matches = regex.Matches(nameSurname + surnameName);
+        @if (matches.Count > 0)
+        {
+        <tr>
+            <td>@potentialVolunteer.Name</td>
+            <td>@potentialVolunteer.Surname</td>
+            <td>@potentialVolunteer.PhoneNumber</td>
+            <td>
+                <MatButton class="btn btn-primary" Outlined="true" Style="background-color:mediumseagreen;color:azure" @onclick="() => AddANewVolunteer(potentialVolunteer.Id)">Accept request</MatButton>
+                <MatButton class="btn btn-primary" Outlined="true" Style="background-color:crimson;color:azure" @onclick="() => RemovePotentialVolunteer(potentialVolunteer.Id)">Decline request</MatButton>
+            </td>
+        </tr>
+        }
+        }
+    </tbody>
+</table>

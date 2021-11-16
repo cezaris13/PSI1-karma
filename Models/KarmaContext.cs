@@ -12,6 +12,7 @@ namespace Karma.Models
         public DbSet<SpecialEquipment> SpecialEquipment { get; set; }
 
         public DbSet<EventImages> EventImages { get; set; }
+
         public DbSet<PendingVolunteer> PendingVolunteers { get; set; }
 
         public string DbPath { get; private set; }
