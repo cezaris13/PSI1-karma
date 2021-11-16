@@ -1,9 +1,7 @@
 ﻿@page "/registration"
-@using Karma.Models
 @attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
 @inject AuthenticationStateProvider GetAuthenticationStateAsync
 @inject IJSRuntime m_jsRuntime
-
 
 <head>
     <link href="css/site.css" rel="stylesheet" />
@@ -19,28 +17,3 @@
         <MatButton Raised="true" class="btn btn-primary element" @onclick="CreatePendingVolunteer">Register</MatButton>
     </div>
 </div>
-
-@code
-{
-    private String Name { get; set; } = "";
-    private String Surname { get; set; } = "";
-    private String PhoneNumber { get; set; } = "";
-    KarmaContext KarmaContext = new KarmaContext();
-
-    private void CreatePendingVolunteer()
-    {
-        var volunteer = new PendingVolunteer(Name, Surname, PhoneNumber, Guid.NewGuid());
-        KarmaContext.PendingVolunteers.Add(volunteer);
-        KarmaContext.SaveChanges();
-        m_notifactionTransmitter.ShowMessage("Registration Succesful", MatToastType.Success);
-        Name = "";
-        Surname = "";
-        PhoneNumber = "";
-        NavigateToMain();
-    }
-
-    public void NavigateToMain()
-    {
-        m_uriHelper.NavigateTo("/");
-    }
-}

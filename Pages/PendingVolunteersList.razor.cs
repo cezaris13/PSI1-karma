@@ -14,9 +14,6 @@ namespace Karma.Pages
         [Inject]
         public IDBServiceProvider m_DBServiceProvider { get; set; }
 
-        [Inject]
-        private NavigationManager m_navigationManager { get; set; }
-
         public string FilterValue = "";
 
         private KarmaContext m_karmaContext = new();
