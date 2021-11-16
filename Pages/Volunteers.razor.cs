@@ -18,6 +18,7 @@ namespace Karma.Pages
         [Inject]
         private NavigationManager m_navigationManager { get; set; }
 
+        public string filterValue = "";
         [Inject]
         private IKarmaContextFactory m_karmaContextFactory { get; set; }
 
@@ -25,8 +26,12 @@ namespace Karma.Pages
 
         private KarmaContext m_karmaContext;
 
-        string CurrentUserId { get; set; }
+        [Inject]
+        public IDBServiceProvider m_DBServiceProvider { get; set; }
 
+        private string CurrentUserId { get; set; }
+
+        //Active volunteers tab:
         public IEnumerable<IVolunteer> GetVolunteers()
         {
             return m_karmaContext.Volunteers.Include(x => x.Events);
@@ -44,6 +49,7 @@ namespace Karma.Pages
 
         public void RemoveVolunteer(Guid id)
         {
+            m_karmaContext.SpecialEquipment.Where(x => x.Owner.Id == id).DeleteFromQuery();
             m_karmaContext.Volunteers.Where(x => x.Id == id).DeleteFromQuery();
             m_karmaContext.SaveChanges();
             m_notificationTransmitter.ShowMessage("The volunteer has been removed", MatToastType.Success);
@@ -54,11 +60,56 @@ namespace Karma.Pages
             m_navigationManager.NavigateTo($"volunteer/{id}");
         }
 
+        //Pending volunteers tab:
         protected override void OnInitialized()
         {
             m_karmaContext = m_karmaContextFactory.Create();
             ClaimsPrincipal principal = m_httpContextAccessor.HttpContext.User;
             CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+
+        public IEnumerable<PendingVolunteer> GetPendingVolunteers()
+        {
+            return m_karmaContext.PendingVolunteers;
+        }
+
+        public void AddANewVolunteer(Guid id)
+        {
+            PendingVolunteer pendingVolunteer = m_karmaContext.PendingVolunteers.Where(x => x.Id == id).FirstOrDefault();
+            var volunteer = new Volunteer(pendingVolunteer.Name, pendingVolunteer.Surname, Guid.NewGuid());
+            int result = m_DBServiceProvider.AddToDB(volunteer);
+            if (result == -1)
+                m_notificationTransmitter.ShowMessage("An error occured while adding volunteer to the database", MatToastType.Danger);
+
+            m_karmaContext.PendingVolunteers.Where(x => x.Id == id).DeleteFromQuery();
+            m_karmaContext.SaveChanges();
+        }
+
+        public void RemovePotentialVolunteer(Guid id)
+        {
+            m_karmaContext.PendingVolunteers.Where(x => x.Id == id).DeleteFromQuery();
+            m_karmaContext.SaveChanges();
+            m_notificationTransmitter.ShowMessage("The request has been deleted", MatToastType.Success);
+        }
+
+        public void NavigateToVolunteerRequest(Guid id)
+        {
+            m_navigationManager.NavigateTo($"pendingvolunteer/{id}");
+        }
+
+        //Equipment tab:
+        private IEnumerable<VolunteerAndEquipment> GetPairsOfVolunteersAndEquipment()
+        {
+            var volunteers = m_karmaContext.Volunteers.ToList();
+            var equipment = m_karmaContext.SpecialEquipment.ToList();
+            return volunteers
+                .GroupJoin(
+                    equipment,
+                    owner => owner,
+                    eq => eq.Owner,
+                    (owner, collection) => new VolunteerAndEquipment(owner.Name, owner.Surname, collection.Select(x => x.Name)))
+                .ToList()
+                .OrderByEquipmentCount();
         }
     }
 }

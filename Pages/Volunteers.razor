@@ -6,52 +6,132 @@
     <link href="css/site.css" rel="stylesheet" />
 </head>
 
-<h1 class="mat">Volunteers</h1>
-<p>Here you can find the list of volunteers working on various projects.</p>
-<div class="container leftAlign" style="width:20%">
-    <MatButton Raised="true" class="btn btn-primary element" @onclick="NavigateToAddVolunteer">Add a new volunteer</MatButton>
-    <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Volunteers" Icon="search" IconTrailing="true" Class="element"></MatTextField>
-</div>
-<table class="table">
-    <tbody>
-        <tr>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Events</th>
-            <th>Actions</th>
-        </tr>
-        @foreach (var volunteer in GetVolunteers())
-        {
-            var nameSurname = volunteer.Name + " " + volunteer.Surname;
-            var surnameName = volunteer.Surname + " " + volunteer.Name;
-            var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            var matches = regex.Matches(nameSurname + surnameName);
-            @if (matches.Count > 0)
-            {
+<MatTabGroup>
+    <MatTab Label="Active volunteers">
+        <h1 class="mat">Volunteers</h1>
+        <p>Here you can find the list of volunteers working on various projects.</p>
+        <div class="container leftAlign" style="width:20%">
+            <MatButton Raised="true" class="btn btn-primary element" @onclick="NavigateToAddVolunteer">Add a new volunteer</MatButton>
+            <MatTextField @bind-Value="@filterValue" OnInput="@(e => filterValue = e.Value.ToString())" Label="Search Volunteers" Icon="search" IconTrailing="true" Class="element"></MatTextField>
+        </div>
+        <table class="table">
+            <tbody>
                 <tr>
-                    <td>@volunteer.Name</td>
-                    <td>@volunteer.Surname</td>
-                    <td>
-                        @if (volunteer.Events != null)
-                        {
-
-                            @foreach (var karmaEvent in volunteer.Events)
-                            {
-                                <div @onclick="() => NavigateToIndividualEvent(karmaEvent.Id)">
-                                    @karmaEvent.Name
-                                </div>
-                            }
-                        }
-                    </td>
-                    <td>
-                        <MatButton class="btn btn-primary" Outlined="true" @onclick="() => NavigateToManageVolunteer(volunteer.Id)">Manage volunteer</MatButton>
-                        @if (!volunteer.Events.Where(p => p.ManagerId != CurrentUserId).Any())
-                        {
-                            <MatButton Raised="true" @onclick="() => RemoveVolunteer(volunteer.Id)">Remove the volunteer</MatButton>
-                        }
-                    </td>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Events</th>
+                    <th>Actions</th>
                 </tr>
-            }
-        }
-    </tbody>
-</table>
+                @foreach (var volunteer in GetVolunteers())
+                {
+                    var nameSurname = volunteer.Name + " " + volunteer.Surname;
+                    var surnameName = volunteer.Surname + " " + volunteer.Name;
+                    var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                    var matches = regex.Matches(nameSurname + surnameName);
+                        @if (matches.Count > 0)
+                        {
+                            <tr>
+                                <td>@volunteer.Name</td>
+                                <td>@volunteer.Surname</td>
+                                <td>
+                                    @if (volunteer.Events != null)
+                                    {
+
+                                        @foreach (var karmaEvent in volunteer.Events)
+                                        {
+                                            <div @onclick="() => NavigateToIndividualEvent(karmaEvent.Id)">
+                                                @karmaEvent.Name
+                                            </div>
+                                        }
+                                    }
+                                </td>
+                                <td>
+                                    <MatButton class="btn btn-primary" Outlined="true" @onclick="() => NavigateToManageVolunteer(volunteer.Id)">Manage volunteer</MatButton>
+                                    @if (!volunteer.Events.Where(p => p.ManagerId != CurrentUserId).Any())
+                                    {
+                                        <MatButton Raised="true" @onclick="() => RemoveVolunteer(volunteer.Id)">Remove the volunteer</MatButton>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                }
+            </tbody>
+        </table>
+    </MatTab>
+
+    <MatTab Label="Pending volunteers">
+        <h1 class="mat">List of pending requests</h1>
+
+        <p>Here are all the people that want to become volunteers. Remeber to only accept their requests after contacting them.</p>
+
+        <div class="container leftAlign" style="width:20%">
+            <MatTextField @bind-Value="@filterValue" OnInput="@(e => filterValue = e.Value.ToString())" Label="Search requests" Icon="search" IconTrailing="true" Class="element"></MatTextField>
+        </div>
+
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Phone number</th>
+                    <th>Actions</th>
+                </tr>
+                @foreach (var potentialVolunteer in GetPendingVolunteers())
+                {
+                    var nameSurname = potentialVolunteer.Name + " " + potentialVolunteer.Surname;
+                    var surnameName = potentialVolunteer.Surname + " " + potentialVolunteer.Name;
+                    var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                    var matches = regex.Matches(nameSurname + surnameName);
+                        @if (matches.Count > 0)
+                        {
+                            <tr>
+                                <td>@potentialVolunteer.Name</td>
+                                <td>@potentialVolunteer.Surname</td>
+                                <td>@potentialVolunteer.PhoneNumber</td>
+                                <td>
+                                    <MatButton class="btn btn-primary" Outlined="true" Style="background-color:mediumseagreen;color:azure" @onclick="() => AddANewVolunteer(potentialVolunteer.Id)">Accept request</MatButton>
+                                    <MatButton class="btn btn-primary" Outlined="true" Style="background-color:crimson;color:azure" @onclick="() => RemovePotentialVolunteer(potentialVolunteer.Id)">Decline request</MatButton>
+                                    <MatButton class="btn btn-primary" Outlined="true" Style="background-color:mediumblue;color:azure" @onclick="() => NavigateToVolunteerRequest(potentialVolunteer.Id)">More actions</MatButton>
+                                </td>
+                            </tr>
+                        }
+                }
+            </tbody>
+        </table>
+    </MatTab>
+
+    <MatTab Label="Volunteer equipment">
+        <h1 class="mat">Special Equipment</h1>
+
+        <p>Here you can find the special equipment each volunteer owns.</p>
+
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Equipment</th>
+                </tr>
+                @foreach (var pair in GetPairsOfVolunteersAndEquipment())
+                {
+                    <tr>
+                        <td>@pair.VolunteerName</td>
+                        <td>@pair.VolunteerSurname</td>
+                        <td>
+                            @if (pair.EquipmentList != null)
+                            {
+
+                                @foreach (var equipmentItemName in pair.EquipmentList)
+                                {
+                                    <div>
+                                        @equipmentItemName
+                                    </div>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </MatTab>
+</MatTabGroup>
