@@ -7,6 +7,6 @@ namespace Karma.Services
 {
     public interface IKarmaContextFactory
     {
-        public KarmaContext CreateKarmaContext();
+        public KarmaContext Create();
     }
 }

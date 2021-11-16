@@ -25,7 +25,7 @@ namespace Karma.Services
             IObjectChecker objectChecker)
         {
             m_notifactionTransmitter = notifactionTransmitter;
-            m_karmaContext = karmaContextFactory.CreateKarmaContext();
+            m_karmaContext = karmaContextFactory.Create();
             m_objectChecker = objectChecker;
         }
 
@@ -62,7 +62,7 @@ namespace Karma.Services
             {
                 m_karmaContext.Events.Where(x => x.Id == id).Delete();
                 m_karmaContext.SaveChanges();
-                m_notifactionTransmitter.ShowMessage($"The {ReturnTypeName<T>()}) has been deleted", MatToastType.Success);
+                m_notifactionTransmitter.ShowMessage($"The {ReturnTypeName<T>()} has been deleted", MatToastType.Success);
                 return 0;
             }
             catch (DbUpdateException)
