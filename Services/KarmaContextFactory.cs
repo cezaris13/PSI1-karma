@@ -13,7 +13,7 @@ namespace Karma.Services
         {
             m_karmaContext = new Lazy<KarmaContext>(() => new KarmaContext());
         }
-        public KarmaContext CreateKarmaContext()
+        public KarmaContext Create()
         {
             return m_karmaContext.Value;
         }

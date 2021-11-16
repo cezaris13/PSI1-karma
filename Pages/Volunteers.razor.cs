@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using Karma.Models;
+using Karma.Services;
 using MatBlazor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +18,12 @@ namespace Karma.Pages
         [Inject]
         private NavigationManager m_navigationManager { get; set; }
 
+        [Inject]
+        private IKarmaContextFactory m_karmaContextFactory { get; set; }
+
         public string FilterValue = "";
 
-        private KarmaContext m_karmaContext = new();
+        private KarmaContext m_karmaContext;
 
         string CurrentUserId { get; set; }
 
@@ -52,6 +56,7 @@ namespace Karma.Pages
 
         protected override void OnInitialized()
         {
+            m_karmaContext = m_karmaContextFactory.Create();
             ClaimsPrincipal principal = m_httpContextAccessor.HttpContext.User;
             CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
         }
