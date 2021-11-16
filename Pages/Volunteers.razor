@@ -28,32 +28,32 @@
                     var surnameName = volunteer.Surname + " " + volunteer.Name;
                     var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                     var matches = regex.Matches(nameSurname + surnameName);
-                    @if (matches.Count > 0)
-                    {
-                        <tr>
-                            <td>@volunteer.Name</td>
-                            <td>@volunteer.Surname</td>
-                            <td>
-                                @if (volunteer.Events != null)
-                                {
-
-                                    @foreach (var karmaEvent in volunteer.Events)
+                        @if (matches.Count > 0)
+                        {
+                            <tr>
+                                <td>@volunteer.Name</td>
+                                <td>@volunteer.Surname</td>
+                                <td>
+                                    @if (volunteer.Events != null)
                                     {
-                                        <div @onclick="() => NavigateToIndividualEvent(karmaEvent.Id)">
-                                            @karmaEvent.Name
-                                        </div>
+
+                                        @foreach (var karmaEvent in volunteer.Events)
+                                        {
+                                            <div @onclick="() => NavigateToIndividualEvent(karmaEvent.Id)">
+                                                @karmaEvent.Name
+                                            </div>
+                                        }
                                     }
-                                }
-                            </td>
-                            <td>
-                                <MatButton class="btn btn-primary" Outlined="true" @onclick="() => NavigateToManageVolunteer(volunteer.Id)">Manage volunteer</MatButton>
-                                @if (!volunteer.Events.Where(p => p.ManagerId != CurrentUserId).Any())
-                                {
-                                    <MatButton Raised="true" @onclick="() => RemoveVolunteer(volunteer.Id)">Remove the volunteer</MatButton>
-                                }
-                            </td>
-                        </tr>
-                    }
+                                </td>
+                                <td>
+                                    <MatButton class="btn btn-primary" Outlined="true" @onclick="() => NavigateToManageVolunteer(volunteer.Id)">Manage volunteer</MatButton>
+                                    @if (!volunteer.Events.Where(p => p.ManagerId != CurrentUserId).Any())
+                                    {
+                                        <MatButton Raised="true" @onclick="() => RemoveVolunteer(volunteer.Id)">Remove the volunteer</MatButton>
+                                    }
+                                </td>
+                            </tr>
+                        }
                 }
             </tbody>
         </table>
@@ -82,19 +82,19 @@
                     var surnameName = potentialVolunteer.Surname + " " + potentialVolunteer.Name;
                     var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                     var matches = regex.Matches(nameSurname + surnameName);
-                    @if (matches.Count > 0)
-                    {
-                        <tr>
-                            <td>@potentialVolunteer.Name</td>
-                            <td>@potentialVolunteer.Surname</td>
-                            <td>@potentialVolunteer.PhoneNumber</td>
-                            <td>
-                                <MatButton class="btn btn-primary" Outlined="true" Style="background-color:mediumseagreen;color:azure" @onclick="() => AddANewVolunteer(potentialVolunteer.Id)">Accept request</MatButton>
-                                <MatButton class="btn btn-primary" Outlined="true" Style="background-color:crimson;color:azure" @onclick="() => RemovePotentialVolunteer(potentialVolunteer.Id)">Decline request</MatButton>
-                                <MatButton class="btn btn-primary" Outlined="true" Style="background-color:mediumblue;color:azure" @onclick="() => NavigateToVolunteerRequest(potentialVolunteer.Id)">More actions</MatButton>
-                            </td>
-                        </tr>
-                    }
+                        @if (matches.Count > 0)
+                        {
+                            <tr>
+                                <td>@potentialVolunteer.Name</td>
+                                <td>@potentialVolunteer.Surname</td>
+                                <td>@potentialVolunteer.PhoneNumber</td>
+                                <td>
+                                    <MatButton class="btn btn-primary" Outlined="true" Style="background-color:mediumseagreen;color:azure" @onclick="() => AddANewVolunteer(potentialVolunteer.Id)">Accept request</MatButton>
+                                    <MatButton class="btn btn-primary" Outlined="true" Style="background-color:crimson;color:azure" @onclick="() => RemovePotentialVolunteer(potentialVolunteer.Id)">Decline request</MatButton>
+                                    <MatButton class="btn btn-primary" Outlined="true" Style="background-color:mediumblue;color:azure" @onclick="() => NavigateToVolunteerRequest(potentialVolunteer.Id)">More actions</MatButton>
+                                </td>
+                            </tr>
+                        }
                 }
             </tbody>
         </table>
