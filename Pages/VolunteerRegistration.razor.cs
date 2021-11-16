@@ -6,28 +6,23 @@ namespace Karma.Pages
 {
     public partial class VolunteerRegistration
     {
-        private String Name { get; set; } = "";
+        private string Name { get; set; } = "";
 
-        private String Surname { get; set; } = "";
+        private string Surname { get; set; } = "";
 
-        private String PhoneNumber { get; set; } = "";
+        private string PhoneNumber { get; set; } = "";
 
-        KarmaContext KarmaContext = new KarmaContext();
+        private KarmaContext m_karmaConext = new();
 
         private void CreatePendingVolunteer()
         {
             var volunteer = new PendingVolunteer(Name, Surname, PhoneNumber, Guid.NewGuid());
-            KarmaContext.PendingVolunteers.Add(volunteer);
-            KarmaContext.SaveChanges();
+            m_karmaConext.PendingVolunteers.Add(volunteer);
+            m_karmaConext.SaveChanges();
             m_notifactionTransmitter.ShowMessage("Registration Succesful", MatToastType.Success);
             Name = "";
             Surname = "";
             PhoneNumber = "";
-            NavigateToMain();
-        }
-
-        public void NavigateToMain()
-        {
             m_uriHelper.NavigateTo("/");
         }
     }

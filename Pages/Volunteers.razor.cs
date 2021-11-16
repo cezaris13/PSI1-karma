@@ -18,13 +18,14 @@ namespace Karma.Pages
         [Inject]
         private NavigationManager m_navigationManager { get; set; }
 
-        public string FilterValue = "";
+        public string filterValue = "";
 
         private KarmaContext m_karmaContext = new();
 
+        [Inject]
         public IDBServiceProvider m_DBServiceProvider { get; set; }
 
-        string CurrentUserId { get; set; }
+        private string CurrentUserId { get; set; }
 
         //Active volunteers tab:
         public IEnumerable<IVolunteer> GetVolunteers()
@@ -73,6 +74,7 @@ namespace Karma.Pages
             int result = m_DBServiceProvider.AddToDB(volunteer);
             if (result == -1)
                 m_notificationTransmitter.ShowMessage("An error occured while adding volunteer to the database", MatToastType.Danger);
+
             m_karmaContext.PendingVolunteers.Where(x => x.Id == id).DeleteFromQuery();
             m_karmaContext.SaveChanges();
         }

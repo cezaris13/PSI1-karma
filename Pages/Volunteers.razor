@@ -12,7 +12,7 @@
         <p>Here you can find the list of volunteers working on various projects.</p>
         <div class="container leftAlign" style="width:20%">
             <MatButton Raised="true" class="btn btn-primary element" @onclick="NavigateToAddVolunteer">Add a new volunteer</MatButton>
-            <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Volunteers" Icon="search" IconTrailing="true" Class="element"></MatTextField>
+            <MatTextField @bind-Value="@filterValue" OnInput="@(e => filterValue = e.Value.ToString())" Label="Search Volunteers" Icon="search" IconTrailing="true" Class="element"></MatTextField>
         </div>
         <table class="table">
             <tbody>
@@ -26,7 +26,7 @@
                 {
                     var nameSurname = volunteer.Name + " " + volunteer.Surname;
                     var surnameName = volunteer.Surname + " " + volunteer.Name;
-                    var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                    var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                     var matches = regex.Matches(nameSurname + surnameName);
                     @if (matches.Count > 0)
                     {
@@ -65,7 +65,7 @@
         <p>Here are all the people that want to become volunteers. Remeber to only accept their requests after contacting them.</p>
 
         <div class="container leftAlign" style="width:20%">
-            <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search requests" Icon="search" IconTrailing="true" Class="element"></MatTextField>
+            <MatTextField @bind-Value="@filterValue" OnInput="@(e => filterValue = e.Value.ToString())" Label="Search requests" Icon="search" IconTrailing="true" Class="element"></MatTextField>
         </div>
 
         <table class="table">
@@ -80,7 +80,7 @@
                 {
                     var nameSurname = potentialVolunteer.Name + " " + potentialVolunteer.Surname;
                     var surnameName = potentialVolunteer.Surname + " " + potentialVolunteer.Name;
-                    var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                    var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                     var matches = regex.Matches(nameSurname + surnameName);
                     @if (matches.Count > 0)
                     {
