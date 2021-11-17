@@ -10,15 +10,31 @@ namespace Karma.Pages
 {
     public partial class Index
     {
+
+        private int m_totalPageQuantity;
+        private int m_currentPage = 1;
         public string filterValue = "";
+        public IEnumerable<IGenericKarmaItem> karmaEvents;
 
         private KarmaContext m_karmaContext = new();
 
-        public IEnumerable<IGenericKarmaItem> GetEvents()
+        protected override void OnInitialized()
+        {
+            LoadEvents();
+        }
+
+        public void SelectedPage(int page)
+        {
+            m_currentPage = page;
+            LoadEvents(page);
+        }
+
+        private void LoadEvents(int page = 1, int elementsPerPage = 10)
         {
             var result = m_karmaContext.Events.ToList();
+            m_totalPageQuantity = Convert.ToInt32(Math.Ceiling(result.Count / (double) elementsPerPage));
             result.Sort();
-            return result;
+            karmaEvents = result.Skip((page - 1) * elementsPerPage).Take(elementsPerPage);
         }
 
         public void NavigateToIndividualEvent(Guid id)

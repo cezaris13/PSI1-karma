@@ -9,10 +9,12 @@
 
 <p class"mat">Ready to aquire karma points by helping out others?</p>
 
+<Pagination TotaPagesQuantity="m_totalPageQuantity" CurrentPage="m_currentPage" Radius="2" SelectedPage="SelectedPage"></Pagination>
+
 <MatTextField @bind-Value="@filterValue" OnInput="@(e => filterValue = e.Value.ToString())" Label="Search Events" Icon="search" IconTrailing="true"></MatTextField>
 
 <div class="card-deck">
-    @foreach (var karmaEvent in GetEvents())
+    @foreach (var karmaEvent in karmaEvents)
     {
         var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());
