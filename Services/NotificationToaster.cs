@@ -10,7 +10,7 @@ namespace Karma.Services
     {
         private IMatToaster m_toaster { get; set; }
 
-        public NotificationToaster(IMatToaster toaster, INotifactionTransmitter transmitter)
+        public NotificationToaster(IMatToaster toaster, INotificationTransmitter transmitter)
         {
             m_toaster = toaster;
             transmitter.NotificationEvent += HandleEvent;
