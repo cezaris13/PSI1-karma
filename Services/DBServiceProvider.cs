@@ -21,11 +21,11 @@ namespace Karma.Services
 
         public DBServiceProvider(
             INotifactionTransmitter notifactionTransmitter,
-            IKarmaContextFactory karmaContextFactory,
+            IDbContextFactory<KarmaContext> karmaContextFactory,
             IObjectChecker objectChecker)
         {
             m_notifactionTransmitter = notifactionTransmitter;
-            m_karmaContext = karmaContextFactory.Create();
+            m_karmaContext = karmaContextFactory.CreateDbContext();
             m_objectChecker = objectChecker;
         }
 

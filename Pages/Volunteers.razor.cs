@@ -20,7 +20,7 @@ namespace Karma.Pages
 
         public string filterValue = "";
         [Inject]
-        private IKarmaContextFactory m_karmaContextFactory { get; set; }
+        public IDbContextFactory<KarmaContext> m_karmaContextFactory { get; set; }
 
         public string FilterValue = "";
 
@@ -63,7 +63,7 @@ namespace Karma.Pages
         //Pending volunteers tab:
         protected override void OnInitialized()
         {
-            m_karmaContext = m_karmaContextFactory.Create();
+            m_karmaContext = m_karmaContextFactory.CreateDbContext();
             ClaimsPrincipal principal = m_httpContextAccessor.HttpContext.User;
             CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
         }
