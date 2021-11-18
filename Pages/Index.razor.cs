@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Karma.Models;
 
 namespace Karma.Pages
@@ -13,6 +14,7 @@ namespace Karma.Pages
 
         private int m_totalPageQuantity;
         private int m_currentPage = 1;
+        public int perPage;
         public string filterValue = "";
         public IEnumerable<IGenericKarmaItem> karmaEvents;
 
@@ -26,7 +28,18 @@ namespace Karma.Pages
         public void SelectedPage(int page)
         {
             m_currentPage = page;
-            LoadEvents(page);
+            LoadEvents(page, perPage);
+        }
+
+        public async Task Refresh(int pageSize)
+        {
+            perPage = pageSize;
+            LoadEvents(elementsPerPage: pageSize);
+            try
+            {
+                await InvokeAsync(StateHasChanged);
+            }
+            catch { }
         }
 
         private void LoadEvents(int page = 1, int elementsPerPage = 10)

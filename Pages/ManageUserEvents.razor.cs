@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Karma.Models;
 
 namespace Karma.Pages
@@ -13,6 +14,7 @@ namespace Karma.Pages
     {
         private int m_totalPageQuantity;
         private int m_currentPage = 1;
+        public int perPage;
         public string filterValue = "";
         private string m_currentUserId { get; set; }
 
@@ -33,7 +35,7 @@ namespace Karma.Pages
         public void SelectedPage(int page)
         {
             m_currentPage = page;
-            LoadEvents(page);
+            LoadEvents(page, perPage);
         }
 
         private void LoadEvents(int page = 1, int elementsPerPage = 10)
@@ -42,6 +44,17 @@ namespace Karma.Pages
             m_totalPageQuantity = Convert.ToInt32(Math.Ceiling(result.Count / (double) elementsPerPage));
             result.Sort();
             karmaEvents = result.Skip((page - 1) * elementsPerPage).Take(elementsPerPage);
+        }
+
+        public async Task Refresh(int pageSize)
+        {
+            perPage = pageSize;
+            LoadEvents(elementsPerPage: pageSize);
+            try
+            {
+                await InvokeAsync(StateHasChanged);
+            }
+            catch { }
         }
 
         protected override void OnInitialized()
