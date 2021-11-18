@@ -32,13 +32,14 @@ namespace Karma
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("DefaultConnection")),
+                    ServiceLifetime.Scoped);
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddDbContextFactory<KarmaContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")),
-                    ServiceLifetime.Singleton);
+                    ServiceLifetime.Scoped);
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddRazorPages();
