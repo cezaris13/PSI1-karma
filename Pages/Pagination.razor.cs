@@ -30,9 +30,9 @@ namespace Karma.Pages
         private void LoadPages()
         {
             links = new List<LinkModel>();
-            bool isPrevious = CurrentPage != 1;
+            bool isPreviousPage = CurrentPage != 1;
             int previousPage = CurrentPage - 1;
-            links.Add(new LinkModel(previousPage, isPrevious, "Previous"));
+            links.Add(new LinkModel(previousPage, isPreviousPage, "Previous"));
 
             for (int i = 1; i <= TotaPagesQuantity; i++)
             {
@@ -40,9 +40,9 @@ namespace Karma.Pages
                     links.Add(new LinkModel(i) { Active = CurrentPage == i });
             }
 
-            bool isNext = CurrentPage != TotaPagesQuantity;
+            bool isNextPage = CurrentPage != TotaPagesQuantity;
             int nextPage = CurrentPage + 1;
-            links.Add(new LinkModel(nextPage, isNext, "Next"));
+            links.Add(new LinkModel(nextPage, isNextPage, "Next"));
         }
     }
 }
