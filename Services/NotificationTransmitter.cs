@@ -6,7 +6,7 @@ using MatBlazor;
 
 namespace Karma.Services
 {
-    public class NotificationTransmitter : INotifactionTransmitter
+    public class NotificationTransmitter : INotificationTransmitter
     {
         private void OnNotificationEvent(NotificationEventArgs args)
         {

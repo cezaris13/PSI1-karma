@@ -6,7 +6,7 @@ using MatBlazor;
 
 namespace Karma.Services
 {
-    public interface INotifactionTransmitter
+    public interface INotificationTransmitter
     {
         void ShowMessage(string message, MatToastType notificationType);
         event EventHandler<NotificationEventArgs> NotificationEvent;

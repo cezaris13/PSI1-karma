@@ -51,7 +51,7 @@ namespace Karma.Pages
             if (result == 0)
                 m_uriHelper.NavigateTo("/volunteers");
             else if (result == -1)
-                m_notifactionTransmitter.ShowMessage("An error occured while adding volunteer to the database", MatToastType.Danger);
+                m_notificationTransmitter.ShowMessage("An error occured while adding volunteer to the database", MatToastType.Danger);
         }
 
         public IEnumerable<ICharityEvent> GetEventsOfThisVolunteer()

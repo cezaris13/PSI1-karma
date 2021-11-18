@@ -41,7 +41,7 @@ namespace Karma.Pages
             if (result == 0)
                 m_uriHelper.NavigateTo("/volunteers");
             else if (result == -1)
-                m_notifactionTransmitter.ShowMessage("An error occured while trying to update Volunteer", MatToastType.Danger);
+                m_notificationTransmitter.ShowMessage("An error occured while trying to update Volunteer", MatToastType.Danger);
         }
 
         protected override void OnInitialized()

@@ -15,16 +15,16 @@ namespace Karma.Services
 {
     public class DBServiceProvider : IDBServiceProvider
     {
-        private readonly INotifactionTransmitter m_notifactionTransmitter;
+        private readonly INotificationTransmitter m_notificationTransmitter;
         private readonly KarmaContext m_karmaContext;
         private readonly IObjectChecker m_objectChecker;
 
         public DBServiceProvider(
-            INotifactionTransmitter notifactionTransmitter,
+            INotificationTransmitter notificationTransmitter,
             IKarmaContextFactory karmaContextFactory,
             IObjectChecker objectChecker)
         {
-            m_notifactionTransmitter = notifactionTransmitter;
+            m_notificationTransmitter = notificationTransmitter;
             m_karmaContext = karmaContextFactory.Create();
             m_objectChecker = objectChecker;
         }
@@ -41,7 +41,7 @@ namespace Karma.Services
             {
                 dbSet.Add(entity);
                 m_karmaContext.SaveChanges();
-                m_notifactionTransmitter.ShowMessage($"The {ReturnTypeName<T>()} has been created", MatToastType.Success);
+                m_notificationTransmitter.ShowMessage($"The {ReturnTypeName<T>()} has been created", MatToastType.Success);
                 return 0;
             }
             catch (DbUpdateException)
@@ -62,7 +62,7 @@ namespace Karma.Services
             {
                 m_karmaContext.Events.Where(x => x.Id == id).Delete();
                 m_karmaContext.SaveChanges();
-                m_notifactionTransmitter.ShowMessage($"The {ReturnTypeName<T>()} has been deleted", MatToastType.Success);
+                m_notificationTransmitter.ShowMessage($"The {ReturnTypeName<T>()} has been deleted", MatToastType.Success);
                 return 0;
             }
             catch (DbUpdateException)
@@ -75,7 +75,7 @@ namespace Karma.Services
         {
             if (m_objectChecker.IsAnyNullOrEmpty(entity))
             {
-                m_notifactionTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
+                m_notificationTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
                 return -2;
             }
             IEnumerable<PropertyInfo> result = m_karmaContext.GetType().GetProperties().Where(p => p.PropertyType == typeof(DbSet<T>));
@@ -88,7 +88,7 @@ namespace Karma.Services
             {
                 dbSet.Update(entity);
                 m_karmaContext.SaveChanges();
-                m_notifactionTransmitter.ShowMessage($"The {ReturnTypeName<T>()} has been updated", MatToastType.Success);
+                m_notificationTransmitter.ShowMessage($"The {ReturnTypeName<T>()} has been updated", MatToastType.Success);
                 return 0;
             }
             catch (DbUpdateException)

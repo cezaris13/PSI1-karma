@@ -64,7 +64,7 @@ namespace Karma.Pages
             if (result == 0)
                 m_uriHelper.NavigateTo("");
             else if (result == -1)
-                m_notifactionTransmitter.ShowMessage("An error occured while updating the event", MatToastType.Danger);
+                m_notificationTransmitter.ShowMessage("An error occured while updating the event", MatToastType.Danger);
         }
 
         public void DeleteEvent()
@@ -72,7 +72,7 @@ namespace Karma.Pages
             if (m_DBServiceProvider.RemoveFromDB<CharityEvent>(Id) == 0)
                 m_uriHelper.NavigateTo("");
             else
-                m_notifactionTransmitter.ShowMessage("An error occured while removing event from ", MatToastType.Danger);
+                m_notificationTransmitter.ShowMessage("An error occured while removing event from ", MatToastType.Danger);
         }
 
         protected override void OnInitialized()
