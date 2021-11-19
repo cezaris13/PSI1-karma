@@ -2,31 +2,32 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Karma.Services
 {
     public class LoggingMiddleware
     {
-        private readonly RequestDelegate _next;
+        private readonly RequestDelegate m_next;
+        private readonly ILogger m_logger;
 
-        public LoggingMiddleware(RequestDelegate next)
+        public LoggingMiddleware(RequestDelegate next, ILogger logger)
         {
-            _next = next;
+            m_next = next;
+            m_logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
         {
-            //First, get the incoming request
             var request = await FormatRequest(context.Request);
+            m_logger.LogInformation(request);
+            await m_next(context);
 
-            //Copy a pointer to the original response body stream
-            var originalBodyStream = context.Response.Body;
+            /*var originalBodyStream = context.Response.Body;
 
             //Create a new memory stream...
             using (var responseBody = new MemoryStream())
@@ -35,7 +36,7 @@ namespace Karma.Services
                 context.Response.Body = responseBody;
 
                 //Continue down the Middleware pipeline, eventually returning to this class
-                await _next(context);
+                await m_next(context);
 
                 //Format the response from the server
                 var response = await FormatResponse(context.Response);
@@ -44,7 +45,7 @@ namespace Karma.Services
 
                 //Copy the contents of the new memory stream (which contains the response) to the original stream, which is then returned to the client.
                 await responseBody.CopyToAsync(originalBodyStream);
-            }
+            }*/
         }
 
         private async Task<string> FormatRequest(HttpRequest request)

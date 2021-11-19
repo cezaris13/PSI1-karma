@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
 using OpenCage.Geocode;
 
@@ -48,6 +49,7 @@ namespace Karma
             services.AddTransient<IDBServiceProvider, DBServiceProvider>();
             services.AddSingleton<IKarmaContextFactory, KarmaContextFactory>();
             services.AddSingleton<IObjectChecker, ObjectChecker>();
+            services.AddSingleton<ILogger, KarmaLogger>();
 
             services.AddHttpClient();
             services.AddHttpContextAccessor();
@@ -86,7 +88,7 @@ namespace Karma
 
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseMiddleware<LoggingMiddleware>();
+            //app.UseMiddleware<LoggingMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
