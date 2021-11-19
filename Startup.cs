@@ -88,7 +88,7 @@ namespace Karma
 
             app.UseAuthentication();
             app.UseAuthorization();
-            //app.UseMiddleware<LoggingMiddleware>();
+            app.UseMiddleware<LoggingMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
