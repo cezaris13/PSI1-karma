@@ -44,6 +44,7 @@ namespace Karma.Pages
         private List<Thread> m_listOfThreads = new();
         private ConcurrentBag<string> m_statusMessages = new();
         private int m_totalLoadedTasks = 0;
+        private Point m_coordinates;
 
         protected override async Task OnInitializedAsync()
         {
@@ -54,9 +55,6 @@ namespace Karma.Pages
             try
             {
                 weatherForecast = await m_weatherForecast.GetWeather(charityEvent.Address);
-                GeocoderResponse location = m_geocoder.Geocode(charityEvent.Address);
-                Point coords = location.Results[0].Geometry;
-                await m_jsRuntime.InvokeVoidAsync("GetMap", coords.Latitude, coords.Longitude);
             }
             catch (InvalidAddressException ex)
             {
@@ -64,14 +62,32 @@ namespace Karma.Pages
                 weatherForecast = "failed";
             }
 
-            m_listOfThreads.Add(new Thread(() => GetImages()));
-            m_listOfThreads.Add(new Thread(() => GetVolunteers()));
-            m_listOfThreads.Add(new Thread(() => GetEquipment()));
-            m_listOfThreads.Add(new Thread(() => CalculateParticipants()));
+            m_listOfThreads.Add(new Thread(async () => await GetImagesAsync()));
+            m_listOfThreads.Add(new Thread(async () => await GetVolunteersAsync()));
+            m_listOfThreads.Add(new Thread(async () => await GetEquipmentAsync()));
+            m_listOfThreads.Add(new Thread(async () => await CalculateParticipantsAsync()));
 
             foreach (Thread thread in m_listOfThreads)
             {
                 thread.Start();
+            }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                try
+                {
+                    GeocoderResponse location = m_geocoder.Geocode(charityEvent.Address);
+                    m_coordinates = location.Results[0].Geometry;
+
+                    await m_jsRuntime.InvokeVoidAsync("GetMap", m_coordinates.Latitude, m_coordinates.Longitude);
+                }
+                catch (Exception)
+                {
+                    m_notifactionTransmitter.ShowMessage("Could not provide maps", MatToastType.Danger);
+                }
             }
         }
 
@@ -80,7 +96,7 @@ namespace Karma.Pages
             m_uriHelper.NavigateTo($"editcharityevent/{Id}");
         }
 
-        private void GetImages()
+        private async Task GetImagesAsync()
         {
             try
             {
@@ -90,32 +106,40 @@ namespace Karma.Pages
                     .Select(p => p.ImageUrl)
                     .ToList();
                 m_totalLoadedTasks++;
-                InvokeAsync(() => StateHasChanged());
+                await InvokeAsync(StateHasChanged);
             }
             catch (DbUpdateException)
             {
                 m_statusMessages.Add("failed to load images");
             }
-            CheckThreads();
+            catch (ObjectDisposedException) { }
+            finally
+            {
+                CheckThreads();
+            }
         }
 
-        private void GetVolunteers()
+        private async Task GetVolunteersAsync()
         {
             try
             {
                 var karmaContext = new KarmaContext();
                 volunteers = karmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p).Select(p => $"{p.Name} {p.Surname}").ToList();
                 m_totalLoadedTasks++;
-                InvokeAsync(() => StateHasChanged());
+                await InvokeAsync(StateHasChanged);
             }
             catch (DbUpdateException)
             {
                 m_statusMessages.Add("failed to load volunteers");
             }
-            CheckThreads();
+            catch (ObjectDisposedException) { }
+            finally
+            {
+                CheckThreads();
+            }
         }
 
-        private void GetEquipment()
+        private async Task GetEquipmentAsync()
         {
             try
             {
@@ -124,16 +148,20 @@ namespace Karma.Pages
                 List<Volunteer> volunteers = karmaContext.Events.Include(e => e.Volunteers).Where(x => x.Id == Id).FirstOrDefault().Volunteers;
                 equipment = karmaContext.SpecialEquipment.Where(x => volunteers.Contains(x.Owner)).Select(se => se.Name).ToList();
                 m_totalLoadedTasks++;
-                InvokeAsync(() => StateHasChanged());
+                await InvokeAsync(StateHasChanged);
             }
             catch (DbUpdateException)
             {
-                m_statusMessages.Add("failed to load equipment");
+                m_statusMessages.Add("failed to load volunteers");
             }
-            CheckThreads();
+            catch (ObjectDisposedException) { }
+            finally
+            {
+                CheckThreads();
+            }
         }
 
-        private void CalculateParticipants()
+        private async Task CalculateParticipantsAsync()
         {
             var karmaContext = new KarmaContext();
             CharityEvent events = karmaContext.Events.Include(x => x.Volunteers).FirstOrDefault(y => y.Id == Id);
@@ -141,8 +169,15 @@ namespace Karma.Pages
             neededParticipants = events.MaxVolunteers;
             participantsProgress = (double) currentParticipants / neededParticipants;
             m_totalLoadedTasks++;
-            InvokeAsync(() => StateHasChanged());
-            CheckThreads();
+            try
+            {
+                await InvokeAsync(StateHasChanged);
+            }
+            catch (ObjectDisposedException) { }
+            finally
+            {
+                CheckThreads();
+            }
         }
 
         private void CheckThreads()
