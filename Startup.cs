@@ -1,5 +1,6 @@
 using Karma.Areas.Identity;
 using Karma.Data;
+using Karma.Models;
 using Karma.Services;
 using MatBlazor;
 using Microsoft.AspNetCore.Builder;
@@ -31,10 +32,14 @@ namespace Karma
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("DefaultConnection")),
+                    ServiceLifetime.Scoped);
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-
+            services.AddDbContextFactory<KarmaContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")),
+                    ServiceLifetime.Scoped);
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddRazorPages();
@@ -46,7 +51,6 @@ namespace Karma
             services.AddScoped<INotificationTransmitter, NotificationTransmitter>();
             services.AddScoped<NotificationToaster>();
             services.AddTransient<IDBServiceProvider, DBServiceProvider>();
-            services.AddSingleton<IKarmaContextFactory, KarmaContextFactory>();
             services.AddSingleton<IObjectChecker, ObjectChecker>();
 
             services.AddHttpClient();

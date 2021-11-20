@@ -23,9 +23,6 @@ namespace Karma.Pages
         [Inject]
         public IDBServiceProvider m_DBServiceProvider { get; set; }
 
-        [Inject]
-        public IKarmaContextFactory m_karmaContextFactory { get; set; }
-
         public Volunteer volunteer;
         private KarmaContext m_karmaContext;
         private string FilterValue { get; set; } = "";
@@ -46,7 +43,7 @@ namespace Karma.Pages
 
         protected override void OnInitialized()
         {
-            m_karmaContext = m_karmaContextFactory.Create();
+            m_karmaContext = m_DBServiceProvider.karmaContext;
             volunteer = m_karmaContext.Volunteers.Include(p => p.Events).Where(p => p.Id == Id).FirstOrDefault();
             ClaimsPrincipal principal = m_httpContextAccessor.HttpContext.User;
             CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);

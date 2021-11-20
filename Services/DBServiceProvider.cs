@@ -15,32 +15,33 @@ namespace Karma.Services
 {
     public class DBServiceProvider : IDBServiceProvider
     {
+        public KarmaContext karmaContext { get; set; }
+
         private readonly INotificationTransmitter m_notificationTransmitter;
-        private readonly KarmaContext m_karmaContext;
         private readonly IObjectChecker m_objectChecker;
 
         public DBServiceProvider(
             INotificationTransmitter notificationTransmitter,
-            IKarmaContextFactory karmaContextFactory,
+            IDbContextFactory<KarmaContext> karmaContextFactory,
             IObjectChecker objectChecker)
         {
             m_notificationTransmitter = notificationTransmitter;
-            m_karmaContext = karmaContextFactory.Create();
+            karmaContext = karmaContextFactory.CreateDbContext();
             m_objectChecker = objectChecker;
         }
 
         public int AddToDB<T>(T entity) where T : class
         {
-            IEnumerable<PropertyInfo> result = m_karmaContext.GetType().GetProperties().Where(p => p.PropertyType == typeof(DbSet<T>));
+            IEnumerable<PropertyInfo> result = karmaContext.GetType().GetProperties().Where(p => p.PropertyType == typeof(DbSet<T>));
             if (!result.Any())
             {
                 return -1;
             }
-            var dbSet = result.First().GetValue(m_karmaContext) as DbSet<T>;
+            var dbSet = result.First().GetValue(karmaContext) as DbSet<T>;
             try
             {
                 dbSet.Add(entity);
-                m_karmaContext.SaveChanges();
+                karmaContext.SaveChanges();
                 m_notificationTransmitter.ShowMessage($"The {ReturnTypeName<T>()} has been created", MatToastType.Success);
                 return 0;
             }
@@ -52,16 +53,16 @@ namespace Karma.Services
 
         public int RemoveFromDB<T>(Guid id) where T : class
         {
-            IEnumerable<PropertyInfo> result = m_karmaContext.GetType().GetProperties().Where(p => p.PropertyType == typeof(DbSet<T>));
+            IEnumerable<PropertyInfo> result = karmaContext.GetType().GetProperties().Where(p => p.PropertyType == typeof(DbSet<T>));
             if (!result.Any())
             {
                 return -1;
             }
-            var dbSet = result.First().GetValue(m_karmaContext) as DbSet<T>;
+            var dbSet = result.First().GetValue(karmaContext) as DbSet<T>;
             try
             {
-                m_karmaContext.Events.Where(x => x.Id == id).Delete();
-                m_karmaContext.SaveChanges();
+                karmaContext.Events.Where(x => x.Id == id).Delete();
+                karmaContext.SaveChanges();
                 m_notificationTransmitter.ShowMessage($"The {ReturnTypeName<T>()} has been deleted", MatToastType.Success);
                 return 0;
             }
@@ -78,16 +79,16 @@ namespace Karma.Services
                 m_notificationTransmitter.ShowMessage("There are some empty fields", MatToastType.Danger);
                 return -2;
             }
-            IEnumerable<PropertyInfo> result = m_karmaContext.GetType().GetProperties().Where(p => p.PropertyType == typeof(DbSet<T>));
+            IEnumerable<PropertyInfo> result = karmaContext.GetType().GetProperties().Where(p => p.PropertyType == typeof(DbSet<T>));
             if (!result.Any())
             {
                 return -1;
             }
-            var dbSet = result.First().GetValue(m_karmaContext) as DbSet<T>;
+            var dbSet = result.First().GetValue(karmaContext) as DbSet<T>;
             try
             {
                 dbSet.Update(entity);
-                m_karmaContext.SaveChanges();
+                karmaContext.SaveChanges();
                 m_notificationTransmitter.ShowMessage($"The {ReturnTypeName<T>()} has been updated", MatToastType.Success);
                 return 0;
             }
