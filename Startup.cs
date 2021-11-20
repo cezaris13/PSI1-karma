@@ -48,7 +48,7 @@ namespace Karma
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddSingleton<IWeatherForecast, WeatherForecast>();
             services.AddSingleton<IGeocoder>(p => new Geocoder(Configuration["OpenCageGeocodingSecret"]));
-            services.AddScoped<INotifactionTransmitter, NotificationTransmitter>();
+            services.AddScoped<INotificationTransmitter, NotificationTransmitter>();
             services.AddScoped<NotificationToaster>();
             services.AddTransient<IDBServiceProvider, DBServiceProvider>();
             services.AddSingleton<IObjectChecker, ObjectChecker>();

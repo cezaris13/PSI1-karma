@@ -60,7 +60,7 @@ namespace Karma.Pages
             }
             catch (InvalidAddressException ex)
             {
-                m_notifactionTransmitter.ShowMessage("could not provide weather forecast:" + ex.Message, MatToastType.Danger);
+                m_notificationTransmitter.ShowMessage("could not provide weather forecast:" + ex.Message, MatToastType.Danger);
                 weatherForecast = "failed";
             }
 
@@ -149,7 +149,7 @@ namespace Karma.Pages
         {
             if (m_totalLoadedTasks == m_listOfThreads.Count && weatherForecast != "failed")
             {
-                m_notifactionTransmitter.ShowMessage("Loaded all elements of the event", MatToastType.Info);
+                m_notificationTransmitter.ShowMessage("Loaded all elements of the event", MatToastType.Info);
             }
             if (!m_statusMessages.IsEmpty)
             {
@@ -157,7 +157,7 @@ namespace Karma.Pages
                 while (val != "")
                 {
                     m_statusMessages.TryTake(out val);
-                    m_notifactionTransmitter.ShowMessage(val, MatToastType.Danger);
+                    m_notificationTransmitter.ShowMessage(val, MatToastType.Danger);
                 }
             }
         }

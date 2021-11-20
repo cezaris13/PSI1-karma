@@ -32,7 +32,7 @@ namespace Karma.Pages
             if (result == 0)
                 m_uriHelper.NavigateTo("");
             else if (result == -1)
-                m_notifactionTransmitter.ShowMessage("An error occured while adding event to the database", MatToastType.Danger);
+                m_notificationTransmitter.ShowMessage("An error occured while adding event to the database", MatToastType.Danger);
         }
     }
 }

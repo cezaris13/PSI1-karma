@@ -19,7 +19,7 @@ namespace Karma.Pages
             var volunteer = new PendingVolunteer(Name, Surname, PhoneNumber, Guid.NewGuid());
             m_karmaConext.PendingVolunteers.Add(volunteer);
             m_karmaConext.SaveChanges();
-            m_notifactionTransmitter.ShowMessage("Registration Succesful", MatToastType.Success);
+            m_notificationTransmitter.ShowMessage("Registration Succesful", MatToastType.Success);
             Name = "";
             Surname = "";
             PhoneNumber = "";
