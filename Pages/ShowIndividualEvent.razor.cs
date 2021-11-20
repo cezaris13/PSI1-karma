@@ -77,10 +77,17 @@ namespace Karma.Pages
         {
             if (firstRender)
             {
-                GeocoderResponse location = m_geocoder.Geocode(charityEvent.Address);
-                m_coordinates = location.Results[0].Geometry;
+                try
+                {
+                    GeocoderResponse location = m_geocoder.Geocode(charityEvent.Address);
+                    m_coordinates = location.Results[0].Geometry;
 
-                await m_jsRuntime.InvokeVoidAsync("GetMap", m_coordinates.Latitude, m_coordinates.Longitude);
+                    await m_jsRuntime.InvokeVoidAsync("GetMap", m_coordinates.Latitude, m_coordinates.Longitude);
+                }
+                catch (Exception)
+                {
+                    m_notifactionTransmitter.ShowMessage("Could not provide maps", MatToastType.Danger);
+                }
             }
         }
 
@@ -105,7 +112,7 @@ namespace Karma.Pages
             {
                 m_statusMessages.Add("failed to load images");
             }
-            catch (ObjectDisposedException){ }
+            catch (ObjectDisposedException) { }
             finally
             {
                 CheckThreads();
@@ -125,7 +132,7 @@ namespace Karma.Pages
             {
                 m_statusMessages.Add("failed to load volunteers");
             }
-            catch (ObjectDisposedException){ }
+            catch (ObjectDisposedException) { }
             finally
             {
                 CheckThreads();
@@ -147,7 +154,7 @@ namespace Karma.Pages
             {
                 m_statusMessages.Add("failed to load volunteers");
             }
-            catch (ObjectDisposedException){ }
+            catch (ObjectDisposedException) { }
             finally
             {
                 CheckThreads();
@@ -166,7 +173,7 @@ namespace Karma.Pages
             {
                 await InvokeAsync(StateHasChanged);
             }
-            catch (ObjectDisposedException){ }
+            catch (ObjectDisposedException) { }
             finally
             {
                 CheckThreads();
