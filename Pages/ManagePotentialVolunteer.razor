@@ -53,8 +53,8 @@
                 <MatExpansionPanelHeader>Open events</MatExpansionPanelHeader>
             </MatExpansionPanelSummary>
             <MatExpansionPanelDetails>
-                <MatList>
-                    @foreach (var charityEvent in GetEventsNotOfThisVolunteer())
+                <MatList TwoLine="true">
+                    @foreach (var charityEvent in GetHighPriorityEvents())
                     {
                         @if (listOfCharityEvents == null || !listOfCharityEvents.Contains(charityEvent))
                         {
@@ -63,13 +63,40 @@
                             @if (matches.Count > 0)
                             {
                                 <MatListItem style=" display: inline-block; width: 100%;">
-                                    <div style="float:left">
-                                        @charityEvent.Name
-                                    </div>
-                                    <div style="float:right">
-                                        <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
-                                    </div>
+                                    <MatListItemPrimaryText>
+                                        <div style="float:left">
+                                            @charityEvent.Name
+                                        </div>
+                                        <div style="float:right">
+                                            <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
+                                        </div>
+                                    </MatListItemPrimaryText>
+                                    <MatListItemSecondaryText Style="color:darkgoldenrod">High priority</MatListItemSecondaryText>
                                 </MatListItem>
+                                <MatListDivider></MatListDivider>
+                            }
+                        }
+                    }
+                    @foreach (var charityEvent in GetRestOfEvents())
+                    {
+                        @if (listOfCharityEvents == null || !listOfCharityEvents.Contains(charityEvent))
+                        {
+                            var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                            var matches = regex.Matches(charityEvent.Name + charityEvent.Description);
+                            @if (matches.Count > 0)
+                            {
+                                <MatListItem style=" display: inline-block; width: 100%;">
+                                    <MatListItemPrimaryText>
+                                        <div style="float:left">
+                                            @charityEvent.Name
+                                        </div>
+                                        <div style="float:right">
+                                            <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
+                                        </div>
+                                    </MatListItemPrimaryText>
+                                    <MatListItemSecondaryText Style="color: darkcyan">Low priority</MatListItemSecondaryText>
+                                </MatListItem>
+                                <MatListDivider></MatListDivider>
                             }
                         }
                     }
