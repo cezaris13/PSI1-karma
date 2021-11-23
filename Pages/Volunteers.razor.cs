@@ -60,9 +60,9 @@ namespace Karma.Pages
 
         public string FindMostValuableVolunteer()
         {
-            var volunteer = GetPairsOfVolunteersAndEquipment();
-            var volunteerAndEquipment = volunteer.Aggregate((longest, next) => next.Size > longest.Size ? next : longest);
-           return volunteerAndEquipment.VolunteerName + " " + volunteerAndEquipment.VolunteerSurname;
+            IEnumerable<VolunteerAndEquipment> listOfVolunteersWithEquipment = GetPairsOfVolunteersAndEquipment();
+            VolunteerAndEquipment volunteerWithMostEquipment = listOfVolunteersWithEquipment.Aggregate((volunteerWithMostEquipment, nextVolunteer) => nextVolunteer.Size > volunteerWithMostEquipment.Size ? nextVolunteer : volunteerWithMostEquipment);
+            return volunteerWithMostEquipment.VolunteerName + " " + volunteerWithMostEquipment.VolunteerSurname;
         }
 
         //Pending volunteers tab:
