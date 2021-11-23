@@ -1,6 +1,6 @@
-using System.Net.Http;
 using Karma.Areas.Identity;
 using Karma.Data;
+using Karma.Models;
 using Karma.Services;
 using MatBlazor;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
 using OpenCage.Geocode;
 
@@ -32,10 +33,14 @@ namespace Karma
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("DefaultConnection")),
+                    ServiceLifetime.Scoped);
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-
+            services.AddDbContextFactory<KarmaContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")),
+                    ServiceLifetime.Scoped);
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddRazorPages();
@@ -43,9 +48,12 @@ namespace Karma
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddSingleton<IWeatherForecast, WeatherForecast>();
-            services.AddSingleton<IGeocoder>(p=>new Geocoder(Configuration["OpenCageGeocodingSecret"]));
-            services.AddScoped<INotifactionTransmitter, NotificationTransmitter>();
+            services.AddSingleton<IGeocoder>(p => new Geocoder(Configuration["OpenCageGeocodingSecret"]));
+            services.AddScoped<INotificationTransmitter, NotificationTransmitter>();
             services.AddScoped<NotificationToaster>();
+            services.AddTransient<IDBServiceProvider, DBServiceProvider>();
+            services.AddSingleton<IObjectChecker, ObjectChecker>();
+            services.AddSingleton<ILogger, KarmaLogger>();
 
             services.AddHttpClient();
             services.AddHttpContextAccessor();
@@ -84,7 +92,7 @@ namespace Karma
 
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseMiddleware<LoggingMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

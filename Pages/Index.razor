@@ -1,11 +1,16 @@
 ﻿@page "/"
 @using System.Text.RegularExpressions;
-@using Karma.Models
 @attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
 
 <head>
     <link href="css/site.css" rel="stylesheet" />
 </head>
+
+<style>
+    html {
+        overflow-y: scroll;
+    }
+</style>
 
 @if (!m_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
 {
@@ -15,13 +20,20 @@
 <h1 class="mat">Karma</h1>
 
 <p class="mat">Ready to aquire karma points by helping out others?</p>
+<MatSelect Label="Page size" ValueChanged="async(int a) => await Refresh(a)">
+    <MatOption TValue="int" Value="10"></MatOption>
+    <MatOption TValue="int" Value="10">10</MatOption>
+    <MatOption TValue="int" Value="15">15</MatOption>
+    <MatOption TValue="int" Value="20">20</MatOption>
+</MatSelect>
+<Pagination TotaPagesQuantity="m_totalPageQuantity" CurrentPage="m_currentPage" Radius="2" SelectedPage="SelectedPage"></Pagination>
 
-<MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Events" Icon="search" IconTrailing="true"></MatTextField>
+<MatTextField @bind-Value="@filterValue" OnInput="@(e => filterValue = e.Value.ToString())" Label="Search Events" Icon="search" IconTrailing="true"></MatTextField>
 
 <div class="card-deck">
-    @foreach (var karmaEvent in GetEvents())
+    @foreach (var karmaEvent in karmaEvents)
     {
-        var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());
         @if (matches.Count > 0)
         {
@@ -41,22 +53,3 @@
         }
     }
 </div>
-
-
-@code {
-    private string FilterValue { get; set; } = "";
-
-    private KarmaContext KarmaContext { get; } = new KarmaContext();
-
-    public IEnumerable<IGenericKarmaItem> GetEvents()
-    {
-        var result = KarmaContext.Events.ToList();
-        result.Sort();
-        return result;
-    }
-
-    public void NavigateToIndividualEvent(Guid id)
-    {
-        m_uriHelper.NavigateTo($"event/{id}");
-    }
-}

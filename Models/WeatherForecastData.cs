@@ -16,22 +16,22 @@ namespace Karma.Models
         {
             set
             {
-                humidity = JsonConvert.DeserializeObject<Dictionary<string, int>>(value["humidity"].ToString());
-                cloudiness = JsonConvert.DeserializeObject<Dictionary<string, int>>(value["cloudiness"].ToString());
-                temperature = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, double>>>(value["temperature"].ToString());
+                m_humidity = JsonConvert.DeserializeObject<Dictionary<string, int>>(value["humidity"].ToString());
+                m_cloudiness = JsonConvert.DeserializeObject<Dictionary<string, int>>(value["cloudiness"].ToString());
+                m_temperature = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, double>>>(value["temperature"].ToString());
                 // add more properties if needed
             }
         }
 
-        private Dictionary<string, int> humidity;
-        private Dictionary<string, int> cloudiness;
-        private Dictionary<string, Dictionary<string, double>> temperature;
+        private Dictionary<string, int> m_humidity;
+        private Dictionary<string, int> m_cloudiness;
+        private Dictionary<string, Dictionary<string, double>> m_temperature;
 
         public int Humidity
         {
             get
             {
-                return humidity["percent"];
+                return m_humidity["percent"];
             }
         }
 
@@ -39,7 +39,7 @@ namespace Karma.Models
         {
             get
             {
-                return cloudiness["percent"];
+                return m_cloudiness["percent"];
             }
         }
 
@@ -47,7 +47,7 @@ namespace Karma.Models
         {
             get
             {
-                return temperature["air"]["C"];
+                return m_temperature["air"]["C"];
             }
         }
 

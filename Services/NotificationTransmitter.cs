@@ -6,17 +6,13 @@ using MatBlazor;
 
 namespace Karma.Services
 {
-    public class NotificationTransmitter : INotifactionTransmitter
+    public class NotificationTransmitter : INotificationTransmitter
     {
         private void OnNotificationEvent(NotificationEventArgs args)
         {
-            //var handler = NotificationEvent; //Alternative events
-            //handler?.Invoke(this, args); //Alternative events
             NotificationEvent(this, args);
         }
 
-        //public event NotificationEventHandler NotificationEvent; //Alternative events
-        //public delegate void NotificationEventHandler(object sender, NotificationEventArgs e); //Alternative events
         public event EventHandler<NotificationEventArgs> NotificationEvent;
 
         public void ShowMessage(string message, MatToastType notificationType)

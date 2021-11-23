@@ -1,16 +1,5 @@
 ﻿@page "/event/{Id:guid}"
-@using System.Linq
-@using Karma.Models
-@using Microsoft.EntityFrameworkCore;
-@using System.Security.Claims
-@using OpenCage.Geocode
-@using System.Threading
 @using MudBlazor
-@using System.Collections.Concurrent
-@inject IJSRuntime jsRuntime
-@inject IWeatherForecast m_weatherForecast
-@inject AuthenticationStateProvider GetAuthenticationStateAsync
-@inject IGeocoder m_geocoder
 
 <head>
     <link href="css/site.css" rel="stylesheet" />
@@ -18,14 +7,13 @@
 
 @if (charityEvent != null)
 {
-    <h1 class="mat">@LoadingMessage</h1>
     <h1 class="mat">@charityEvent.Name</h1>
     <h2 class="mat">@charityEvent.Description</h2>
     <h3 class="mat">@charityEvent.State.ToString()</h3>
     <h3 class="mat">@charityEvent.Address</h3>
-    <h3 class="mat">@WeatherForecast</h3>
-    <h3 class="mat-subtitle1">Participants @CurrentParticipants / @NeededParticipants</h3>
-    <MatProgressBar Progress=@ParticipantsProgress></MatProgressBar>
+    <h3 class="mat">@weatherForecast</h3>
+    <h3 class="mat-subtitle1">Participants @currentParticipants / @neededParticipants</h3>
+    <MatProgressBar Progress=@participantsProgress></MatProgressBar>
 
     <div id="mapid" style="height: 500px; width: 500px; z-index: 0;"></div>
 
@@ -37,7 +25,7 @@
         <div style="float:left; width:40%">
             <p>Event volunteers:</p>
             <ol>
-                @foreach (var volunteer in Volunteers)
+                @foreach (var volunteer in volunteers)
                 {
                     <li>@volunteer</li>
                 }
@@ -46,19 +34,19 @@
         <div style="float:right; width:40%">
             <p>Event equipment:</p>
             <ol>
-                @foreach (var equipment in Equipment)
+                @foreach (var equipment in equipment)
                 {
                     <li>@equipment</li>
                 }
             </ol>
         </div>
     </div>
-    if (Images.Count > 0)
+    if (images.Count > 0)
     {
         <div class="container leftAlign">
             <h2 class="mat">charity event photos</h2>
             <MudCarousel Style="height:400px;width:400px" ShowArrows="true" ShowDelimiters="false" AutoCycle="true" TData="object">
-                @foreach (var image in Images)
+                @foreach (var image in images)
                 {
                     <MudCarouselItem Transition="Transition.Slide">
                         <img src=@image style="width:400px;height:400px">
@@ -71,159 +59,4 @@
 else
 {
     <h1 class="mat">Sorry,but this event was not found</h1>
-}
-
-@code
-{
-    [Parameter]
-    public Guid Id { get; set; }
-    private CharityEvent charityEvent;
-    private int totalLoadedTasks = 0;
-    public string LoadingMessage = "Loading...";
-    public string CurrentUserId { get; set; }
-    public string WeatherForecast { get; set; } = "loading weather forecast";
-    public int CurrentParticipants { get; set; } = 0;
-    public int NeededParticipants { get; set; } = 0;
-    public double ParticipantsProgress { get; set; } = 0;
-    public List<string> Images = new List<string>();
-    public List<string> Equipment = new List<string>() { "Loading..." };
-    public List<string> Volunteers = new List<string>() { "Loading..." };
-    private List<Thread> listOfThreads = new List<Thread>();
-    private ConcurrentBag<string> statusMessages = new ConcurrentBag<string>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        var karmaContext = new KarmaContext();
-        charityEvent = karmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
-        var principal = m_httpContextAccessor.HttpContext.User;
-        CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-        try
-        {
-            WeatherForecast = await m_weatherForecast.GetWeather(charityEvent.Address);
-            var location = m_geocoder.Geocode(charityEvent.Address);
-            var coords = location.Results[0].Geometry;
-            await jsRuntime.InvokeVoidAsync("GetMap", coords.Latitude, coords.Longitude);
-        }
-        catch (InvalidAddressException ex)
-        {
-            m_notifactionTransmitter.ShowMessage("could not provide weather forecast:" + ex.Message, MatToastType.Danger);
-            WeatherForecast = "failed";
-        }
-
-        listOfThreads.Add(new Thread(
-            () =>
-            {
-                //Thread.Sleep(2000); //demonstation purposes
-                GetImages();
-            }));
-        listOfThreads.Add(new Thread(
-            () =>
-            {
-                //Thread.Sleep(3000);//demonstation purposes
-                GetVolunteers();
-            }));
-        listOfThreads.Add(new Thread(
-            () => { GetEquipment(); }));
-        listOfThreads.Add(new Thread(
-            () => { CalculateParticipants(); }));
-
-        foreach (var thread in listOfThreads)
-        {
-            thread.Start();
-        }
-    }
-
-    public void NavigateToEditEvent()
-    {
-        m_uriHelper.NavigateTo($"editcharityevent/{Id}");
-    }
-
-    private void GetImages()
-    {
-        try
-        {
-            var karmaContext = new KarmaContext();
-            Images = karmaContext.EventImages
-                .Where(p => p.EventId == Id)
-                .Select(p => p.ImageUrl)
-                .ToList();
-            //throw new DbUpdateException();// demonstration purposes
-            totalLoadedTasks++;
-            LoadingMessage = totalLoadedTasks.ToString() + "/" + listOfThreads.Count();
-            this.InvokeAsync(() => this.StateHasChanged());
-        }
-        catch (DbUpdateException)
-        {
-            statusMessages.Add("failed to load images");
-        }
-        CheckThreads();
-    }
-
-    private void GetVolunteers()
-    {
-        try
-        {
-            var karmaContext = new KarmaContext();
-            Volunteers = karmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p).Select(p => $"{p.Name} {p.Surname}").ToList();
-            //throw new DbUpdateException();// demonstration purposes
-            totalLoadedTasks++;
-            LoadingMessage = totalLoadedTasks.ToString() + "/" + listOfThreads.Count();
-            this.InvokeAsync(() => this.StateHasChanged());
-        }
-        catch (DbUpdateException)
-        {
-            statusMessages.Add("failed to load volunteers");
-        }
-        CheckThreads();
-    }
-
-    private void GetEquipment()
-    {
-        try
-        {
-            var karmaContext = new KarmaContext();
-            var eventEquipment = new List<string>();
-            var vols = karmaContext.Events.Include(e => e.Volunteers).Where(x => x.Id == Id).FirstOrDefault().Volunteers;
-            Equipment = karmaContext.SpecialEquipment.Where(x => vols.Contains(x.Owner)).Select(se => se.Name).ToList();
-            //throw new DbUpdateException();// demonstration purposes
-            totalLoadedTasks++;
-            LoadingMessage = totalLoadedTasks.ToString() + "/" + listOfThreads.Count();
-            this.InvokeAsync(() => this.StateHasChanged());
-        }
-        catch (DbUpdateException)
-        {
-            statusMessages.Add("failed to load equipment");
-        }
-        CheckThreads();
-    }
-
-    private void CalculateParticipants()
-    {
-        var karmaContext = new KarmaContext();
-        var ev = karmaContext.Events.Include(x => x.Volunteers).FirstOrDefault(y => y.Id == Id);
-        CurrentParticipants = ev.Volunteers.Count;
-        NeededParticipants = ev.MaxVolunteers;
-        ParticipantsProgress = (double)CurrentParticipants / NeededParticipants;
-        totalLoadedTasks++;
-        this.InvokeAsync(() => this.StateHasChanged());
-        CheckThreads();
-    }
-
-    private void CheckThreads()
-    {
-        if (totalLoadedTasks == listOfThreads.Count && WeatherForecast != "failed")
-        {
-            LoadingMessage = "";
-            m_notifactionTransmitter.ShowMessage("Loaded all elements of the event", MatToastType.Info);
-        }
-        if (statusMessages.Count > 0)
-        {
-            string val = null;
-            while (val != "")
-            {
-                statusMessages.TryTake(out val);
-                m_notifactionTransmitter.ShowMessage(val, MatToastType.Danger);
-            }
-        }
-    }
 }
