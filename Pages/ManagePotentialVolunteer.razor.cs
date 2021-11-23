@@ -58,7 +58,7 @@ namespace Karma.Pages
 
         public IEnumerable<ICharityEvent> GetEventsNotOfThisVolunteer()
         {
-            return m_karmaContext.Events.Include(p => p.Volunteers);
+            return m_karmaContext.Events.Include(p => p.Volunteers).Where(p => p.ManagerId == CurrentUserId && p.MaxVolunteers > p.Volunteers.Count);
         }
 
         public void AddEventToVolunteerList(Guid id)

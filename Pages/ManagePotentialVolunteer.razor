@@ -67,13 +67,7 @@
                                         @charityEvent.Name
                                     </div>
                                     <div style="float:right">
-                                        @if (charityEvent.ManagerId == CurrentUserId)
-                                        {
-                                            @if (charityEvent.Volunteers.Count < charityEvent.MaxVolunteers)
-                                            {
-                                                <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
-                                            }
-                                        }
+                                        <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
                                     </div>
                                 </MatListItem>
                             }
