@@ -86,7 +86,7 @@ namespace Karma.Pages
                 }
                 catch (Exception)
                 {
-                    m_notifactionTransmitter.ShowMessage("Could not provide maps", MatToastType.Danger);
+                    m_notificationTransmitter.ShowMessage("Could not provide maps", MatToastType.Danger);
                 }
             }
         }
