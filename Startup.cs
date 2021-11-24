@@ -53,7 +53,7 @@ namespace Karma
             services.AddScoped<NotificationToaster>();
             services.AddTransient<IDBServiceProvider, DBServiceProvider>();
             services.AddSingleton<IObjectChecker, ObjectChecker>();
-            services.AddSingleton<ILogger, KarmaLogger>();
+            services.AddSingleton<IKarmaLogger, KarmaLogger>();
             services.AddTransient<IEventPriority, EventPriority>();
 
             services.AddHttpClient();
