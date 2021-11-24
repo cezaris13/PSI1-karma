@@ -56,7 +56,25 @@ namespace Karma.Pages
 
         public IEnumerable<ICharityEvent> GetEventsNotOfThisVolunteer()
         {
-            return m_karmaContext.Events.Include(p => p.Volunteers).Where(p => !p.Volunteers.Contains(volunteer));
+            return m_karmaContext.Events.Include(p => p.Volunteers).Where(p => !p.Volunteers.Contains(volunteer) && p.ManagerId == CurrentUserId && p.MaxVolunteers > p.Volunteers.Count);
+        }
+
+        public IEnumerable<ICharityEvent> GetHighPriorityEvents()
+        {
+            IEnumerable<ICharityEvent> allEvents = GetEventsNotOfThisVolunteer();
+            return allEvents.Aggregate(new List<ICharityEvent>(), (list, currentEvent) =>
+            {
+                if ((currentEvent.MaxVolunteers / 2) > currentEvent.Volunteers.Count)
+                {
+                    list.Add(currentEvent);
+                }
+                return list;
+            });
+        }
+
+        public IEnumerable<ICharityEvent> GetRestOfEvents()
+        {
+            return GetEventsNotOfThisVolunteer().Except(GetHighPriorityEvents());
         }
 
         private void AddEventToVolunteerList(Guid id)

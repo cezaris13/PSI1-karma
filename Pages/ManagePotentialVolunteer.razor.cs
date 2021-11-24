@@ -56,11 +56,6 @@ namespace Karma.Pages
             return listOfCharityEvents;
         }
 
-        public IEnumerable<ICharityEvent> GetEventsNotOfThisVolunteer()
-        {
-            return m_karmaContext.Events.Include(p => p.Volunteers);
-        }
-
         public void AddEventToVolunteerList(Guid id)
         {
             listOfCharityEvents.Add(m_karmaContext.Events.Where(p => p.Id == id).FirstOrDefault());

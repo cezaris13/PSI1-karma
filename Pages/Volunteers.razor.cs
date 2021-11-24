@@ -58,6 +58,13 @@ namespace Karma.Pages
             m_navigationManager.NavigateTo($"volunteer/{id}");
         }
 
+        public string FindMostValuableVolunteer()
+        {
+            IEnumerable<VolunteerAndEquipment> listOfVolunteersWithEquipment = GetPairsOfVolunteersAndEquipment();
+            VolunteerAndEquipment volunteerWithMostEquipment = listOfVolunteersWithEquipment.Aggregate((volunteerWithMostEquipment, nextVolunteer) => nextVolunteer.Size > volunteerWithMostEquipment.Size ? nextVolunteer : volunteerWithMostEquipment);
+            return volunteerWithMostEquipment.VolunteerName + " " + volunteerWithMostEquipment.VolunteerSurname;
+        }
+
         //Pending volunteers tab:
         protected override void OnInitialized()
         {

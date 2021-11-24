@@ -1,4 +1,5 @@
 ﻿@page "/addvolunteer"
+@inject IEventPriority m_eventPriority
 
 <head>
     <link href="css/site.css" rel="stylesheet" />
@@ -25,14 +26,14 @@
                 {
                     @foreach (var charityEvent in GetEventsOfThisVolunteer())
                     {
-                        <MatListItem style=" display: inline-block; width: 100%;">
-                            <div style="float:left; margin: 0">
-                                @charityEvent.Name
-                            </div>
-                            <div style="float:right">
-                                <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</MatButton>
-                            </div>
-                        </MatListItem>
+                    <MatListItem style=" display: inline-block; width: 100%;">
+                        <div style="float:left; margin: 0">
+                            @charityEvent.Name
+                        </div>
+                        <div style="float:right">
+                            <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</MatButton>
+                        </div>
+                    </MatListItem>
                     }
                 }
             </MatList>
@@ -43,25 +44,41 @@
             <MatExpansionPanelHeader>Charity events that this volunteer could be a part of:</MatExpansionPanelHeader>
         </MatExpansionPanelSummary>
         <MatExpansionPanelDetails>
-            <MatList>
-                @foreach (var charityEvent in GetEventsNotOfThisVolunteer())
+            <MatList TwoLine="true">
+                @foreach (var charityEvent in m_eventPriority.GetHighPriorityEvents(CurrentUserId))
                 {
                     @if (listOfCharityEvents == null || !listOfCharityEvents.Contains(charityEvent))
                     {
-                        <MatListItem style=" display: inline-block; width: 100%;">
+                    <MatListItem style=" display: inline-block; width: 100%;">
+                        <MatListItemPrimaryText>
                             <div style="float:left; margin: 0">
                                 @charityEvent.Name
                             </div>
                             <div style="float:right">
-                                @if (charityEvent.ManagerId == CurrentUserId)
-                                {
-                                    @if (charityEvent.Volunteers.Count < charityEvent.MaxVolunteers)
-                                    {
-                                        <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
-                                    }
-                                }
+                                <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
                             </div>
-                        </MatListItem>
+                        </MatListItemPrimaryText>
+                        <MatListItemSecondaryText Style="color:darkgoldenrod">High priority</MatListItemSecondaryText>
+                    </MatListItem>
+                    <MatListDivider></MatListDivider>
+                    }
+                }
+                @foreach (var charityEvent in m_eventPriority.GetRestOfEvents(CurrentUserId))
+                {
+                    @if (listOfCharityEvents == null || !listOfCharityEvents.Contains(charityEvent))
+                    {
+                    <MatListItem style=" display: inline-block; width: 100%;">
+                        <MatListItemPrimaryText>
+                            <div style="float:left; margin: 0">
+                                @charityEvent.Name
+                            </div>
+                            <div style="float:right">
+                                <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
+                            </div>
+                        </MatListItemPrimaryText>
+                        <MatListItemSecondaryText Style="color:darkcyan">Low priority</MatListItemSecondaryText>
+                    </MatListItem>
+                    <MatListDivider></MatListDivider>
                     }
                 }
             </MatList>
