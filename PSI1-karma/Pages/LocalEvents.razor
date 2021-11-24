@@ -5,7 +5,7 @@
 @attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
 @using Microsoft.Extensions.Configuration;
 @inject IConfiguration m_configuration
-@inject IHttpClientFactory client
+@inject IHttpClientFactory m_httpClientFactory
 
 <h1 class="mat">Events near you</h1>
 <br>
@@ -66,7 +66,7 @@
 
     public async Task GetCityString()
     {
-        var localClient = client.CreateClient("city");
+        var localClient = m_httpClientFactory.CreateClient("city");
         var city = await localClient.GetStringAsync($"https://api.ipdata.co/?api-key={m_configuration["IpDataKey"]}&fields=city");
         address = JsonConvert.DeserializeObject<JsonToString>(city).city;
     }
@@ -74,7 +74,7 @@
     public async Task GetNearbyEvents()
     {
         List<CharityEvent> givenEvents = new List<CharityEvent>();
-        var localClient = client.CreateClient("events");
+        var localClient = m_httpClientFactory.CreateClient("events");
         localClient.BaseAddress = new Uri(baseUrl);
         HttpResponseMessage Res = await localClient.GetAsync($"api/Event?address={address}");
         if (Res.IsSuccessStatusCode)
