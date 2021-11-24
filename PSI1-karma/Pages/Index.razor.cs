@@ -14,7 +14,7 @@ namespace Karma.Pages
 
         private int m_totalPageQuantity;
         private int m_currentPage = 1;
-        public int perPage;
+        public int perPage = 10;
         public string filterValue = "";
         public IEnumerable<IGenericKarmaItem> karmaEvents;
 

@@ -1,0 +1,47 @@
+﻿@page "/localevents"
+@using System.Text.RegularExpressions;
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+
+<h1 class="mat">Events near you</h1>
+<br>
+
+<MatSelect Label="Page size" ValueChanged="async(int a) => await Refresh(a)">
+    <MatOption TValue="int" Value="10"></MatOption>
+    <MatOption TValue="int" Value="10">10</MatOption>
+    <MatOption TValue="int" Value="15">15</MatOption>
+    <MatOption TValue="int" Value="20">20</MatOption>
+</MatSelect>
+<Pagination TotaPagesQuantity="m_totalPageQuantity" CurrentPage="m_currentPage" Radius="2" SelectedPage="SelectedPage"></Pagination>
+
+<MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Events" Icon="search" IconTrailing="true"></MatTextField>
+
+<div class="card-deck">
+    @if (listOfLocalCharityEvents.Any())
+    {
+        @foreach (var karmaEvent in listOfLocalCharityEvents)
+        {
+            var regex = new Regex($"(.*){FilterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());
+            @if (matches.Count > 0)
+            {
+                <MatCard class="demo-mat-card mx-3" @onclick="() => NavigateToIndividualEvent(karmaEvent.Id)">
+                    <div class="demo-mat-card-content">
+                        <MatHeadline6 class="demo-mat-card-clean-margin">
+                            @karmaEvent.Name
+                        </MatHeadline6>
+                    </div>
+                    <MatCardContent>
+                        <MatCardMedia Wide="true" ImageUrl=@karmaEvent.PhotoPath></MatCardMedia>
+                        <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">
+                            @karmaEvent.Description
+                        </MatBody2>
+                    </MatCardContent>
+                </MatCard>
+            }
+        }
+    }
+    else
+    {
+        <p>Sorry, but we couldn't find any events near you</p>
+    }
+</div>
