@@ -19,7 +19,7 @@ namespace Karma.Pages
         public IConfiguration m_configuration { get; set; }
 
         [Inject]
-        public IHttpClientFactory client { get; set; }
+        public IHttpClientFactory m_httpClientFactory { get; set; }
 
         public IEnumerable<ICharityEvent> listOfLocalCharityEvents = new List<CharityEvent>();
         private IEnumerable<ICharityEvent> m_listOfLocalCharityEvents = new List<CharityEvent>();
@@ -52,7 +52,7 @@ namespace Karma.Pages
 
         public async Task GetCityString()
         {
-            HttpClient localClient = client.CreateClient("city");
+            HttpClient localClient = m_httpClientFactory.CreateClient("city");
             string city = await localClient.GetStringAsync($"https://api.ipdata.co/?api-key={m_configuration["IpDataKey"]}&fields=city");
             address = JsonConvert.DeserializeObject<JsonToString>(city).city;
         }
@@ -60,7 +60,7 @@ namespace Karma.Pages
         public async Task GetNearbyEvents()
         {
             List<CharityEvent> givenEvents = new List<CharityEvent>();
-            HttpClient localClient = client.CreateClient("events");
+            HttpClient localClient = m_httpClientFactory.CreateClient("events");
             localClient.BaseAddress = new Uri(m_baseUrl);
             HttpResponseMessage Res = await localClient.GetAsync($"api/Event?address={address}");
             if (Res.IsSuccessStatusCode)
