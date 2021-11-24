@@ -10,9 +10,9 @@ namespace Karma.Services
     public class LoggingMiddleware
     {
         private readonly RequestDelegate m_next;
-        private readonly ILogger m_logger;
+        private readonly IKarmaLogger m_logger;
 
-        public LoggingMiddleware(RequestDelegate next, ILogger logger)
+        public LoggingMiddleware(RequestDelegate next, IKarmaLogger logger)
         {
             m_next = next;
             m_logger = logger;
