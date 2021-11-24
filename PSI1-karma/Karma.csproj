@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="APIProject\**" />
+    <Content Remove="APIProject\**" />
+    <EmbeddedResource Remove="APIProject\**" />
+    <None Remove="APIProject\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MatBlazor" Version="2.8.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.10" />
@@ -27,7 +34,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="APIProject\" />
   </ItemGroup>
 
   <ItemGroup>

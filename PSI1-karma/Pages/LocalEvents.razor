@@ -1,14 +1,17 @@
 ﻿@page "/localevents"
 @using System.Text.RegularExpressions;
-@using Karma.Models
-@using Newtonsoft.Json;
 @attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
-@using Microsoft.Extensions.Configuration;
-@inject IConfiguration m_configuration
-@inject IHttpClientFactory client
 
 <h1 class="mat">Events near you</h1>
 <br>
+
+<MatSelect Label="Page size" ValueChanged="async(int a) => await Refresh(a)">
+    <MatOption TValue="int" Value="10"></MatOption>
+    <MatOption TValue="int" Value="10">10</MatOption>
+    <MatOption TValue="int" Value="15">15</MatOption>
+    <MatOption TValue="int" Value="20">20</MatOption>
+</MatSelect>
+<Pagination TotaPagesQuantity="m_totalPageQuantity" CurrentPage="m_currentPage" Radius="2" SelectedPage="SelectedPage"></Pagination>
 
 <MatTextField @bind-Value="@FilterValue" OnInput="@(e => FilterValue = e.Value.ToString())" Label="Search Events" Icon="search" IconTrailing="true"></MatTextField>
 
@@ -42,51 +45,3 @@
         <p>Sorry, but we couldn't find any events near you</p>
     }
 </div>
-
-
-@code {
-    private IEnumerable<ICharityEvent> listOfLocalCharityEvents = new List<CharityEvent>();
-
-    private string FilterValue { get; set; } = "";
-
-    private string address { get; set; } = "";
-
-    readonly string baseUrl = "https://localhost:44336/";
-
-    protected override async Task OnInitializedAsync()
-    {
-        await GetCityString();
-        await GetNearbyEvents();
-    }
-
-    public void NavigateToIndividualEvent(Guid id)
-    {
-        m_uriHelper.NavigateTo($"event/{id}");
-    }
-
-    public async Task GetCityString()
-    {
-        var localClient = client.CreateClient("city");
-        var city = await localClient.GetStringAsync($"https://api.ipdata.co/?api-key={m_configuration["IpDataKey"]}&fields=city");
-        address = JsonConvert.DeserializeObject<JsonToString>(city).city;
-    }
-
-    public async Task GetNearbyEvents()
-    {
-        List<CharityEvent> givenEvents = new List<CharityEvent>();
-        var localClient = client.CreateClient("events");
-        localClient.BaseAddress = new Uri(baseUrl);
-        HttpResponseMessage Res = await localClient.GetAsync($"api/Event?address={address}");
-        if (Res.IsSuccessStatusCode)
-        {
-            var EmpResponse = await Res.Content.ReadAsStringAsync();
-            givenEvents = JsonConvert.DeserializeObject<List<CharityEvent>>(EmpResponse);
-        }
-        listOfLocalCharityEvents = givenEvents;
-    }
-
-    public class JsonToString
-    {
-        public string city = string.Empty;
-    }
-}
