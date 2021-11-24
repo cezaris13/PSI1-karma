@@ -1,4 +1,5 @@
 ﻿@page "/addvolunteer"
+@inject IEventPriority m_eventPriority
 
 <head>
     <link href="css/site.css" rel="stylesheet" />
@@ -25,14 +26,14 @@
                 {
                     @foreach (var charityEvent in GetEventsOfThisVolunteer())
                     {
-                        <MatListItem style=" display: inline-block; width: 100%;">
-                            <div style="float:left; margin: 0">
-                                @charityEvent.Name
-                            </div>
-                            <div style="float:right">
-                                <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</MatButton>
-                            </div>
-                        </MatListItem>
+                    <MatListItem style=" display: inline-block; width: 100%;">
+                        <div style="float:left; margin: 0">
+                            @charityEvent.Name
+                        </div>
+                        <div style="float:right">
+                            <MatButton Outlined="true" class="btn btn-primary" @onclick="() => RemoveEventFromList(charityEvent.Id)">Remove</MatButton>
+                        </div>
+                    </MatListItem>
                     }
                 }
             </MatList>
@@ -44,40 +45,40 @@
         </MatExpansionPanelSummary>
         <MatExpansionPanelDetails>
             <MatList TwoLine="true">
-                @foreach (var charityEvent in GetHighPriorityEvents())
+                @foreach (var charityEvent in m_eventPriority.GetHighPriorityEvents(CurrentUserId))
                 {
                     @if (listOfCharityEvents == null || !listOfCharityEvents.Contains(charityEvent))
                     {
-                        <MatListItem style=" display: inline-block; width: 100%;">
-                            <MatListItemPrimaryText>
-                                <div style="float:left; margin: 0">
-                                    @charityEvent.Name
-                                </div>
-                                <div style="float:right">
-                                    <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
-                                </div>
-                            </MatListItemPrimaryText>
-                            <MatListItemSecondaryText Style="color:darkgoldenrod">High priority</MatListItemSecondaryText>
-                        </MatListItem>
-                        <MatListDivider></MatListDivider>
+                    <MatListItem style=" display: inline-block; width: 100%;">
+                        <MatListItemPrimaryText>
+                            <div style="float:left; margin: 0">
+                                @charityEvent.Name
+                            </div>
+                            <div style="float:right">
+                                <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
+                            </div>
+                        </MatListItemPrimaryText>
+                        <MatListItemSecondaryText Style="color:darkgoldenrod">High priority</MatListItemSecondaryText>
+                    </MatListItem>
+                    <MatListDivider></MatListDivider>
                     }
                 }
-                @foreach (var charityEvent in GetRestOfEvents())
+                @foreach (var charityEvent in m_eventPriority.GetRestOfEvents(CurrentUserId))
                 {
                     @if (listOfCharityEvents == null || !listOfCharityEvents.Contains(charityEvent))
                     {
-                        <MatListItem style=" display: inline-block; width: 100%;">
-                            <MatListItemPrimaryText>
-                                <div style="float:left; margin: 0">
-                                    @charityEvent.Name
-                                </div>
-                                <div style="float:right">
-                                    <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
-                                </div>
-                            </MatListItemPrimaryText>
-                            <MatListItemSecondaryText Style="color:darkcyan">Low priority</MatListItemSecondaryText>
-                        </MatListItem>
-                        <MatListDivider></MatListDivider>
+                    <MatListItem style=" display: inline-block; width: 100%;">
+                        <MatListItemPrimaryText>
+                            <div style="float:left; margin: 0">
+                                @charityEvent.Name
+                            </div>
+                            <div style="float:right">
+                                <MatButton Outlined="true" class="btn btn-primary" @onclick="() => AddEventToVolunteerList(charityEvent.Id)">Add</MatButton>
+                            </div>
+                        </MatListItemPrimaryText>
+                        <MatListItemSecondaryText Style="color:darkcyan">Low priority</MatListItemSecondaryText>
+                    </MatListItem>
+                    <MatListDivider></MatListDivider>
                     }
                 }
             </MatList>

@@ -54,6 +54,7 @@ namespace Karma
             services.AddTransient<IDBServiceProvider, DBServiceProvider>();
             services.AddSingleton<IObjectChecker, ObjectChecker>();
             services.AddSingleton<ILogger, KarmaLogger>();
+            services.AddTransient<IEventPriority, EventPriority>();
 
             services.AddHttpClient();
             services.AddHttpContextAccessor();

@@ -61,7 +61,7 @@ namespace Karma.Pages
 
         public IEnumerable<ICharityEvent> GetHighPriorityEvents()
         {
-            var allEvents = GetEventsNotOfThisVolunteer();
+            IEnumerable<ICharityEvent> allEvents = GetEventsNotOfThisVolunteer();
             return allEvents.Aggregate(new List<ICharityEvent>(), (list, currentEvent) =>
             {
                 if ((currentEvent.MaxVolunteers / 2) > currentEvent.Volunteers.Count)
