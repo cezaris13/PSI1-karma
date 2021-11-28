@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
 using OpenCage.Geocode;
+using SendGrid;
 
 namespace Karma
 {
@@ -41,7 +42,8 @@ namespace Karma
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")),
                     ServiceLifetime.Scoped);
-            services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IEmailSender>(
+                p => new EmailSender(Configuration, new SendGridClient(Configuration["SendGridApiKey"])));
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
