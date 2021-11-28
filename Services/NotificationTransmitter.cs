@@ -17,7 +17,7 @@ namespace Karma.Services
 
         public void ShowMessage(string message, MatToastType notificationType)
         {
-            var args = new NotificationEventArgs(message,notificationType);
+            var args = new NotificationEventArgs(message, notificationType);
             OnNotificationEvent(args);
         }
     }
