@@ -17,14 +17,10 @@ namespace KarmaTests.Integration
             [Values(MatToastType.Info, MatToastType.Danger, MatToastType.Success)] MatToastType type)
         {
             var mockToaster = new Mock<IMatToaster>(MockBehavior.Strict);
-           
+            var mockToast = new Mock<MatToast>(MockBehavior.Strict, "a", "b", "c", new MatToastOptions(MatToastType.Danger, new MatToastConfiguration()));
             mockToaster
-                .Setup(x => x.Add(message, type, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Action>()))
-
-                //.Setup(x => x.Add(message, type, It.IsAny<string>(), It.IsAny<string>(), (Action<MatToastOptions>) It.IsAny<object>()))
-                //.Callback((int interval, bool reset, Action action) => action());
-                //, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<object>()
-                .Returns(new Mock<MatToast>(MockBehavior.Strict).Object);
+                .Setup(x => x.Add(message, type, It.IsAny<string>(), It.IsAny<string>(), (Action<MatToastOptions>) It.IsAny<object>()))
+                .Returns(mockToast.Object);
             var transmitter = new NotificationTransmitter();
             var toaster = new NotificationToaster(mockToaster.Object, transmitter);
 
