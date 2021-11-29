@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Karma.Models
 {
@@ -17,6 +18,9 @@ namespace Karma.Models
 
         public string DbPath { get; private set; }
 
+        public KarmaContext() : base() { }
+
+        [ActivatorUtilitiesConstructor]
         public KarmaContext(DbContextOptions options) : base(options)
         {
 

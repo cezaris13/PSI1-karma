@@ -68,7 +68,6 @@ namespace KarmaTests
             }
         }
 
-        //this test wont pass for now
         [Test]
         public void RemoveFromDb_RemoveValidDBSetEntity_ReturnsZero()
         {
@@ -84,9 +83,9 @@ namespace KarmaTests
 
             using (var context = new KarmaContext(options))
             {
-                context.Volunteers.Add(new Volunteer("Name1", "Surname1", id));
-                context.Volunteers.Add(new Volunteer("Name2", "Surname2", Guid.NewGuid()));
-                context.Volunteers.Add(new Volunteer("Name3", "Surname3", Guid.NewGuid()));
+                context.Events.Add(new CharityEvent("Event1", "desc1", id, "manager1", "address1"));
+                context.Events.Add(new CharityEvent("Event2", "desc2", Guid.NewGuid(), "manager1", "address1"));
+                context.Events.Add(new CharityEvent("Event3", "desc3", Guid.NewGuid(), "manager2", "address1"));
                 context.SaveChanges();
             }
 
@@ -98,7 +97,7 @@ namespace KarmaTests
                     .Returns(context);
 
                 var sut = new DBServiceProvider(notificationTransmitter.Object, dbContextFactory.Object, null);
-                var result = sut.RemoveFromDB<Volunteer>(id);
+                var result = sut.RemoveFromDB<CharityEvent>(id);
 
                 Assert.AreEqual(0, result);
                 notificationTransmitter.VerifyAll();
@@ -106,7 +105,7 @@ namespace KarmaTests
             }
             using (var context = new KarmaContext(options))
             {
-                Assert.AreEqual(2, context.Volunteers.Select(p => p).Count());
+                Assert.AreEqual(2, context.Events.Select(p => p).Count());
             }
         }
 
