@@ -97,7 +97,6 @@ namespace KarmaTests
                     .Setup(p => p.CreateDbContext())
                     .Returns(context);
 
-                var volunteer = new Volunteer("name", "surname", Guid.NewGuid());
                 var sut = new DBServiceProvider(notificationTransmitter.Object, dbContextFactory.Object, null);
                 var result = sut.RemoveFromDB<Volunteer>(id);
 
