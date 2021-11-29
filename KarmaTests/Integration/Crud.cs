@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using Karma.Models;
 using MatBlazor;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
 namespace KarmaTests.Integration
@@ -14,24 +15,13 @@ namespace KarmaTests.Integration
         private Volunteer testVolunteer = new Volunteer("John", "Smith", Guid.Parse("16842fce-a185-40ab-a657-b3daa1e2af30"));
         private Volunteer testVolunteer2 = new Volunteer("John", "Smith2", Guid.Parse("16842fce-a185-40ab-a657-b3daa1e2af31"));
 
-        [SetUp]
-        public void SetUp()
-        {
-            DeleteVolunteers();
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            DeleteVolunteers();
-        }
-
         [Test]
-        public void ShowMessageTest2(
-            [Values(null, "", "SingleWord", "Many different words.? !; and stuff")] string message,
-            [Values(MatToastType.Info, MatToastType.Danger, MatToastType.Success)] MatToastType type)
+        public void Crud_Volunteers()
         {
-            var db = new KarmaContext();
+            var options = new DbContextOptionsBuilder<KarmaContext>()
+                .UseInMemoryDatabase(databaseName: "KarmaVolunteers")
+                .Options;
+            var db = new KarmaContext(options);
             TestVolunteer(db, testVolunteer.Id, null);
             TestVolunteer(db, testVolunteer2.Id, null);
             db.Volunteers.Add(testVolunteer);
@@ -47,18 +37,10 @@ namespace KarmaTests.Integration
             TestVolunteer(db, testVolunteer2.Id, testVolunteer2);
         }
 
-        private void DeleteVolunteers()
-        {
-            var db = new KarmaContext();
-            db.Volunteers.Remove(testVolunteer);
-            db.Volunteers.Remove(testVolunteer2);
-            db.SaveChanges();
-        }
-
-        private void TestVolunteer(KarmaContext db, Guid Id, Volunteer actual)
+        private void TestVolunteer(KarmaContext db, Guid Id, Volunteer expected)
         {
             var volunteer = db.Volunteers.FirstOrDefault(x => x.Id == Id);
-            Assert.AreEqual(null, actual);
+            Assert.AreEqual(expected, volunteer);
         }
     }
 }
