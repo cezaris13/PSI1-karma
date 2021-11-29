@@ -7,11 +7,16 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Karma.Models;
+using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 
 namespace Karma.Pages
 {
     public partial class ManageUserEvents
     {
+        [Inject]
+        private IDbContextFactory<KarmaContext> m_contextFactory { get; set; }
+
         private int m_totalPageQuantity;
         private int m_currentPage = 1;
         public int perPage = 10;
@@ -20,7 +25,7 @@ namespace Karma.Pages
 
         public IEnumerable<IGenericKarmaItem> karmaEvents;
 
-        private KarmaContext m_karmaContext = new();
+        private KarmaContext m_karmaContext;
 
         public void NavigateToIndividualEvent(Guid id)
         {
@@ -59,6 +64,7 @@ namespace Karma.Pages
 
         protected override void OnInitialized()
         {
+            m_karmaContext = m_contextFactory.CreateDbContext();
             ClaimsPrincipal principal = m_httpContextAccessor.HttpContext.User;
             m_currentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
             LoadEvents();
