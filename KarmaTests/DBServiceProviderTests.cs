@@ -80,7 +80,6 @@ namespace KarmaTests
             var options = new DbContextOptionsBuilder<KarmaContext>()
                 .UseInMemoryDatabase(databaseName: "KarmaEvents4")
                 .Options;
-
             using (var context = new KarmaContext(options))
             {
                 context.Events.Add(new CharityEvent("Event1", "desc1", id, "manager1", "address1"));
@@ -88,7 +87,6 @@ namespace KarmaTests
                 context.Events.Add(new CharityEvent("Event3", "desc3", Guid.NewGuid(), "manager2", "address1"));
                 context.SaveChanges();
             }
-
             using (var context = new KarmaContext(options))
             {
                 var dbContextFactory = new Mock<IDbContextFactory<KarmaContext>>(MockBehavior.Strict);
