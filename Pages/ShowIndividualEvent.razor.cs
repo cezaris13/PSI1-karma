@@ -21,6 +21,9 @@ namespace Karma.Pages
     public partial class ShowIndividualEvent
     {
         [Inject]
+        private IDbContextFactory<KarmaContext> m_contextFactory { get; set; }
+
+        [Inject]
         public IJSRuntime m_jsRuntime { get; set; }
 
         [Inject]
@@ -48,7 +51,7 @@ namespace Karma.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var karmaContext = new KarmaContext();
+            var karmaContext = m_contextFactory.CreateDbContext();
             charityEvent = karmaContext.Events.Where(p => p.Id == Id).FirstOrDefault();
             ClaimsPrincipal principal = m_httpContextAccessor.HttpContext.User;
             CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -100,7 +103,7 @@ namespace Karma.Pages
         {
             try
             {
-                var karmaContext = new KarmaContext();
+                var karmaContext = m_contextFactory.CreateDbContext();
                 images = karmaContext.EventImages
                     .Where(p => p.EventId == Id)
                     .Select(p => p.ImageUrl)
@@ -123,7 +126,7 @@ namespace Karma.Pages
         {
             try
             {
-                var karmaContext = new KarmaContext();
+                var karmaContext = m_contextFactory.CreateDbContext();
                 volunteers = karmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).Select(p => p.Volunteers).SelectMany(p => p).Select(p => $"{p.Name} {p.Surname}").ToList();
                 m_totalLoadedTasks++;
                 await InvokeAsync(StateHasChanged);
@@ -143,7 +146,7 @@ namespace Karma.Pages
         {
             try
             {
-                var karmaContext = new KarmaContext();
+                var karmaContext = m_contextFactory.CreateDbContext();
                 var eventEquipment = new List<string>();
                 List<Volunteer> volunteers = karmaContext.Events.Include(e => e.Volunteers).Where(x => x.Id == Id).FirstOrDefault().Volunteers;
                 equipment = karmaContext.SpecialEquipment.Where(x => volunteers.Contains(x.Owner)).Select(se => se.Name).ToList();
@@ -163,7 +166,7 @@ namespace Karma.Pages
 
         private async Task CalculateParticipantsAsync()
         {
-            var karmaContext = new KarmaContext();
+            var karmaContext = m_contextFactory.CreateDbContext();
             CharityEvent events = karmaContext.Events.Include(x => x.Volunteers).FirstOrDefault(y => y.Id == Id);
             currentParticipants = events.Volunteers.Count;
             neededParticipants = events.MaxVolunteers;

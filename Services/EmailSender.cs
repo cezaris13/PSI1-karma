@@ -10,21 +10,21 @@ namespace Karma.Services
     public class EmailSender : IEmailSender
     {
         private readonly IConfiguration m_config;
-
-        public EmailSender(IConfiguration config)
+        private readonly ISendGridClient m_sendGridClient;
+        public EmailSender(IConfiguration config, ISendGridClient client)
         {
             m_config = config;
+            m_sendGridClient = client;
         }
 
         public Task SendEmailAsync(string email, string subject, string message)
         {
             Func<string, string, EmailAddress> constructFrom = (x, y) => new EmailAddress(x, y);
-            return Execute(m_config["SendGridApiKey"], subject, message, email, constructFrom);
+            return Execute(subject, message, email, constructFrom);
         }
 
-        public Task Execute(string apiKey, string subject, string message, string email, Func<string, string, EmailAddress> constructFrom)
+        private Task Execute(string subject, string message, string email, Func<string, string, EmailAddress> constructFrom)
         {
-            var client = new SendGridClient(apiKey);
             var msg = new SendGridMessage()
             {
                 From = constructFrom(m_config["KarmaEmail"], m_config["PasswordConfirmationName"]),
@@ -35,7 +35,7 @@ namespace Karma.Services
             msg.AddTo(new EmailAddress(email));
 
             msg.SetClickTracking(false, false);
-            return client.SendEmailAsync(msg);
+            return m_sendGridClient.SendEmailAsync(msg);
         }
     }
 }

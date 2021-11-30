@@ -1,3 +1,4 @@
+using System;
 using Karma.Areas.Identity;
 using Karma.Data;
 using Karma.Models;
@@ -12,9 +13,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
 using OpenCage.Geocode;
+using SendGrid;
 
 namespace Karma
 {
@@ -31,17 +32,19 @@ namespace Karma
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")),
-                    ServiceLifetime.Scoped);
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddDbContextFactory<KarmaContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")),
-                    ServiceLifetime.Scoped);
-            services.AddTransient<IEmailSender, EmailSender>();
+            {
+                Environment.SpecialFolder folder = Environment.SpecialFolder.LocalApplicationData;
+                string path = Environment.GetFolderPath(folder);
+                string DbPath = $"{path}{System.IO.Path.DirectorySeparatorChar}karma.db";
+                options.UseSqlite($"Data Source={DbPath}");
+            }, ServiceLifetime.Transient);
+
+            services.AddTransient<IEmailSender>(
+                p => new EmailSender(Configuration, new SendGridClient(Configuration["SendGridApiKey"])));
 
             services.AddRazorPages();
             services.AddServerSideBlazor();

@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Karma.Models;
+using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
 
 namespace Karma.Pages
 {
@@ -19,10 +21,14 @@ namespace Karma.Pages
         public string filterValue = "";
         public IEnumerable<IGenericKarmaItem> karmaEvents;
 
-        private KarmaContext m_karmaContext = new();
+        [Inject]
+        private IDbContextFactory<KarmaContext> m_contextFactory{ get; set; }
+
+        private KarmaContext m_karmaContext;
 
         protected override void OnInitialized()
         {
+            m_karmaContext = m_contextFactory.CreateDbContext();
             LoadEvents(elementsPerPage: perPage);
         }
 
