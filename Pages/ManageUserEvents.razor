@@ -14,13 +14,6 @@
 <h1 class="mat">Karma</h1>
 
 <p class"mat">Ready to aquire karma points by helping out others?</p>
-<MatSelect Label="Page size" ValueChanged="async(int a) => await Refresh(a)">
-    <MatOption TValue="int" Value="10"></MatOption>
-    <MatOption TValue="int" Value="10">10</MatOption>
-    <MatOption TValue="int" Value="15">15</MatOption>
-    <MatOption TValue="int" Value="20">20</MatOption>
-</MatSelect>
-<Pagination TotaPagesQuantity="m_totalPageQuantity" CurrentPage="m_currentPage" Radius="2" SelectedPage="SelectedPage"></Pagination>
 
 <MatTextField @bind-Value="@filterValue" OnInput="@(e => filterValue = e.Value.ToString())" Label="Search Events" Icon="search" IconTrailing="true"></MatTextField>
 
@@ -50,3 +43,10 @@
         }
     }
 </div>
+
+<MatSelect Label="Page size" Value="@perPage" ValueChanged="async(int a) => await Refresh(a)">
+    <MatOption TValue="int" Value="3">3</MatOption>
+    <MatOption TValue="int" Value="5">5</MatOption>
+    <MatOption TValue="int" Value="10">10</MatOption>
+</MatSelect>
+<Pagination TotaPagesQuantity="m_totalPageQuantity" CurrentPage="m_currentPage" Radius="2" SelectedPage="SelectedPage"></Pagination>

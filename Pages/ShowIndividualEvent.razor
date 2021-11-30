@@ -7,54 +7,94 @@
 
 @if (charityEvent != null)
 {
-    <h1 class="mat">@charityEvent.Name</h1>
-    <h2 class="mat">@charityEvent.Description</h2>
-    <h3 class="mat">@charityEvent.State.ToString()</h3>
-    <h3 class="mat">@charityEvent.Address</h3>
-    <h3 class="mat">@weatherForecast</h3>
-    <h3 class="mat-subtitle1">Participants @currentParticipants / @neededParticipants</h3>
-    <MatProgressBar Progress=@participantsProgress></MatProgressBar>
-
-    <div id="mapid" style="height: 500px; width: 500px; z-index: 0;"></div>
-
-    if (CurrentUserId == charityEvent.ManagerId)
-    {
-        <MatButton Raised="true" class="btn btn-primary" @onclick="NavigateToEditEvent">Update event</MatButton>
-    }
-    <div class="container" style="overflow: auto;">
-        <div style="float:left; width:40%">
-            <p>Event volunteers:</p>
-            <ol>
-                @foreach (var volunteer in volunteers)
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-10">
+                <h1 class="mat">@charityEvent.Name</h1>
+                <h3 class="mat">@charityEvent.Address</h3>
+                <h3 class="mat">@charityEvent.State.ToString()</h3>
+            </div>
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-2">
+                @if (CurrentUserId == charityEvent.ManagerId)
                 {
-                    <li>@volunteer</li>
+                    <MatButton Raised="true" class="btn btn-primary" @onclick="NavigateToEditEvent">Update event</MatButton>
                 }
-            </ol>
-        </div>
-        <div style="float:right; width:40%">
-            <p>Event equipment:</p>
-            <ol>
-                @foreach (var equipment in equipment)
-                {
-                    <li>@equipment</li>
-                }
-            </ol>
+            </div>
         </div>
     </div>
-    if (images.Count > 0)
-    {
-        <div class="container leftAlign">
-            <h2 class="mat">charity event photos</h2>
-            <MudCarousel Style="height:400px;width:400px" ShowArrows="true" ShowDelimiters="false" AutoCycle="true" TData="object">
-                @foreach (var image in images)
+    <MatAccordion>
+        <MatExpansionPanel>
+            <MatExpansionPanelSummary>
+                <MatExpansionPanelHeader>
+                    <h3 class="mat-subtitle1">Participants @currentParticipants / @neededParticipants</h3>
+                    <MatProgressBar Style="width:335%" Progress=@participantsProgress></MatProgressBar>
+                </MatExpansionPanelHeader>
+            </MatExpansionPanelSummary>
+            <MatExpansionPanelDetails>
+                <div class="mat-layout-grid">
+                    <div class="mat-layout-grid-inner">
+                        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
+                            <table class="table" style="float: left; width: 100%">
+                                <tbody>
+                                    <tr>
+                                        <th>Volunteers:</th>
+                                    </tr>
+                                    @foreach (var volunteer in volunteers)
+                                    {
+                                        <tr>
+                                            <td>@volunteer</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">
+                            <table class="table" style="float:right">
+                                <tbody>
+                                    <tr>
+                                        <th>Equipment:</th>
+                                    </tr>
+                                    @foreach (var equip in equipment)
+                                    {
+                                        <tr>
+                                            <td>@equip</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </MatExpansionPanelDetails>
+        </MatExpansionPanel>
+    </MatAccordion>
+
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-7">
+                <b1 class="mat">@charityEvent.Description</b1>
+            </div>
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-5">
+
+                <h3 class="mat">@weatherForecast</h3>
+
+                <div id="mapid" style="height: 500px; width: 500px; z-index: 0;"></div>
+
+                @if (images.Count > 0)
                 {
-                    <MudCarouselItem Transition="Transition.Slide">
-                        <img src=@image style="width:400px;height:400px">
-                    </MudCarouselItem>
+                    <h2 class="mat">Event photos</h2>
+                    <MudCarousel Style="height:400px;width:500px" ShowArrows="true" ShowDelimiters="false" AutoCycle="true" TData="object">
+                        @foreach (var image in images)
+                        {
+                            <MudCarouselItem Transition="Transition.Slide">
+                                <img src=@image style="width:500px;height:400px">
+                            </MudCarouselItem>
+                        }
+                    </MudCarousel>
                 }
-            </MudCarousel>
+            </div>
         </div>
-    }
+    </div>
 }
 else
 {

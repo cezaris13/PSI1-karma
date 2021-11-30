@@ -14,7 +14,7 @@ namespace Karma.Pages
     {
         private int m_totalPageQuantity;
         private int m_currentPage = 1;
-        public int perPage = 10;
+        public int perPage = 5;
         public string filterValue = "";
         private string m_currentUserId { get; set; }
 
@@ -61,7 +61,7 @@ namespace Karma.Pages
         {
             ClaimsPrincipal principal = m_httpContextAccessor.HttpContext.User;
             m_currentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-            LoadEvents();
+            LoadEvents(elementsPerPage: perPage);
         }
     }
 }
