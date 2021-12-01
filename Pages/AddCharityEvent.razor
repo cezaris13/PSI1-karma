@@ -10,8 +10,8 @@
 <MudPaper Elevation="10" class="box">
     <div class="centerContainer">
         <MatTextField @bind-Value="@EventTitle" @oninput="@((e) => { EventTitle = (string)e.Value; })" Label="Event Title" Outlined="false" Class="element"></MatTextField>
-        <MatTextField @bind-Value="@EventDescription" @oninput="@((e) => { EventDescription = (string)e.Value; })" Label="Event Description" Outlined="false" Class="element"></MatTextField>
         <MatTextField @bind-Value="@EventAddress" @oninput="@((e) => { EventAddress = (string)e.Value; })" Label="Event Location" Outlined="false" Class="element"></MatTextField>
+        <MatTextField @bind-Value="@EventDescription" @oninput="@((e) => { EventDescription = (string)e.Value; })" Label="Event Description" Outlined="false" Class="element" TextArea="true" FullWidth="true" Style="height: 400px"></MatTextField>
         <MatButton Raised="true" class="btn btn-primary element" @onclick="AddEvent">Add event</MatButton>
     </div>
 </MudPaper>

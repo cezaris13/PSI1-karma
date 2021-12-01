@@ -20,36 +20,32 @@
 <h1 class="mat">Karma</h1>
 
 <p class="mat">Ready to aquire karma points by helping out others?</p>
-<MatSelect Label="Page size" ValueChanged="async(int a) => await Refresh(a)">
-    <MatOption TValue="int" Value="10"></MatOption>
-    <MatOption TValue="int" Value="10">10</MatOption>
-    <MatOption TValue="int" Value="15">15</MatOption>
-    <MatOption TValue="int" Value="20">20</MatOption>
-</MatSelect>
-<Pagination TotaPagesQuantity="m_totalPageQuantity" CurrentPage="m_currentPage" Radius="2" SelectedPage="SelectedPage"></Pagination>
 
 <MatTextField @bind-Value="@filterValue" OnInput="@(e => filterValue = e.Value.ToString())" Label="Search Events" Icon="search" IconTrailing="true"></MatTextField>
 
 <div class="card-deck">
-    @foreach (var karmaEvent in karmaEvents)
+    @foreach (var karmaEvent in SearchForEvents())
     {
-        var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());
-        @if (matches.Count > 0)
-        {
-            <MatCard class="demo-mat-card mx-3" @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">
-                <div class="demo-mat-card-content">
-                    <MatHeadline6 class="demo-mat-card-clean-margin">
-                        @karmaEvent.Name
-                    </MatHeadline6>
-                </div>
-                <MatCardContent>
-                    <MatCardMedia Wide="true" ImageUrl=@karmaEvent.PhotoPath></MatCardMedia>
-                    <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">
-                        @karmaEvent.Description
-                    </MatBody2>
-                </MatCardContent>
-            </MatCard>
-        }
+        <MatCard class="demo-mat-card mx-3" @onclick="()=>NavigateToIndividualEvent(karmaEvent.Id)">
+            <div class="demo-mat-card-content">
+                <MatHeadline6 class="demo-mat-card-clean-margin">
+                    @karmaEvent.Name
+                </MatHeadline6>
+            </div>
+            <MatCardContent>
+                <MatCardMedia Wide="true" ImageUrl=@karmaEvent.PhotoPath></MatCardMedia>
+                <MatBody2 class="demo-mat-card-content demo-mat-card-clean-margin">
+                    @karmaEvent.Description
+                </MatBody2>
+            </MatCardContent>
+        </MatCard>
     }
 </div>
+
+<MatSelect Label="Page size" Value="@perPage" ValueChanged="async(int a) => await Refresh(a)">
+    <MatOption TValue="int" Value="3">3</MatOption>
+    <MatOption TValue="int" Value="5">5</MatOption>
+    <MatOption TValue="int" Value="10">10</MatOption>
+</MatSelect>
+<Pagination TotaPagesQuantity="m_totalPageQuantity" CurrentPage="m_currentPage" Radius="2" SelectedPage="SelectedPage"></Pagination>
+

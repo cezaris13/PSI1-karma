@@ -78,7 +78,7 @@ namespace Karma.Pages
             charityEvent = m_karmaContext.Events.Include(p => p.Volunteers).Where(p => p.Id == Id).FirstOrDefault();
             ClaimsPrincipal principal = m_httpContextAccessor.HttpContext.User;
             CurrentUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-            VolunteerCount = charityEvent.Volunteers.Count;
+            VolunteerCount = charityEvent.MaxVolunteers;
         }
 
         public IEnumerable<IVolunteer> GetVolunteersInThisEvent()

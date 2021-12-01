@@ -8,14 +8,33 @@
 
 @if (charityEvent.ManagerId == CurrentUserId)
 {
+    <h1 class="mat">Edit charity event</h1>
+    <div class="mat-layout-grid">
+        <div class="mat-layout-grid-inner">
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-5">
+                <MatTextField @bind-Value="@charityEvent.Name" Label="Event Title" Outlined="true" Class="element"></MatTextField>
+                <MatTextField @bind-Value="@charityEvent.Address" Label="Event Location" Outlined="true" Class="element"></MatTextField>
+            </div>
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-5">
+                <MatTextField @bind-Value="@charityEvent.PhotoPath" Label="Picture URL" Outlined="true" Class="element"></MatTextField>
+                <MatTextField type="number" min="0" max="1000000" OnFocus="@OnFocusHandler" OnFocusOut="OnFocusOutHandler" @bind-Value="@VolunteerCount" Label="Maximum number of volunteers" Outlined="true" Class="element"></MatTextField>
+                <div style="color:red" class="element">@errorMessage</div>
+            </div>
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-2 mat-layout-grid-cell-align-middle">
+                @if (charityEvent.MaxVolunteers >= 0 && charityEvent.MaxVolunteers >= charityEvent.Volunteers.Count)
+                {
+                    <MatButton Outlined="true" class="btn btn-primary" @onclick="UpdateEvent">Update event</MatButton>
+                }
+                <br>
+                <br>
+                <MatButton Raised="true" class="btn btn-primary" @onclick="DeleteEvent">Delete event</MatButton>
+            </div>
+            <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
+                <MatTextField @bind-Value="@charityEvent.Description" Label="Event Description" Outlined="true" Class="element" TextArea="true" Style="height: 400px"></MatTextField>
+            </div>
+        </div>
+    </div>
     <div class="container leftAlign" style="width: 20%">
-        <h1 class="mat">Edit charity event</h1>
-        <MatTextField @bind-Value="@charityEvent.Name" @oninput="@((e) => { charityEvent.Name = (string)e.Value; })" Label="Event Title" Outlined="true" Class="element"></MatTextField>
-        <MatTextField @bind-Value="@charityEvent.Description" @oninput="@((e) => { charityEvent.Description = (string)e.Value; })" Label="Event Description" Outlined="true" Class="element"></MatTextField>
-        <MatTextField @bind-Value="@charityEvent.Address" @oninput="@((e) => { charityEvent.Address = (string)e.Value; })" Label="Event Location" Outlined="true" Class="element"></MatTextField>
-        <MatTextField type="number" min="0" max="1000000" OnFocus="@OnFocusHandler" OnFocusOut="OnFocusOutHandler" @bind-Value="@VolunteerCount" Label="Maximum number of volunteers" Outlined="true" Class="element"></MatTextField>
-        <div style="color:red" class="element">@errorMessage</div>
-        <MatTextField @bind-Value="@charityEvent.PhotoPath" @oninput="@((e) => { charityEvent.PhotoPath = (string)e.Value; })" Label="Picture URL" Outlined="true" Class="element"></MatTextField>
         <MatTextField @bind-Value="@filterValue" OnInput="@(e => filterValue = e.Value.ToString())" Label="Search" Icon="search" IconTrailing="true" Class="element"></MatTextField>
     </div>
     <MatAccordion Multi="true">
@@ -87,9 +106,4 @@
             </MatExpansionPanelDetails>
         </MatExpansionPanel>
     </MatAccordion>
-    @if (charityEvent.MaxVolunteers >= 0 && charityEvent.MaxVolunteers >= charityEvent.Volunteers.Count)
-    {
-        <MatButton Outlined="true" class="btn btn-primary" @onclick="UpdateEvent">Update event</MatButton>
-    }
-    <MatButton Raised="true" class="btn btn-primary" @onclick="DeleteEvent">Delete event</MatButton>
 }

@@ -61,8 +61,12 @@ namespace Karma.Pages
         public string FindMostValuableVolunteer()
         {
             IEnumerable<VolunteerAndEquipment> listOfVolunteersWithEquipment = GetPairsOfVolunteersAndEquipment();
-            VolunteerAndEquipment volunteerWithMostEquipment = listOfVolunteersWithEquipment.Aggregate((volunteerWithMostEquipment, nextVolunteer) => nextVolunteer.Size > volunteerWithMostEquipment.Size ? nextVolunteer : volunteerWithMostEquipment);
-            return volunteerWithMostEquipment.VolunteerName + " " + volunteerWithMostEquipment.VolunteerSurname;
+            if (listOfVolunteersWithEquipment.Any())
+            {
+                VolunteerAndEquipment volunteerWithMostEquipment = listOfVolunteersWithEquipment.Aggregate((volunteerWithMostEquipment, nextVolunteer) => nextVolunteer.Size > volunteerWithMostEquipment.Size ? nextVolunteer : volunteerWithMostEquipment);
+                return volunteerWithMostEquipment.VolunteerName + " " + volunteerWithMostEquipment.VolunteerSurname;
+            }
+            return "volunteer not found";
         }
 
         //Pending volunteers tab:
