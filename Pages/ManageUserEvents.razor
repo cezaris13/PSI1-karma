@@ -18,7 +18,7 @@
 <MatTextField @bind-Value="@filterValue" OnInput="@(e => filterValue = e.Value.ToString())" Label="Search Events" Icon="search" IconTrailing="true"></MatTextField>
 
 <div class="card-deck">
-    @foreach (var karmaEvent in karmaEvents)
+    @foreach (var karmaEvent in SearchForEvents())
     {
         var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());

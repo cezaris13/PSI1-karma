@@ -61,7 +61,6 @@ namespace Karma.Pages
         public string FindMostValuableVolunteer()
         {
             IEnumerable<VolunteerAndEquipment> listOfVolunteersWithEquipment = GetPairsOfVolunteersAndEquipment();
-            //
             if (listOfVolunteersWithEquipment.Any())
             {
                 VolunteerAndEquipment volunteerWithMostEquipment = listOfVolunteersWithEquipment.Aggregate((volunteerWithMostEquipment, nextVolunteer) => nextVolunteer.Size > volunteerWithMostEquipment.Size ? nextVolunteer : volunteerWithMostEquipment);

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Karma.Models;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,9 +44,25 @@ namespace Karma.Pages
             LoadEvents(page, perPage);
         }
 
+        public IEnumerable<IGenericKarmaItem> SearchForEvents()
+        {
+            LoadEvents(m_currentPage, perPage);
+            return karmaEvents;
+        }
+
         private void LoadEvents(int page = 1, int elementsPerPage = 10)
         {
-            var result = m_karmaContext.Events.Where(p => p.ManagerId == m_currentUserId).ToList();
+            var temp = m_karmaContext.Events.Where(p => p.ManagerId == m_currentUserId).ToList();
+            List<CharityEvent> result = new List<CharityEvent>();
+            foreach (var karmaEvent in temp)
+            {
+                var regex = new Regex($"(.*){filterValue}(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                var matches = regex.Matches(karmaEvent.Name + karmaEvent.Description + karmaEvent.Id.ToString());
+                if (matches.Count > 0)
+                {
+                    result.Add(karmaEvent);
+                }
+            }
             m_totalPageQuantity = Convert.ToInt32(Math.Ceiling(result.Count / (double) elementsPerPage));
             result.Sort();
             karmaEvents = result.Skip((page - 1) * elementsPerPage).Take(elementsPerPage);
